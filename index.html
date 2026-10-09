@@ -79,14 +79,14 @@ const fb=initializeApp({
 });
 const auth=getAuth(fb);
 const fs=initializeFirestore(fb,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
-let uid=null;
+let me=null;
 
 // ---------- storage: users/{uid}/decks and users/{uid}/notes ----------
-const all=async s=>(await getDocs(collection(fs,'users',uid,s))).docs.map(d=>d.data());
-const get=async(s,id)=>{const d=await getDoc(doc(fs,'users',uid,s,id));return d.exists()?d.data():undefined};
+const all=async s=>(await getDocs(collection(fs,'users',me,s))).docs.map(d=>d.data());
+const get=async(s,id)=>{const d=await getDoc(doc(fs,'users',me,s,id));return d.exists()?d.data():undefined};
 const wait=p=>Promise.race([p,new Promise(r=>setTimeout(r,2000))]); // don't hang when offline
-const put=(s,v)=>wait(setDoc(doc(fs,'users',uid,s,v.id),v));
-const del=(s,id)=>wait(deleteDoc(doc(fs,'users',uid,s,id)));
+const put=(s,v)=>wait(setDoc(doc(fs,'users',me,s,v.id),v));
+const del=(s,id)=>wait(deleteDoc(doc(fs,'users',me,s,id)));
 
 // ---------- sign-in ----------
 let pending=null;
@@ -105,7 +105,7 @@ function signedOut(){
   };
 }
 onAuthStateChanged(auth,u=>{
-  uid=u?u.uid:null;
+  me=u?u.uid:null;
   document.querySelector('nav').style.display=u?'':'none';
   const who=document.getElementById('who');
   if(!u){who.innerHTML='';signedOut();return}
@@ -121,7 +121,7 @@ let study=null,saveTimer=null;
 
 // ---------- router ----------
 async function route(){
-  await flush();if(!uid)return;
+  await flush();if(!me)return;
   const [,page,id]=(location.hash||'#/cards').split('/');
   document.getElementById('n-cards').className=['cards','study'].includes(page)?'on':'';
   document.getElementById('n-notes').className=['notes','note'].includes(page)?'on':'';
