@@ -55,17 +55,65 @@ textarea{min-height:140px;resize:vertical}
 .editor mark{background:#ffe66d;color:#222}
 .saved{color:var(--soft);font-size:.85rem}
 @media(max-width:560px){.list .item{grid-template-columns:1fr auto}.list .item span+span{grid-column:1;color:var(--soft)}.two{grid-template-columns:1fr}}
+.who{margin-left:auto;display:flex;gap:8px;align-items:center;color:var(--soft);font-size:.85rem}.who button{padding:6px 10px}
+@media(max-width:560px){.who span{display:none}}
 </style>
 </head>
 <body>
 <header><div class="bar"><span class="brand">My Toolbox</span>
-<nav><a href="#/cards" id="n-cards">Flashcards</a><a href="#/notes" id="n-notes">Notes</a></nav></div></header>
+<nav><a href="#/cards" id="n-cards">Flashcards</a><a href="#/notes" id="n-notes">Notes</a></nav><span class="who" id="who"></span></div></header>
 <main id="app"></main>
-<script>
-// ---------- storage (IndexedDB, stays on this device) ----------
-const dbp=new Promise((ok,no)=>{const r=indexedDB.open('toolbox',1);r.onupgradeneeded=()=>{['decks','notes'].forEach(s=>r.result.createObjectStore(s,{keyPath:'id'}))};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
-const tx=async(s,m,f)=>{const d=await dbp;return new Promise((ok,no)=>{const t=d.transaction(s,m);const q=f(t.objectStore(s));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)})};
-const all=s=>tx(s,'readonly',o=>o.getAll()),get=(s,id)=>tx(s,'readonly',o=>o.get(id)),put=(s,v)=>tx(s,'readwrite',o=>o.put(v)),del=(s,id)=>tx(s,'readwrite',o=>o.delete(id));
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {initializeFirestore,persistentLocalCache,persistentMultipleTabManager,collection,doc,getDoc,getDocs,setDoc,deleteDoc} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+// ---------- Firebase ----------
+const fb=initializeApp({
+  apiKey:"AIzaSyBTjTUogNJDAJ2RcSeQgQgNbEQlL8_ONJg",
+  authDomain:"toolbox-2f419.firebaseapp.com",
+  projectId:"toolbox-2f419",
+  storageBucket:"toolbox-2f419.firebasestorage.app",
+  messagingSenderId:"290112154686",
+  appId:"1:290112154686:web:0a2e6d4e7af229c6a4756f"
+});
+const auth=getAuth(fb);
+const fs=initializeFirestore(fb,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
+let uid=null;
+
+// ---------- storage: users/{uid}/decks and users/{uid}/notes ----------
+const all=async s=>(await getDocs(collection(fs,'users',uid,s))).docs.map(d=>d.data());
+const get=async(s,id)=>{const d=await getDoc(doc(fs,'users',uid,s,id));return d.exists()?d.data():undefined};
+const wait=p=>Promise.race([p,new Promise(r=>setTimeout(r,2000))]); // don't hang when offline
+const put=(s,v)=>wait(setDoc(doc(fs,'users',uid,s,v.id),v));
+const del=(s,id)=>wait(deleteDoc(doc(fs,'users',uid,s,id)));
+
+// ---------- sign-in ----------
+let pending=null;
+async function flush(){if(!pending)return;clearTimeout(saveTimer);const f=pending;pending=null;await f()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
+addEventListener('pagehide',flush);
+function signedOut(){
+  app.innerHTML=`<div class="panel" style="max-width:420px;margin:40px auto;text-align:center"><h1>My Toolbox</h1><p class="sub">Sign in to open your flashcards and notes.</p><button class="pri" id="gin">Sign in with Google</button><p class="sub" id="aerr" style="color:var(--warn);margin-top:12px"></p></div>`;
+  document.getElementById('gin').onclick=async()=>{
+    const p=new GoogleAuthProvider();
+    try{await signInWithPopup(auth,p)}
+    catch(e){
+      if(e.code==='auth/popup-blocked')signInWithRedirect(auth,p);
+      else document.getElementById('aerr').textContent='Sign-in failed ('+e.code+')';
+    }
+  };
+}
+onAuthStateChanged(auth,u=>{
+  uid=u?u.uid:null;
+  document.querySelector('nav').style.display=u?'':'none';
+  const who=document.getElementById('who');
+  if(!u){who.innerHTML='';signedOut();return}
+  who.innerHTML=`<span>${esc(u.email||'')}</span><button id="out">Sign out</button>`;
+  document.getElementById('out').onclick=()=>signOut(auth);
+  route();
+});
+
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const app=document.getElementById('app');
@@ -73,6 +121,7 @@ let study=null,saveTimer=null;
 
 // ---------- router ----------
 async function route(){
+  await flush();if(!uid)return;
   const [,page,id]=(location.hash||'#/cards').split('/');
   document.getElementById('n-cards').className=['cards','study'].includes(page)?'on':'';
   document.getElementById('n-notes').className=['notes','note'].includes(page)?'on':'';
@@ -137,14 +186,18 @@ async function noteView(id){
   <input type="file" id="pic" accept="image/*" hidden>
   <div class="row" style="margin-top:14px"><button class="del" data-act="delnote" data-id="${id}">Delete note</button></div>`;
   const ed=document.getElementById('ed'),ti=document.getElementById('ntitle'),sv=document.getElementById('saved');
-  const save=()=>{sv.textContent='Saving…';clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{await put('notes',{id,title:ti.value,html:ed.innerHTML,updated:Date.now()});sv.textContent='Saved'},500)};
+  const save=()=>{sv.textContent='Saving…';clearTimeout(saveTimer);
+    pending=async()=>{const note={id,title:ti.value,html:ed.innerHTML,updated:Date.now()};
+      if(note.html.length>900000){sv.textContent='Too big to save. Remove a photo.';return}
+      try{await put('notes',note);sv.textContent='Saved'}catch(e){sv.textContent='Not saved ('+(e.code||'error')+')'}};
+    saveTimer=setTimeout(flush,600)};
   ed.addEventListener('input',save);ti.addEventListener('input',save);
   document.getElementById('pic').addEventListener('change',async e=>{
     const f=e.target.files[0];if(!f)return;ed.focus();
     document.execCommand('insertImage',false,await shrink(f));save();e.target.value='';
   });
 }
-function shrink(file,max=1200){return new Promise(ok=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82))};i.src=r.result};r.readAsDataURL(file)})}
+function shrink(file,max=900){return new Promise(ok=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.7))};i.src=r.result};r.readAsDataURL(file)})}
 
 // ---------- events ----------
 document.addEventListener('mousedown',e=>{if(e.target.closest('.tools button'))e.preventDefault()});
@@ -176,7 +229,7 @@ document.addEventListener('click',async e=>{
   else if(act==='got'){study.q.shift();study.done++;study.flip=false;drawStudy(await get('decks',study.id))}
   else if(act==='again'){study.q.push(study.q.shift());study.flip=false;drawStudy(await get('decks',study.id))}
   else if(act==='newnote'){const n={id:uid(),title:'',html:'',updated:Date.now()};await put('notes',n);location.hash='#/note/'+n.id}
-  else if(act==='delnote'){if(confirm('Delete this note?')){await del('notes',id);location.hash='#/notes'}}
+  else if(act==='delnote'){if(confirm('Delete this note?')){pending=null;clearTimeout(saveTimer);await del('notes',id);location.hash='#/notes'}}
   else if(act==='link'){const u=prompt('Link address (https://…)');if(u){document.getElementById('ed').focus();document.execCommand('createLink',false,u);document.getElementById('ed').dispatchEvent(new Event('input'))}}
   else if(act==='photo'){document.getElementById('pic').click()}
   else if(act==='export'){
@@ -186,7 +239,6 @@ document.addEventListener('click',async e=>{
   else if(act==='import'){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=async()=>{try{const j=JSON.parse(await inp.files[0].text());for(const d of j.decks||[])await put('decks',d);for(const n of j.notes||[])await put('notes',n);alert('Backup restored.');route()}catch{alert('That file is not a valid backup.')}};inp.click()}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('flash'))e.target.click()});
-route();
 </script>
 </body>
 </html>
