@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Toolbox</title>
+<style>
+:root{--bg:#eef2f5;--panel:#fff;--ink:#17252f;--soft:#5d6d79;--line:#d5dde3;--accent:#0e7c86;--accent-ink:#fff;--warn:#b3392f;--r:10px}
+@media (prefers-color-scheme:dark){:root{--bg:#10181d;--panel:#18232a;--ink:#e6edf1;--soft:#93a4af;--line:#2b3a44;--accent:#3fb6c1;--accent-ink:#06262a;--warn:#ef8278}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+header{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:env(safe-area-inset-top) 16px 0}
+.bar{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:20px;height:52px}
+.brand{font-weight:700;letter-spacing:.2px}
+nav{display:flex;gap:4px}
+nav a{color:var(--soft);text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600}
+nav a.on{color:var(--accent-ink);background:var(--accent)}
+main{max-width:900px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.sub{color:var(--soft);margin:0 0 18px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+button,.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer}
+button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.del{color:var(--warn)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,[contenteditable]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 12px;width:100%}
+textarea{min-height:140px;resize:vertical}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:16px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-height:120px;text-align:left;color:inherit;text-decoration:none;overflow:hidden}
+.tile:hover{border-color:var(--accent)}
+.tile b{font-size:1.05rem;overflow-wrap:anywhere}
+.tile small{color:var(--soft)}
+.tile p{margin:0;color:var(--soft);font-size:.92rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tile img{width:100%;height:90px;object-fit:cover;border-radius:6px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:14px}
+.panel h2{font-size:1rem;margin:0 0 10px}
+.list .item{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center}
+.list .item:last-child{border:0}
+.list span{overflow-wrap:anywhere}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.study{margin-top:18px;text-align:center}
+.flash{background:var(--panel);border:1px solid var(--line);border-radius:14px;min-height:220px;display:flex;align-items:center;justify-content:center;padding:24px;font-size:1.5rem;cursor:pointer;overflow-wrap:anywhere;user-select:none}
+.flash.back{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--panel))}
+.prog{color:var(--soft);margin:10px 0}
+.empty{color:var(--soft);padding:30px 0;text-align:center}
+.tools{position:sticky;top:calc(52px + env(safe-area-inset-top));z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:6px;display:flex;gap:4px;overflow-x:auto;margin:12px 0}
+.tools button{padding:7px 11px;min-width:38px;flex:none}
+.title{font-size:1.6rem;font-weight:700;border:0;background:transparent;padding:6px 0}
+.editor{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-height:55vh;font:1.05rem/1.65 Georgia,"Times New Roman",serif;overflow-wrap:anywhere}
+.editor img{max-width:100%;height:auto;border-radius:6px;margin:6px 0}
+.editor h2{font:700 1.5rem/1.3 system-ui,sans-serif}.editor h3{font:700 1.2rem/1.3 system-ui,sans-serif}
+.editor blockquote{border-left:3px solid var(--accent);margin:8px 0;padding-left:12px;color:var(--soft)}
+.editor mark{background:#ffe66d;color:#222}
+.saved{color:var(--soft);font-size:.85rem}
+@media(max-width:560px){.list .item{grid-template-columns:1fr auto}.list .item span+span{grid-column:1;color:var(--soft)}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="bar"><span class="brand">My Toolbox</span>
+<nav><a href="#/cards" id="n-cards">Flashcards</a><a href="#/notes" id="n-notes">Notes</a></nav></div></header>
+<main id="app"></main>
+<script>
+// ---------- storage (IndexedDB, stays on this device) ----------
+const dbp=new Promise((ok,no)=>{const r=indexedDB.open('toolbox',1);r.onupgradeneeded=()=>{['decks','notes'].forEach(s=>r.result.createObjectStore(s,{keyPath:'id'}))};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+const tx=async(s,m,f)=>{const d=await dbp;return new Promise((ok,no)=>{const t=d.transaction(s,m);const q=f(t.objectStore(s));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)})};
+const all=s=>tx(s,'readonly',o=>o.getAll()),get=(s,id)=>tx(s,'readonly',o=>o.get(id)),put=(s,v)=>tx(s,'readwrite',o=>o.put(v)),del=(s,id)=>tx(s,'readwrite',o=>o.delete(id));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const app=document.getElementById('app');
+let study=null,saveTimer=null;
+
+// ---------- router ----------
+async function route(){
+  const [,page,id]=(location.hash||'#/cards').split('/');
+  document.getElementById('n-cards').className=['cards','study'].includes(page)?'on':'';
+  document.getElementById('n-notes').className=['notes','note'].includes(page)?'on':'';
+  window.scrollTo(0,0);
+  if(page==='cards'&&id)return deckView(id);
+  if(page==='cards')return decksView();
+  if(page==='study')return studyView(id);
+  if(page==='notes')return notesView();
+  if(page==='note')return noteView(id);
+  location.hash='#/cards';
+}
+addEventListener('hashchange',route);
+
+// ---------- flashcards ----------
+async function decksView(){
+  const decks=(await all('decks')).sort((a,b)=>b.updated-a.updated);
+  app.innerHTML=`<h1>Flashcards</h1><p class="sub">Make decks, paste in lists, and study.</p>
+  <div class="row"><button class="pri" data-act="newdeck">New deck</button><button data-act="export">Back up everything</button><button data-act="import">Restore backup</button></div>
+  ${decks.length?`<div class="grid">${decks.map(d=>`<a class="tile" href="#/cards/${d.id}"><b>${esc(d.name)}</b><small>${d.cards.length} card${d.cards.length==1?'':'s'}</small></a>`).join('')}</div>`:'<div class="empty">No decks yet. Create one to get started.</div>'}`;
+}
+async function deckView(id){
+  const d=await get('decks',id);if(!d){location.hash='#/cards';return}
+  app.innerHTML=`<div class="row between"><div><h1>${esc(d.name)}</h1><p class="sub">${d.cards.length} cards</p></div>
+  <div class="row"><button class="pri" data-act="study" data-id="${id}" ${d.cards.length?'':'disabled'}>Study</button><button data-act="rename" data-id="${id}">Rename</button><button class="del" data-act="deldeck" data-id="${id}">Delete deck</button></div></div>
+  <div class="panel"><h2>Add a card</h2><div class="two"><input id="f" placeholder="Front"><input id="b" placeholder="Back"></div><button class="pri" data-act="addcard" data-id="${id}">Add card</button></div>
+  <div class="panel"><h2>Paste a list</h2><p class="sub" style="margin:0 0 8px">One card per line, front and back separated by a comma. Extra commas stay in the back.</p>
+  <textarea id="bulk" placeholder="hola, hello&#10;gracias, thank you"></textarea><div class="row" style="margin-top:8px"><button class="pri" data-act="bulk" data-id="${id}">Import cards</button></div></div>
+  <div class="panel list"><h2>Cards</h2>${d.cards.length?d.cards.map((c,i)=>`<div class="item"><span>${esc(c.f)}</span><span>${esc(c.b)}</span><span class="row"><button data-act="editcard" data-id="${id}" data-i="${i}">Edit</button><button class="del" data-act="delcard" data-id="${id}" data-i="${i}">Delete</button></span></div>`).join(''):'<div class="empty">This deck is empty.</div>'}</div>`;
+}
+async function studyView(id){
+  const d=await get('decks',id);if(!d||!d.cards.length){location.hash='#/cards/'+id;return}
+  if(!study||study.id!==id)study={id,q:[...d.cards].sort(()=>Math.random()-.5),total:d.cards.length,done:0,flip:false};
+  drawStudy(d);
+}
+function drawStudy(d){
+  const s=study;
+  if(!s.q.length){app.innerHTML=`<h1>${esc(d.name)}</h1><div class="empty">All ${s.total} cards done.</div><div class="row" style="justify-content:center"><button class="pri" data-act="restart" data-id="${s.id}">Study again</button><a class="btn" href="#/cards/${s.id}" style="text-decoration:none">Back to deck</a></div>`;return}
+  const c=s.q[0];
+  app.innerHTML=`<div class="row between"><h1>${esc(d.name)}</h1><a href="#/cards/${s.id}" style="color:var(--soft)">Exit</a></div>
+  <div class="study"><div class="prog">${s.done} of ${s.total} known · ${s.q.length} left</div>
+  <div class="flash ${s.flip?'back':''}" data-act="flip" tabindex="0">${esc(s.flip?c.b:c.f)}</div>
+  <p class="sub" style="margin-top:10px">${s.flip?'Did you know it?':'Tap the card to see the answer'}</p>
+  <div class="row" style="justify-content:center">${s.flip?'<button class="del" data-act="again">Again</button><button class="pri" data-act="got">Got it</button>':'<button data-act="flip">Show answer</button>'}</div></div>`;
+}
+
+// ---------- notes ----------
+async function notesView(){
+  const notes=(await all('notes')).sort((a,b)=>b.updated-a.updated);
+  app.innerHTML=`<h1>Notes</h1><p class="sub">Tap a note to open it.</p><button class="pri" data-act="newnote">New note</button>
+  ${notes.length?`<div class="grid">${notes.map(n=>{const t=document.createElement('div');t.innerHTML=n.html;const img=t.querySelector('img');return `<a class="tile" href="#/note/${n.id}">${img?`<img src="${img.src}" alt="">`:''}<b>${esc(n.title||'Untitled')}</b><p>${esc(t.textContent.trim())}</p><small>${new Date(n.updated).toLocaleDateString()}</small></a>`}).join('')}</div>`:'<div class="empty">No notes yet.</div>'}`;
+}
+async function noteView(id){
+  const n=await get('notes',id);if(!n){location.hash='#/notes';return}
+  const B=(cmd,label,arg,title)=>`<button data-cmd="${cmd}" ${arg?`data-arg="${arg}"`:''} title="${title||label}">${label}</button>`;
+  app.innerHTML=`<div class="row between"><a href="#/notes" style="color:var(--soft)">&larr; All notes</a><span class="saved" id="saved">Saved</span></div>
+  <input class="title" id="ntitle" placeholder="Title" value="${esc(n.title)}">
+  <div class="tools">${B('undo','Undo')}${B('redo','Redo')}${B('formatBlock','H1','h2','Heading')}${B('formatBlock','H2','h3','Subheading')}${B('formatBlock','Text','p','Normal text')}
+  ${B('bold','<b>B</b>','','Bold')}${B('italic','<i>I</i>','','Italic')}${B('underline','<u>U</u>','','Underline')}${B('strikeThrough','<s>S</s>','','Strikethrough')}${B('hiliteColor','Mark','#ffe66d','Highlight')}
+  ${B('insertUnorderedList','&bull; List')}${B('insertOrderedList','1. List')}${B('formatBlock','Quote','blockquote')}${B('justifyLeft','Left')}${B('justifyCenter','Center')}
+  <button data-act="link">Link</button><button data-act="photo">Photo</button><button data-cmd="removeFormat">Clear</button></div>
+  <div class="editor" id="ed" contenteditable="true">${n.html}</div>
+  <input type="file" id="pic" accept="image/*" hidden>
+  <div class="row" style="margin-top:14px"><button class="del" data-act="delnote" data-id="${id}">Delete note</button></div>`;
+  const ed=document.getElementById('ed'),ti=document.getElementById('ntitle'),sv=document.getElementById('saved');
+  const save=()=>{sv.textContent='Saving…';clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{await put('notes',{id,title:ti.value,html:ed.innerHTML,updated:Date.now()});sv.textContent='Saved'},500)};
+  ed.addEventListener('input',save);ti.addEventListener('input',save);
+  document.getElementById('pic').addEventListener('change',async e=>{
+    const f=e.target.files[0];if(!f)return;ed.focus();
+    document.execCommand('insertImage',false,await shrink(f));save();e.target.value='';
+  });
+}
+function shrink(file,max=1200){return new Promise(ok=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82))};i.src=r.result};r.readAsDataURL(file)})}
+
+// ---------- events ----------
+document.addEventListener('mousedown',e=>{if(e.target.closest('.tools button'))e.preventDefault()});
+document.addEventListener('click',async e=>{
+  const cm=e.target.closest('[data-cmd]');
+  if(cm){document.getElementById('ed').focus();document.execCommand(cm.dataset.cmd,false,cm.dataset.arg||null);document.getElementById('ed').dispatchEvent(new Event('input'));return}
+  const t=e.target.closest('[data-act]');if(!t)return;
+  const {act,id,i}=t.dataset;
+  if(act==='newdeck'){const name=prompt('Deck name');if(name&&name.trim()){const d={id:uid(),name:name.trim(),cards:[],updated:Date.now()};await put('decks',d);location.hash='#/cards/'+d.id}}
+  else if(act==='rename'){const d=await get('decks',id);const n=prompt('Deck name',d.name);if(n&&n.trim()){d.name=n.trim();await put('decks',d);deckView(id)}}
+  else if(act==='deldeck'){if(confirm('Delete this deck and all its cards?')){await del('decks',id);location.hash='#/cards'}}
+  else if(act==='addcard'){const f=document.getElementById('f').value.trim(),b=document.getElementById('b').value.trim();if(!f||!b)return alert('Fill in both sides.');const d=await get('decks',id);d.cards.push({f,b});d.updated=Date.now();await put('decks',d);deckView(id)}
+  else if(act==='bulk'){
+    const d=await get('decks',id);let n=0,skipped=0;
+    document.getElementById('bulk').value.split(/\r?\n/).forEach(line=>{
+      if(!line.trim())return;const k=line.search(/,|\t/);
+      if(k<1){skipped++;return}
+      const f=line.slice(0,k).trim(),b=line.slice(k+1).trim();
+      if(f&&b){d.cards.push({f,b});n++}else skipped++;
+    });
+    d.updated=Date.now();await put('decks',d);await deckView(id);
+    alert(`Imported ${n} card${n==1?'':'s'}.`+(skipped?` Skipped ${skipped} line${skipped==1?'':'s'} with no comma.`:''));
+  }
+  else if(act==='editcard'){const d=await get('decks',id),c=d.cards[i];const f=prompt('Front',c.f);if(f===null)return;const b=prompt('Back',c.b);if(b===null)return;if(f.trim()&&b.trim()){d.cards[i]={f:f.trim(),b:b.trim()};await put('decks',d);deckView(id)}}
+  else if(act==='delcard'){const d=await get('decks',id);d.cards.splice(i,1);await put('decks',d);deckView(id)}
+  else if(act==='study'){study=null;location.hash='#/study/'+id}
+  else if(act==='restart'){study=null;studyView(id)}
+  else if(act==='flip'){study.flip=!study.flip;drawStudy(await get('decks',study.id))}
+  else if(act==='got'){study.q.shift();study.done++;study.flip=false;drawStudy(await get('decks',study.id))}
+  else if(act==='again'){study.q.push(study.q.shift());study.flip=false;drawStudy(await get('decks',study.id))}
+  else if(act==='newnote'){const n={id:uid(),title:'',html:'',updated:Date.now()};await put('notes',n);location.hash='#/note/'+n.id}
+  else if(act==='delnote'){if(confirm('Delete this note?')){await del('notes',id);location.hash='#/notes'}}
+  else if(act==='link'){const u=prompt('Link address (https://…)');if(u){document.getElementById('ed').focus();document.execCommand('createLink',false,u);document.getElementById('ed').dispatchEvent(new Event('input'))}}
+  else if(act==='photo'){document.getElementById('pic').click()}
+  else if(act==='export'){
+    const data=JSON.stringify({decks:await all('decks'),notes:await all('notes')});
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download='toolbox-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  }
+  else if(act==='import'){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=async()=>{try{const j=JSON.parse(await inp.files[0].text());for(const d of j.decks||[])await put('decks',d);for(const n of j.notes||[])await put('notes',n);alert('Backup restored.');route()}catch{alert('That file is not a valid backup.')}};inp.click()}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('flash'))e.target.click()});
+route();
+</script>
+</body>
+</html>
