@@ -169,6 +169,16 @@ nav .menu{left:0;right:auto}
 .more{display:block;padding-top:8px;border-top:1px solid var(--line);font-size:.9rem;font-weight:600}
 .hhead a{text-decoration:none}
 @media(max-width:560px){.stats div{flex:1 1 60px;min-width:0;padding:10px 12px}.stats b{font-size:1.3rem}.stats span{font-size:.78rem}}
+.habtile{position:relative;justify-content:flex-start;font:inherit}
+.habtile .pill{margin-top:auto;align-self:flex-start}
+.habtile.done{border-color:var(--accent)}
+.habtile .cover{position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 82%,transparent);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.habtile .cover svg{width:36px;height:36px;stroke-width:3;margin:0}
+.habtile .cover .fl{display:flex;align-items:center;gap:5px;font-weight:700;font-size:1.1rem}
+.habtile .cover .fl svg{width:18px;height:18px;fill:#fff;stroke-width:2}
+.habtile.done p,.habtile.done .pill{visibility:hidden}
+.habtile.done b{position:relative;z-index:1;color:#fff}
+.habtile .cover{padding-top:24px}
 </style>
 </head>
 <body>
@@ -270,7 +280,7 @@ const BACK=h=>`<a class="circle" href="${h}" title="Back" aria-label="Back">${SV
 const backupBtns=k=>`<button data-act="export" data-kind="${k}">${SVG('M12 3v12m0 0l-4-4m4 4l4-4M5 21h14')}Back up</button><button data-act="import">${SVG('M12 15V3m0 0L8 7m4-4l4 4M5 21h14')}Restore</button>`;
 const pad=n=>String(n).padStart(2,'0');
 const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-const ALLD=[0,1,2,3,4,5,6],CHECK='M5 12l5 5L20 7';
+const ALLD=[0,1,2,3,4,5,6],CHECK='M5 12l5 5L20 7',FLAME='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z';
 function hstats(h){
   const sched=h.sched&&h.sched.length?h.sched:ALLD,log=h.log||{};
   let cur=0;const d=new Date();d.setHours(12,0,0,0);
@@ -296,17 +306,20 @@ async function homeView(){
   hs.sort((a,b)=>(a.created||0)-(b.created||0));
   const sched=hs.filter(h=>(h.sched&&h.sched.length?h.sched:ALLD).includes(dow));
   const doneN=sched.filter(h=>h.log&&h.log[today]).length;
-  const rows=sched.slice(0,6).map(h=>{const dn=h.log&&h.log[today];return `<div class="hrow"><button class="tick ${dn?'done':''}" data-act="hab" data-id="${h.id}" data-d="${today}" aria-label="Toggle ${esc(h.name||'habit')} for today">${dn?SVG(CHECK):''}</button><a href="#/habit/${h.id}">${esc(h.name||'Untitled habit')}</a><span class="pill">${streakTxt(hstats(h).cur)}</span></div>`}).join('');
-  const habits=hs.length
-    ?`<div class="hhead"><span>${sched.length?(doneN===sched.length?'All done for today':`${doneN} of ${sched.length} done today`):'Nothing scheduled today'}</span><a href="#/habits">All habits</a></div><div class="bar2"><i style="width:${sched.length?Math.round(doneN/sched.length*100):0}%"></i></div>${rows}${sched.length>6?`<a class="more" href="#/habits">+${sched.length-6} more</a>`:''}`
-    :`<div class="empty" style="padding:8px 0">No habits yet. <a href="#/habits">Add your first habit</a></div>`;
+  const tiles=sched.slice(0,8).map(h=>{
+    const dn=h.log&&h.log[today],n=hstats(h).cur;
+    return `<button class="tile habtile ${dn?'done':''}" data-act="hab" data-id="${h.id}" data-d="${today}" aria-pressed="${!!dn}"><b>${esc(h.name||'Untitled habit')}</b><p>${dn?'Done today':'Tap to mark done'}</p><span class="pill">${streakTxt(n)}</span>${dn?`<span class="cover">${SVG(CHECK)}<span class="fl">${SVG(FLAME)}${n}</span></span>`:''}</button>`;
+  }).join('');
+  const habits=!hs.length
+    ?`<div class="empty" style="padding:8px 0">No habits yet. <a href="#/habits">Add your first habit</a></div>`
+    :`<div class="hhead"><span>${sched.length?(doneN===sched.length?'All done for today':`${doneN} of ${sched.length} done today`):'Nothing scheduled today'}</span><a href="#/habits">All habits${sched.length>8?`, +${sched.length-8} more`:''}</a></div>${tiles?`<div class="grid">${tiles}</div>`:''}`;
   app.innerHTML=`<h1>Toolbox</h1><p class="sub">Your personal tools, synced to your Google account.</p>
   <h2 class="h2">Tools</h2>
   <div class="grid"><a class="tile tool" href="#/cards"><b>Flashcards</b><p>Make decks, paste in lists, and study.</p></a>
   <a class="tile tool" href="#/habits"><b>Habits</b><p>Daily check-offs and streaks.</p></a>
   <a class="tile tool" href="#/notes"><b>Notes</b><p>Rich text notes with photos.</p></a></div>
   <h2 class="h2">Habits</h2>
-  <div class="panel">${habits}</div>
+  ${habits}
   <h2 class="h2">Recents</h2>
   ${items.length?`<div class="grid">${items.map(tile).join('')}</div>`:'<div class="empty">Nothing yet. Make a deck or a note and it will show up here.</div>'}`;
 }
