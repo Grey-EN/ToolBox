@@ -172,11 +172,10 @@ nav .menu{left:0;right:auto}
 .habtile{position:relative;justify-content:flex-start;font:inherit}
 .habtile .pill{margin-top:auto;align-self:flex-start}
 .habtile.done{border-color:var(--accent)}
-.habtile .cover{position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 82%,transparent);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.habtile .cover{position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 70%,transparent);-webkit-backdrop-filter:blur(2.5px);backdrop-filter:blur(2.5px);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
 .habtile .cover svg{width:36px;height:36px;stroke-width:3;margin:0}
 .habtile .cover .fl{display:flex;align-items:center;gap:5px;font-weight:700;font-size:1.1rem}
 .habtile .cover .fl svg{width:18px;height:18px;fill:#fff;stroke-width:2}
-.habtile.done p,.habtile.done .pill{visibility:hidden}
 .habtile.done b{position:relative;z-index:1;color:#fff}
 .habtile .cover{padding-top:24px}
 </style>
@@ -312,7 +311,7 @@ async function homeView(){
   }).join('');
   const habits=!hs.length
     ?`<div class="empty" style="padding:8px 0">No habits yet. <a href="#/habits">Add your first habit</a></div>`
-    :`<div class="hhead"><span>${sched.length?(doneN===sched.length?'All done for today':`${doneN} of ${sched.length} done today`):'Nothing scheduled today'}</span><a href="#/habits">All habits${sched.length>8?`, +${sched.length-8} more`:''}</a></div>${tiles?`<div class="grid">${tiles}</div>`:''}`;
+    :`<div class="hhead"><span>${sched.length?(doneN===sched.length?'All done for today':`${doneN} of ${sched.length} done today`):'Nothing scheduled today'}${sched.length>8?` (showing 8 of ${sched.length})`:''}</span></div>${tiles?`<div class="grid">${tiles}</div>`:''}`;
   app.innerHTML=`<h1>Toolbox</h1><p class="sub">Your personal tools, synced to your Google account.</p>
   <h2 class="h2">Tools</h2>
   <div class="grid"><a class="tile tool" href="#/cards"><b>Flashcards</b><p>Make decks, paste in lists, and study.</p></a>
