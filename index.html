@@ -81,8 +81,6 @@ nav{flex:none}
 .navbtn:hover:not(:disabled){color:var(--ink)}
 .navbtn.on{color:var(--acc-t);background:color-mix(in srgb,var(--accent) 15%,transparent)}
 .navbtn svg{width:14px;height:14px;margin:0 0 0 4px;vertical-align:-2px}
-.who{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--soft);font-size:.82rem;min-width:0}
-.who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .circle{width:34px;height:34px;padding:0;border:0;border-radius:50%;display:inline-grid;place-items:center;flex:none;background:var(--accent);color:var(--accent-ink);text-decoration:none;cursor:pointer}
 .circle:hover:not(:disabled){filter:brightness(1.1)}
 .circle svg{width:18px;height:18px;margin:0}
@@ -172,18 +170,41 @@ nav .menu{left:0;right:auto}
 .habtile{position:relative;justify-content:flex-start;font:inherit}
 .habtile .pill{margin-top:auto;align-self:flex-start}
 .habtile.done{border-color:var(--accent)}
-.habtile .cover{position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 70%,transparent);-webkit-backdrop-filter:blur(2.5px);backdrop-filter:blur(2.5px);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.habtile .cover{position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 35%,transparent);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
 .habtile .cover svg{width:36px;height:36px;stroke-width:3;margin:0}
 .habtile .cover .fl{display:flex;align-items:center;gap:5px;font-weight:700;font-size:1.1rem}
 .habtile .cover .fl svg{width:18px;height:18px;fill:#fff;stroke-width:2}
 .habtile.done b{position:relative;z-index:1;color:#fff}
 .habtile .cover{padding-top:24px}
+.habtile.done p,.habtile.done .pill{visibility:hidden}
+[hidden]{display:none!important}
+.acts{margin-left:auto;display:flex;gap:10px;align-items:center}
+.circle{position:relative}
+.circle.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+.badge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font-size:.64rem;font-weight:700;display:grid;place-items:center;outline:2px solid var(--bg)}
+.notifwrap{position:static}
+.menu.notifs{position:absolute;top:calc(100% + 6px);right:12px;left:auto;width:min(380px,calc(100vw - 24px));max-height:70vh;overflow-y:auto;padding:0;gap:0}
+.notifs .nhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700}
+.notifs .nhead .row{flex-wrap:nowrap;gap:6px}
+.notifs .nhead button{width:auto;padding:5px 9px;font-size:.76rem;border:1px solid var(--line);background:var(--panel2)}
+.notifs .nhead button:disabled{opacity:.4}
+.notifs .nitem{display:flex;align-items:flex-start;gap:10px;padding:12px 8px 12px 14px;border-bottom:1px solid var(--line)}
+.notifs .nitem:last-child{border-bottom:0}
+.notifs .nitem.unread{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.notifs .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none}
+.notifs .nitem.read .dot{background:transparent}
+.notifs a.txt{display:block;flex:1;min-width:0;width:auto;padding:0;background:transparent;border-radius:0}
+.notifs a.txt:hover{background:transparent}
+.notifs .txt b{display:block}.notifs .txt span{display:block;color:var(--soft);font-weight:500}.notifs .txt small{color:var(--soft);font-weight:500;font-size:.78rem}
+.notifs .nx{width:auto;padding:0 8px;font-size:1.3rem;line-height:1;color:var(--soft);background:transparent}
 </style>
 </head>
 <body>
 <header><div class="bar"><a class="brand" href="#/home" aria-label="Toolbox home"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></i><b>Toolbox</b></a>
 <nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><a href="#/cards">Flashcards</a><a href="#/habits">Habits</a><a href="#/notes">Notes</a></div></div></nav>
-<span class="who" id="who"></span><button class="circle" id="theme" title="Switch theme" aria-label="Switch theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg></button></div></header>
+<div class="acts"><div class="menuwrap notifwrap" id="notifwrap" hidden><button class="circle ghost" id="bell" data-act="menu" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button><div class="menu notifs" id="notifs"></div></div>
+<button class="circle" id="theme" title="Switch theme" aria-label="Switch theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg></button>
+<button class="circle" id="out" title="Sign out" aria-label="Sign out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button></div></div></header>
 <main id="app"></main>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -229,12 +250,13 @@ function signedOut(){
 onAuthStateChanged(auth,u=>{
   me=u?u.uid:null;
   document.querySelector('nav').style.display=u?'':'none';
-  const who=document.getElementById('who');
-  if(!u){who.innerHTML='';signedOut();return}
-  who.innerHTML=`<span>${esc(u.email||'')}</span><button class="circle" id="out" title="Sign out" aria-label="Sign out">${SVG('M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9')}</button>`;
-  document.getElementById('out').onclick=()=>signOut(auth);
-  route();
+  document.getElementById('out').hidden=!u;document.getElementById('notifwrap').hidden=!u;
+  if(!u){NOTIFS=[];signedOut();return}
+  route();syncNotifs();
 });
+document.getElementById('out').onclick=()=>signOut(auth);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNotifs()});
+setInterval(()=>{if(!document.hidden)syncNotifs()},5*60e3);
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -249,6 +271,35 @@ function confirmBox(msg){return new Promise(res=>{
   o.onclick=e=>{const b=e.target.closest('button');if(b||e.target===o){o.remove();res(b?b.dataset.v==='1':false)}};
   document.body.appendChild(o);o.querySelector('button').focus();
 })}
+
+// ---------- notifications (in-site only) ----------
+let NOTIFS=[],syncing=false;
+async function syncNotifs(){
+  if(!me||syncing)return;syncing=true;
+  try{
+    const [decks,ns]=await Promise.all([all('decks'),all('notifications')]);
+    const today=ymd(new Date()),now=Date.now(),ids=new Set(decks.map(d=>d.id)),jobs=[];
+    let list=ns.filter(n=>{if(!ids.has(n.deckId)||now-n.created>30*DAY){jobs.push(del('notifications',n.id));return false}return true});
+    for(const d of decks){
+      const due=d.cards.filter(c=>(c.due||0)<=now).length,name=d.name||'Untitled deck';
+      const mine=list.filter(n=>n.deckId===d.id),unread=mine.find(n=>!n.read);
+      const text=due+' card'+(due==1?'':'s')+' due';
+      if(due>0){
+        if(unread){if(unread.text!==text||unread.name!==name){unread.text=text;unread.name=name;jobs.push(put('notifications',unread))}}
+        else if(!mine.some(n=>n.day===today)){const n={id:'n-'+d.id+'-'+today,type:'due',deckId:d.id,name,day:today,text,created:now,read:false};list.push(n);jobs.push(put('notifications',n))}
+      }else if(unread){jobs.push(del('notifications',unread.id));list=list.filter(n=>n!==unread)}
+    }
+    await Promise.all(jobs);
+    NOTIFS=list.sort((a,b)=>b.created-a.created);
+  }catch(e){}
+  syncing=false;paintBell();
+}
+function paintBell(){
+  const list=NOTIFS.filter(n=>!n.dismissed),un=list.filter(n=>!n.read).length,b=document.getElementById('badge'),today=ymd(new Date());
+  b.hidden=!un;b.textContent=un>9?'9+':un;
+  document.getElementById('notifs').innerHTML=`<div class="nhead"><span>Notifications</span><span class="row"><button data-act="nreadall" ${un?'':'disabled'}>Mark all read</button><button data-act="nclear" ${list.length?'':'disabled'}>Clear all</button></span></div>`
+   +(list.length?list.map(n=>`<div class="nitem ${n.read?'read':'unread'}"><i class="dot"></i><a class="txt" href="#/study/${n.deckId}" data-act="nread" data-id="${n.id}"><b>${esc(n.name)}</b><span>${esc(n.text)}</span><small>${n.day===today?'Today':new Date(n.created).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</small></a><button class="nx" data-act="ndismiss" data-id="${n.id}" aria-label="Dismiss">&times;</button></div>`).join(''):'<div class="empty" style="padding:22px 14px">No notifications</div>');
+}
 
 // ---------- router ----------
 async function route(){
@@ -369,8 +420,9 @@ function makeOpts(d,c){
 function grade(c,ok){
   c.seen=(c.seen||0)+1;
   if(ok){c.right=(c.right||0)+1;c.box=Math.min(5,(c.box||0)+1)}else c.box=0;
-  c.due=Date.now()+STEPS[c.box];
+  c.due=STEPS[c.box]?(()=>{const d=new Date(Date.now()+STEPS[c.box]);d.setHours(0,0,0,0);return d.getTime()})():Date.now();
   put('decks',study.deck).catch(()=>{});
+  setTimeout(syncNotifs,1500);
 }
 async function studyView(id){
   const d=await get('decks',id);if(!d){location.hash='#/cards';return}
@@ -482,7 +534,7 @@ function shrink(file,max=900){return new Promise(ok=>{const r=new FileReader();r
 // ---------- events ----------
 document.addEventListener('mousedown',e=>{if(e.target.closest('.tools button'))e.preventDefault()});
 document.addEventListener('click',async e=>{
-  if(!e.target.closest('[data-act="menu"]'))closeMenus();
+  if(!e.target.closest('[data-act="menu"],.notifs'))closeMenus();
   const cm=e.target.closest('[data-cmd]');
   if(cm){document.getElementById('ed').focus();document.execCommand(cm.dataset.cmd,false,cm.dataset.arg||null);document.getElementById('ed').dispatchEvent(new Event('input'));return}
   const t=e.target.closest('[data-act]');if(!t)return;
@@ -521,6 +573,10 @@ document.addEventListener('click',async e=>{
   else if(act==='pick'){const s=study;if(s.pick)return;const ok=s.opts[+i].ok;grade(cardOf(s.q[0]),ok);if(ok){s.done++;s.right++}else s.wrong++;s.pick={i:+i,ok};drawStudy()}
   else if(act==='next'){const s=study,k=s.q.shift();if(!s.pick.ok)s.q.push(k);s.pick=null;s.opts=null;drawStudy()}
   else if(act==='resetprog'){if(await confirmBox('Reset study progress for every card in this deck?')){const d=await get('decks',id);d.cards.forEach(c=>{c.box=0;c.due=0;c.seen=0;c.right=0});await put('decks',d);deckView(id)}}
+  else if(act==='nread'){const n=NOTIFS.find(x=>x.id===id);if(n&&!n.read){n.read=true;put('notifications',n);paintBell()}}
+  else if(act==='ndismiss'){const n=NOTIFS.find(x=>x.id===id);if(n){n.read=true;n.dismissed=true;await put('notifications',n);paintBell()}}
+  else if(act==='nreadall'){await Promise.all(NOTIFS.filter(n=>!n.read).map(n=>{n.read=true;return put('notifications',n)}));paintBell()}
+  else if(act==='nclear'){await Promise.all(NOTIFS.filter(n=>!n.dismissed).map(n=>{n.read=true;n.dismissed=true;return put('notifications',n)}));paintBell()}
   else if(act==='newhabit'){const h={id:uid(),name:'',sched:ALLD,log:{},created:Date.now(),updated:Date.now()};await put('habits',h);location.hash='#/habit/'+h.id}
   else if(act==='hab'){const h=await get('habits',id);if(!h)return;const k=t.dataset.d;h.log=h.log||{};if(h.log[k])delete h.log[k];else h.log[k]=1;h.updated=Date.now();await put('habits',h);render()}
   else if(act==='hsched'){const h=await get('habits',id),n=+t.dataset.n;let sc=h.sched&&h.sched.length?[...h.sched]:[...ALLD];sc=sc.includes(n)?sc.filter(x=>x!==n):[...sc,n];if(!sc.length)return;h.sched=sc;h.updated=Date.now();await put('habits',h);habitView(id)}
