@@ -197,11 +197,31 @@ nav .menu{left:0;right:auto}
 .notifs a.txt:hover{background:transparent}
 .notifs .txt b{display:block}.notifs .txt span{display:block;color:var(--soft);font-weight:500}.notifs .txt small{color:var(--soft);font-weight:500;font-size:.78rem}
 .notifs .nx{width:auto;padding:0 8px;font-size:1.3rem;line-height:1;color:var(--soft);background:transparent}
+.pick{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:12px;background:var(--panel)}
+.pick .chk{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;color:var(--accent-ink)}
+.pick.on{border-color:var(--accent)}
+.pick.on .chk{background:var(--accent);border-color:var(--accent)}
+.pick .chk svg{width:14px;height:14px;margin:0;stroke-width:3}
+.pick .nm{flex:1;min-width:0;overflow-wrap:anywhere}
+.pick small{color:var(--soft);font-weight:500;white-space:nowrap}
+.picks{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));margin-top:12px}
+.qlabel{color:var(--soft);font-size:.82rem;font-weight:600;margin-bottom:8px;text-align:center}
+.typed{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.typed input{flex:1;min-width:180px;font-size:1.05rem;padding:12px 14px}
+.fb{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);text-align:left}
+.fb b,.fb span{display:block}.fb span{color:var(--soft);margin-top:2px;overflow-wrap:anywhere}
+.fb.ok{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--panel))}
+.fb.bad{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,var(--panel))}
+.fb.bad b{color:var(--warn)}
+.score{font-size:3rem;font-weight:800;color:var(--acc-t);line-height:1.1}
+.miss{padding:10px 0;border-top:1px solid var(--line)}
+.miss b,.miss span{display:block;overflow-wrap:anywhere}.miss span{color:var(--soft)}.miss .ans{color:var(--acc-t);font-weight:600}
+.panel>h2+.seg,.panel>.seg{margin-top:2px}
 </style>
 </head>
 <body>
 <header><div class="bar"><a class="brand" href="#/home" aria-label="Toolbox home"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></i><b>Toolbox</b></a>
-<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><a href="#/cards">Flashcards</a><a href="#/habits">Habits</a><a href="#/notes">Notes</a></div></div></nav>
+<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/habits">Habits</a><a href="#/notes">Notes</a></div></div></nav>
 <div class="acts"><div class="menuwrap notifwrap" id="notifwrap" hidden><button class="circle ghost" id="bell" data-act="menu" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button><div class="menu notifs" id="notifs"></div></div>
 <button class="circle" id="theme" title="Switch theme" aria-label="Switch theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg></button>
 <button class="circle" id="out" title="Sign out" aria-label="Sign out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button></div></div></header>
@@ -305,17 +325,19 @@ function paintBell(){
 async function route(){
   await flush();if(!me)return;
   if((location.hash||'#/home').split('/')[1]!=='study')study=null;
+  if((location.hash||'#/home').split('/')[1]!=='test')T=null;
   closeMenus();window.scrollTo(0,0);
   return render();
 }
 async function render(){
   const [,page,id]=(location.hash||'#/home').split('/');
   document.getElementById('n-home').className=page==='home'?'on':'';
-  document.getElementById('n-tools').className='navbtn'+(['cards','study','notes','note','habits','habit'].includes(page)?' on':'');
+  document.getElementById('n-tools').className='navbtn'+(['cards','study','test','notes','note','habits','habit'].includes(page)?' on':'');
   if(page==='home')return homeView();
   if(page==='cards'&&id)return deckView(id);
   if(page==='cards')return decksView();
   if(page==='study')return studyView(id);
+  if(page==='test')return testView();
   if(page==='habits')return habitsView();
   if(page==='habit')return habitView(id);
   if(page==='notes')return notesView();
@@ -366,6 +388,7 @@ async function homeView(){
   app.innerHTML=`<h1>Toolbox</h1><p class="sub">Your personal tools, synced to your Google account.</p>
   <h2 class="h2">Tools</h2>
   <div class="grid"><a class="tile tool" href="#/cards"><b>Flashcards</b><p>Make decks, paste in lists, and study.</p></a>
+  <a class="tile tool" href="#/test"><b>Test</b><p>Quiz yourself on any decks.</p></a>
   <a class="tile tool" href="#/habits"><b>Habits</b><p>Daily check-offs and streaks.</p></a>
   <a class="tile tool" href="#/notes"><b>Notes</b><p>Rich text notes with photos.</p></a></div>
   <h2 class="h2">Habits</h2>
@@ -491,6 +514,125 @@ async function habitView(id){
   ti.addEventListener('input',()=>{clearTimeout(saveTimer);pending=async()=>{const x=await get('habits',id);if(!x)return;x.name=ti.value;x.updated=Date.now();await put('habits',x)};saveTimer=setTimeout(flush,600)});
 }
 
+// ---------- test ----------
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+// forgiving comparison: ignores case, extra/leading/trailing spaces, curly quotes and end punctuation
+const nrm=s=>String(s).normalize('NFC').replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/\s+/g,' ').trim().replace(/^[\s"'.,;:!?\u00A1\u00BF]+|[\s"'.,;:!?\u00A1\u00BF]+$/g,'').trim().toLowerCase();
+const fold=s=>nrm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const parts=side=>{const set=new Set([side.trim()]);side.split(/\s*[;|\/]\s*/).forEach(x=>{if(x.trim())set.add(x.trim())});return [...set]};
+function judge(input,side){
+  const i=nrm(input);if(!i)return 'wrong';
+  const a=parts(side);
+  if(a.some(x=>nrm(x)===i))return 'ok';
+  const f=fold(input);if(a.some(x=>fold(x)===f))return 'accent';
+  return 'wrong';
+}
+let testCfg={mode:'pick',decks:[],dir:'front',method:'mc',nPick:'all',nRandom:20};
+try{Object.assign(testCfg,JSON.parse(localStorage.getItem('testCfg')||'{}'))}catch(e){}
+const saveCfg=()=>{try{localStorage.setItem('testCfg',JSON.stringify(testCfg))}catch(e){}};
+let T=null,testDecks=[];
+const itemsOf=decks=>decks.flatMap(d=>d.cards.filter(c=>c.f&&c.b).map(c=>({deck:d.name||'Untitled deck',f:c.f,b:c.b})));
+const segHtml=(act,cur,opts)=>`<div class="seg">${opts.map(([v,l])=>`<button class="${String(cur)===String(v)?'on':''}" data-act="${act}" data-v="${v}">${l}</button>`).join('')}</div>`;
+async function testView(){
+  testDecks=(await all('decks')).sort((a,b)=>(b.updated||0)-(a.updated||0));
+  testCfg.decks=testCfg.decks.filter(id=>testDecks.some(d=>d.id===id));
+  if(T)drawTest();else drawSetup();
+}
+function drawSetup(){
+  const c=testCfg,withCards=testDecks.filter(d=>d.cards.length);
+  const sel=c.mode==='random'?withCards:withCards.filter(d=>c.decks.includes(d.id)),items=itemsOf(sel);
+  const nCfg=c.mode==='random'?c.nRandom:c.nPick,n=nCfg==='all'?items.length:Math.min(+nCfg,items.length);
+  const dS=side=>new Set(items.map(x=>nrm(x[side]))).size;
+  const need=c.dir==='front'?dS('b'):c.dir==='back'?dS('f'):Math.min(dS('b'),dS('f'));
+  const picks=testDecks.length?`<div class="picks">${testDecks.map(d=>{const on=c.decks.includes(d.id);return `<button class="pick ${on?'on':''}" data-act="tdeck" data-id="${d.id}" ${d.cards.length?'':'disabled'}><span class="chk">${on?SVG(CHECK):''}</span><span class="nm">${esc(d.name||'Untitled deck')}</span><small>${d.cards.length} card${d.cards.length==1?'':'s'}</small></button>`}).join('')}</div>`:'<div class="empty">No decks yet. <a href="#/cards">Make one in Flashcards</a>.</div>';
+  const dirNote={front:'You see the front of each card and answer with the back.',back:'You see the back of each card and answer with the front.',both:'Each question randomly shows the front or the back.'}[c.dir];
+  app.innerHTML=`<h1>Test</h1><p class="sub">Test yourself on your flashcards. Results here do not change your study progress.</p>
+  <div class="panel"><h2>Cards to test</h2>${segHtml('tmode',c.mode,[['pick','Pick decks'],['random','Random mix']])}
+  ${c.mode==='pick'?`<div class="row" style="margin-top:12px;justify-content:space-between"><span class="sub" style="margin:0">${sel.length} deck${sel.length==1?'':'s'} selected, ${items.length} card${items.length==1?'':'s'}</span><span class="row"><button data-act="tall">Select all</button><button data-act="tnone">Clear</button></span></div>${picks}`
+  :`<p class="sub" style="margin:12px 0 0">A random assortment from all your decks (${items.length} cards in ${withCards.length} deck${withCards.length==1?'':'s'}).</p>`}</div>
+  <div class="panel"><h2>Question shows</h2>${segHtml('tdir',c.dir,[['front','Front'],['back','Back'],['both','Either']])}<p class="sub" style="margin:10px 0 16px">${dirNote}</p>
+  <h2>Answer by</h2>${segHtml('tmethod',c.method,[['mc','Multiple choice'],['type','Type answer'],['mixed','Mixed']])}
+  ${c.method!=='type'&&items.length&&need<3?'<p class="sub" style="margin:10px 0 0">Multiple choice needs at least 3 different answers in the selected cards. Typed questions are used instead.</p>':''}
+  <h2 style="margin-top:16px">Number of questions</h2>${segHtml('tcount',nCfg,[[10,'10'],[20,'20'],[50,'50'],['all','All']])}</div>
+  <div class="row" style="margin-top:16px"><button class="pri" data-act="tstart" ${n?'':'disabled'}>${n?`Start test, ${n} question${n==1?'':'s'}`:'Choose some cards to start'}</button></div>`;
+}
+function makeRun(base,pool,cfg){
+  const dS=side=>new Set(pool.map(x=>nrm(x[side]))).size;
+  const items=base.map(b=>{
+    const dir=cfg.dir==='both'?(Math.random()<.5?'front':'back'):cfg.dir;
+    let method=cfg.method==='mixed'?(Math.random()<.5?'mc':'type'):cfg.method;
+    if(method==='mc'&&dS(dir==='front'?'b':'f')<3)method='type';
+    return {deck:b.deck,f:b.f,b:b.b,dir,method};
+  });
+  return {items,pool,cfg:{...cfg},i:0,results:[],cur:null,showDeck:new Set(pool.map(x=>x.deck)).size>1};
+}
+function buildTest(){
+  const c=testCfg,withCards=testDecks.filter(d=>d.cards.length);
+  const pool=itemsOf(c.mode==='random'?withCards:withCards.filter(d=>c.decks.includes(d.id)));
+  const nCfg=c.mode==='random'?c.nRandom:c.nPick;
+  let base=shuffle(pool.slice());if(nCfg!=='all')base=base.slice(0,+nCfg);
+  return base.length?makeRun(base,pool,c):null;
+}
+function mcOpts(r,it){
+  const ans=it.dir==='front'?it.b:it.f,seen=new Set([nrm(ans)]),others=[];
+  for(const p of shuffle(r.pool.slice())){const v=it.dir==='front'?p.b:p.f,k=nrm(v);if(!seen.has(k)){seen.add(k);others.push(v);if(others.length===3)break}}
+  return shuffle([{t:ans,ok:true},...others.map(t=>({t,ok:false}))]);
+}
+const testHead=sub=>`<div class="row between" style="align-items:flex-start"><div><h1>Test</h1><p class="sub" style="margin:0">${sub}</p></div><button class="circle" data-act="tquit" title="Exit test" aria-label="Exit test">${SVG('M19 12H5m7 7l-7-7 7-7')}</button></div>`;
+function drawTest(){
+  const r=T;
+  if(r.i>=r.items.length)return drawResults();
+  const it=r.items[r.i];
+  if(!r.cur)r.cur={opts:it.method==='mc'?mcOpts(r,it):null,pick:null,verdict:null,given:''};
+  const cu=r.cur,q=it.dir==='front'?it.f:it.b,a=it.dir==='front'?it.b:it.f,answered=cu.pick!==null||cu.verdict!==null;
+  let body;
+  if(it.method==='mc'){
+    body=`<div class="opts">${cu.opts.map((o,i)=>`<button class="opt ${cu.pick!==null?(o.ok?'right':(cu.pick===i?'wrong':'')):''}" data-act="tpick" data-i="${i}">${esc(o.t)}</button>`).join('')}</div>`;
+  }else if(cu.verdict===null){
+    body=`<div class="typed"><input id="tans" placeholder="Type the ${it.dir==='front'?'back':'front'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer"><button class="pri" data-act="tcheck">Check</button><button data-act="tskip">Skip</button></div>${parts(a).length>1?'<p class="sub" style="margin:8px 0 0">Any one of the listed answers is accepted.</p>':''}`;
+  }else{
+    const v=cu.verdict;
+    body=`<div class="typed"><input value="${esc(cu.given)}" disabled aria-label="Your answer"></div><div class="fb ${v==='wrong'?'bad':'ok'}"><b>${v==='ok'?'Correct':v==='accent'?'Correct, but check the accents':(cu.given.trim()?'Not quite':'Skipped')}</b>${v==='ok'?'':`<span>Answer: ${esc(a)}</span>`}</div>`;
+  }
+  app.innerHTML=testHead(`Question ${r.i+1} of ${r.items.length}`)+`<div class="bar2" style="margin:14px 0"><i style="width:${Math.round(r.i/r.items.length*100)}%"></i></div>
+  <div class="study"><div class="qlabel">${it.dir==='front'?'Front':'Back'}${r.showDeck?', '+esc(it.deck):''}</div><div class="flash q">${esc(q)}</div>${body}
+  ${answered?`<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" id="tnext" data-act="tnext">${r.i+1>=r.items.length?'See results':'Next'}</button></div>`:''}</div>`;
+  if(answered){const nb=document.getElementById('tnext');if(nb)nb.focus()}
+  else if(it.method==='type'){const inp=document.getElementById('tans');if(inp)inp.focus()}
+}
+function drawResults(){
+  const r=T,ok=r.results.filter(x=>x.ok).length,tot=r.results.length,missed=r.results.filter(x=>!x.ok);
+  app.innerHTML=testHead('Finished')+`<div class="study" style="margin-top:18px"><div class="score">${Math.round(ok/tot*100)}%</div><p class="sub">${ok} of ${tot} correct</p>
+  <div class="row" style="justify-content:center">${missed.length?`<button class="pri" data-act="tretry">Retry missed (${missed.length})</button>`:''}<button class="${missed.length?'':'pri'}" data-act="tnew">New test</button><button data-act="tquit">Change settings</button></div></div>
+  ${missed.length?`<div class="panel"><h2>Missed</h2>${missed.map(m=>`<div class="miss"><b>${esc(m.q)}</b><span>${m.given?'You answered: '+esc(m.given):'Skipped'}</span><span class="ans">Answer: ${esc(m.a)}</span></div>`).join('')}</div>`:'<div class="empty">Perfect score.</div>'}`;
+}
+const TACT=['tmode','tdeck','tall','tnone','tdir','tmethod','tcount','tstart','tpick','tcheck','tskip','tnext','tquit','tretry','tnew'];
+async function testAct(act,t){
+  const c=testCfg,v=t.dataset.v;
+  if(act==='tmode')c.mode=v;
+  else if(act==='tdeck'){const id=t.dataset.id;c.decks=c.decks.includes(id)?c.decks.filter(x=>x!==id):[...c.decks,id]}
+  else if(act==='tall')c.decks=testDecks.filter(d=>d.cards.length).map(d=>d.id);
+  else if(act==='tnone')c.decks=[];
+  else if(act==='tdir')c.dir=v;
+  else if(act==='tmethod')c.method=v;
+  else if(act==='tcount'){const n=v==='all'?'all':+v;if(c.mode==='random')c.nRandom=n;else c.nPick=n}
+  if(['tmode','tdeck','tall','tnone','tdir','tmethod','tcount'].includes(act)){saveCfg();drawSetup();return}
+  if(act==='tstart'||act==='tnew'){T=buildTest();if(T)drawTest();else drawSetup();return}
+  if(act==='tquit'){
+    if(T&&T.i<T.items.length&&T.results.length&&!(await confirmBox('Leave this test? Your progress will be lost.')))return;
+    T=null;drawSetup();return;
+  }
+  const r=T;if(!r)return;
+  if(act==='tretry'){const base=r.results.filter(x=>!x.ok).map(x=>({deck:x.deck,f:x.f,b:x.b}));T=makeRun(shuffle(base),r.pool,r.cfg);T.showDeck=r.showDeck;drawTest();return}
+  if(act==='tnext'){r.i++;r.cur=null;drawTest();return}
+  const it=r.items[r.i],cu=r.cur,q=it.dir==='front'?it.f:it.b,a=it.dir==='front'?it.b:it.f;
+  const rec=(ok,given)=>r.results.push({q,a,given,ok,dir:it.dir,deck:it.deck,f:it.f,b:it.b});
+  if(act==='tpick'){if(cu.pick!==null)return;cu.pick=+t.dataset.i;const o=cu.opts[cu.pick];rec(o.ok,o.t);drawTest()}
+  else if(act==='tcheck'){if(cu.verdict!==null)return;const inp=document.getElementById('tans'),val=inp?inp.value:'';if(!val.trim()){if(inp)inp.focus();return}cu.given=val;cu.verdict=judge(val,a);rec(cu.verdict!=='wrong',val);drawTest()}
+  else if(act==='tskip'){if(cu.verdict!==null)return;cu.given='';cu.verdict='wrong';rec(false,'');drawTest()}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='tans'){e.preventDefault();const b=document.querySelector('[data-act="tcheck"]');if(b)b.click()}});
+
 // ---------- notes ----------
 async function notesView(){
   const notes=(await all('notes')).sort((a,b)=>b.updated-a.updated);
@@ -583,6 +725,7 @@ document.addEventListener('click',async e=>{
   else if(act==='hmonth'){hOff+=Number(t.dataset.n);habitView(id)}
   else if(act==='askdelh'){if(await confirmBox('Delete this habit and its history?')){await del('habits',id);habitsView()}}
   else if(act==='delhabit'){if(await confirmBox('Delete this habit and its history?')){pending=null;clearTimeout(saveTimer);await del('habits',id);location.hash='#/habits'}}
+  else if(TACT.includes(act)){await testAct(act,t)}
   else if(act==='newnote'){const n={id:uid(),title:'',html:'',updated:Date.now()};await put('notes',n);location.hash='#/note/'+n.id}
   else if(act==='delnote'){if(await confirmBox('Delete this note? This cannot be undone.')){pending=null;clearTimeout(saveTimer);await del('notes',id);location.hash='#/notes'}}
   else if(act==='link'){const u=prompt('Link address (https://…)');if(u){document.getElementById('ed').focus();document.execCommand('createLink',false,u);document.getElementById('ed').dispatchEvent(new Event('input'))}}
