@@ -217,6 +217,17 @@ nav .menu{left:0;right:auto}
 .miss{padding:10px 0;border-top:1px solid var(--line)}
 .miss b,.miss span{display:block;overflow-wrap:anywhere}.miss span{color:var(--soft)}.miss .ans{color:var(--acc-t);font-weight:600}
 .panel>h2+.seg,.panel>.seg{margin-top:2px}
+.hwbox{margin:8px auto 0;border:1px solid var(--line);border-radius:14px;background:var(--panel);position:relative;touch-action:none;overflow:hidden;
+background-image:linear-gradient(var(--line),var(--line)),linear-gradient(var(--line),var(--line));background-size:100% 1px,1px 100%;background-position:center,center;background-repeat:no-repeat}
+.hwbox svg{display:block;touch-action:none;position:relative}
+.wchips{display:flex;gap:8px;justify-content:center;margin:6px 0 2px;min-height:34px}
+.wchip{min-width:34px;height:34px;padding:0 6px;border:2px solid var(--line);border-radius:9px;display:grid;place-items:center;font-size:1.05rem;color:var(--soft)}
+.wchip.cur{border-color:var(--accent);color:var(--ink)}
+.wchip.done{background:color-mix(in srgb,var(--accent) 18%,transparent);border-color:var(--accent);color:var(--ink)}
+.fb.warn{border-color:var(--accent);border-style:dashed;background:transparent}
+.fb.warn b{color:var(--acc-t)}
+.seg{flex-wrap:wrap}
+.flash.q.w{min-height:84px;font-size:1.4rem}
 </style>
 </head>
 <body>
@@ -527,7 +538,89 @@ function judge(input,side){
   const f=fold(input);if(a.some(x=>fold(x)===f))return 'accent';
   return 'wrong';
 }
-let testCfg={mode:'pick',decks:[],dir:'front',method:'mc',nPick:'all',nRandom:20};
+// ----- Japanese writing support (stroke data is fetched from free CDNs when needed) -----
+const JA=/[\u3041-\u3096\u309D\u309E\u30A1-\u30FA\u30FC\u3005\u3006\u3400-\u4DBF\u4E00-\u9FFF]/;
+const KANA=/[\u3041-\u3096\u309D\u309E\u30A1-\u30FA\u30FC]/;
+const hasJa=s=>JA.test(String(s));
+// the Japanese characters to be written for one side of a card (first Japanese variant, brackets removed)
+const writeChars=s=>{const t=String(s).split(/\s*[;|\/]\s*/).map(x=>x.replace(/[\uFF08(][^\uFF09)]*[\uFF09)]/g,'').trim()).find(x=>JA.test(x))||'';return Array.from(t).filter(c=>JA.test(c))};
+const HW_URLS=['https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js','https://unpkg.com/hanzi-writer@3.7.3/dist/hanzi-writer.min.js'];
+let hwPromise=null;
+function loadHW(){
+  if(window.HanziWriter)return Promise.resolve();
+  if(!hwPromise)hwPromise=(async()=>{
+    for(const u of HW_URLS){
+      try{await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src=u;sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)});if(window.HanziWriter)return}catch(e){}
+    }
+    hwPromise=null;throw new Error('Hanzi Writer failed to load');
+  })();
+  return hwPromise;
+}
+const fetchFirst=async(urls,kind)=>{for(const u of urls){try{const r=await fetch(u);if(r.ok)return kind==='json'?await r.json():await r.text()}catch(e){}}throw new Error('fetch failed')};
+const hexName=c=>c.codePointAt(0).toString(16).padStart(5,'0')+'.svg';
+const charCache=new Map();
+function loadChar(c){
+  if(!charCache.has(c)){
+    const p=(async()=>{
+      if(!KANA.test(c)){   // kanji: Hanzi Writer's Japanese data first, KanjiVG as a back-up
+        try{
+          const j=await fetchFirst([`https://cdn.jsdelivr.net/gh/chanind/hanzi-writer-data-jp@master/data/${encodeURIComponent(c)}.json`,`https://raw.githubusercontent.com/chanind/hanzi-writer-data-jp/master/data/${encodeURIComponent(c)}.json`],'json');
+          if(j&&j.strokes&&j.medians)return {strokes:j.strokes,medians:j.medians};
+        }catch(e){}
+      }
+      // kana (and kanji missing above): standard KanjiVG stroke data, converted to Hanzi Writer's format
+      const f=hexName(c),txt=await fetchFirst([`https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@master/kanji/${f}`,`https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji/${f}`],'text');
+      const ds=[...txt.matchAll(/<path[^>]*?\sid="kvg:[0-9a-f]+-s\d+"[^>]*?\sd="([^"]+)"/g)].map(m=>m[1]);
+      if(!ds.length)throw new Error('no strokes');
+      return kvgConvert(ds);
+    })();
+    charCache.set(c,p);p.catch(()=>charCache.delete(c));
+  }
+  return charCache.get(c);
+}
+// KanjiVG gives centre-lines on a 109x109 grid (y down); Hanzi Writer wants outlines + medians on a 1024 grid (y up)
+function kvgConvert(ds){
+  const S=1024/109,NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg'),pe=document.createElementNS(NS,'path');
+  svg.style.cssText='position:absolute;width:0;height:0;visibility:hidden';svg.appendChild(pe);document.body.appendChild(svg);
+  const strokes=[],medians=[],r=Math.round;
+  try{
+    for(const d of ds){
+      pe.setAttribute('d',d);const L=pe.getTotalLength(),n=Math.max(10,Math.ceil(L/1.5)),P=[];
+      for(let i=0;i<=n;i++){const q=pe.getPointAtLength(L*i/n);P.push({x:q.x*S,y:900-q.y*S})}
+      const m=Math.min(14,P.length),med=[];
+      for(let k=0;k<m;k++){const q=P[Math.round(k*(P.length-1)/(m-1))],pt=[r(q.x),r(q.y)],lp=med[med.length-1];if(!lp||lp[0]!==pt[0]||lp[1]!==pt[1])med.push(pt)}   // no repeated points: they break direction checks
+      medians.push(med);
+      const N=P.length,left=[],right=[],tans=[],ws=[];
+      for(let i=0;i<N;i++){
+        const a=P[Math.max(0,i-1)],b=P[Math.min(N-1,i+1)];let tx=b.x-a.x,ty=b.y-a.y;const mm=Math.hypot(tx,ty)||1;tx/=mm;ty/=mm;
+        const t=i/(N-1),w=2.1*S*(0.6+0.4*Math.min(1,Math.min(t,1-t)/0.15));tans.push([tx,ty]);ws.push(w);
+        left.push([P[i].x-ty*w,P[i].y+tx*w]);right.push([P[i].x+ty*w,P[i].y-tx*w]);
+      }
+      const cap=(i,dir)=>{const o=[],[tx,ty]=tans[i],w=ws[i];for(let k=1;k<6;k++){const th=Math.PI*k/6;o.push([P[i].x+dir*(-ty*w*Math.cos(th)+tx*w*Math.sin(th)),P[i].y+dir*(tx*w*Math.cos(th)+ty*w*Math.sin(th))])}return o};
+      const endCap=cap(N-1,1),startCap=cap(0,-1);   // start cap runs from the right side round to the left side
+      const poly=[...left,...endCap,...right.slice().reverse(),...startCap];
+      strokes.push('M'+poly.map(q=>r(q[0])+','+r(q[1])).join('L')+'Z');
+    }
+  }finally{svg.remove()}
+  return {strokes,medians};
+}
+// forgiving shape comparison used to spot "right stroke, wrong order"
+const resample=(pts,n=24)=>{
+  const P=pts.map(p=>Array.isArray(p)?{x:p[0],y:p[1]}:p);if(P.length<2)return null;
+  const L=[0];for(let i=1;i<P.length;i++)L.push(L[i-1]+Math.hypot(P[i].x-P[i-1].x,P[i].y-P[i-1].y));
+  const T=L[L.length-1];if(!T)return null;const out=[];let j=1;
+  for(let k=0;k<n;k++){const t=T*k/(n-1);while(j<P.length-1&&L[j]<t)j++;const a=P[j-1],b=P[j],seg=(L[j]-L[j-1])||1,u=Math.min(1,Math.max(0,(t-L[j-1])/seg));out.push({x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u})}
+  return out;
+};
+const pathDist=(A,B)=>{const a=resample(A),b=resample(B);if(!a||!b)return Infinity;let s=0;for(let i=0;i<a.length;i++)s+=Math.hypot(a[i].x-b[i].x,a[i].y-b[i].y);return s/a.length};
+// index of a LATER stroke that the drawn line clearly matches better than the expected one, or -1
+function laterStroke(points,medians,n,len){
+  if(!points||points.length<3)return -1;
+  const dE=pathDist(points,medians[n]);let best=-1,bd=Infinity;
+  for(let j=n+1;j<medians.length;j++){const d=pathDist(points,medians[j]);if(d<bd){bd=d;best=j}}
+  return best>=0&&bd<=130*len&&bd<dE*0.6?best:-1;
+}
+let testCfg={mode:'pick',decks:[],dir:'front',method:'mc',sens:1,nPick:'all',nRandom:20};
 try{Object.assign(testCfg,JSON.parse(localStorage.getItem('testCfg')||'{}'))}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('testCfg',JSON.stringify(testCfg))}catch(e){}};
 let T=null,testDecks=[];
@@ -551,17 +644,30 @@ function drawSetup(){
   ${c.mode==='pick'?`<div class="row" style="margin-top:12px;justify-content:space-between"><span class="sub" style="margin:0">${sel.length} deck${sel.length==1?'':'s'} selected, ${items.length} card${items.length==1?'':'s'}</span><span class="row"><button data-act="tall">Select all</button><button data-act="tnone">Clear</button></span></div>${picks}`
   :`<p class="sub" style="margin:12px 0 0">A random assortment from all your decks (${items.length} cards in ${withCards.length} deck${withCards.length==1?'':'s'}).</p>`}</div>
   <div class="panel"><h2>Question shows</h2>${segHtml('tdir',c.dir,[['front','Front'],['back','Back'],['both','Either']])}<p class="sub" style="margin:10px 0 16px">${dirNote}</p>
-  <h2>Answer by</h2>${segHtml('tmethod',c.method,[['mc','Multiple choice'],['type','Type answer'],['mixed','Mixed']])}
-  ${c.method!=='type'&&items.length&&need<3?'<p class="sub" style="margin:10px 0 0">Multiple choice needs at least 3 different answers in the selected cards. Typed questions are used instead.</p>':''}
+  <h2>Answer by</h2>${segHtml('tmethod',c.method,[['mc','Multiple choice'],['type','Type answer'],['write','Write it'],['mixed','Mixed']])}
+  ${(c.method==='write'||c.method==='mixed')&&items.length?(()=>{const wr=items.filter(x=>hasJa(x.f)||hasJa(x.b)).length;return `<p class="sub" style="margin:10px 0 0">${c.method==='write'&&wr<items.length?(wr?`${wr} of ${items.length} selected cards contain Japanese and can be written. The rest use typed answers.`:'None of the selected cards contain Japanese, so typed answers are used.'):'Write it shows the English or romaji side and you write the Japanese by hand, stroke by stroke. The Japanese side is always the answer, whichever side you chose above. Stroke data loads from the internet (free).'}</p>`})():''}
+  ${(c.method==='write'||c.method==='mixed')?`<h2 style="margin-top:16px">Writing sensitivity</h2>${segHtml('tsens',c.sens,[[0.7,'Strict'],[1,'Normal'],[1.5,'Relaxed'],[2.2,'Very relaxed']])}<p class="sub" style="margin:10px 0 0">How closely your strokes must follow the correct ones.</p>`:''}
+  ${c.method!=='type'&&c.method!=='write'&&items.length&&need<3?'<p class="sub" style="margin:10px 0 0">Multiple choice needs at least 3 different answers in the selected cards. Typed questions are used instead.</p>':''}
   <h2 style="margin-top:16px">Number of questions</h2>${segHtml('tcount',nCfg,[[10,'10'],[20,'20'],[50,'50'],['all','All']])}</div>
-  <div class="row" style="margin-top:16px"><button class="pri" data-act="tstart" ${n?'':'disabled'}>${n?`Start test, ${n} question${n==1?'':'s'}`:'Choose some cards to start'}</button></div>`;
+  <div class="row" style="margin-top:16px"><button class="pri" data-act="tstart" ${n?'':'disabled'}>${n?`Start test, ${n} question${n==1?'':'s'}`:'Choose some cards to start'}</button></div>
+  <p class="sub" style="margin-top:22px;font-size:.78rem">Stroke data: KanjiVG (CC BY-SA 3.0, Ulrich Apel), Hanzi Writer Japanese data (animCJK, Make Me a Hanzi) and the Hanzi Writer library (MIT).</p>`;
 }
 function makeRun(base,pool,cfg){
   const dS=side=>new Set(pool.map(x=>nrm(x[side]))).size;
   const items=base.map(b=>{
-    const dir=cfg.dir==='both'?(Math.random()<.5?'front':'back'):cfg.dir;
-    let method=cfg.method==='mixed'?(Math.random()<.5?'mc':'type'):cfg.method;
-    if(method==='mc'&&dS(dir==='front'?'b':'f')<3)method='type';
+    let dir=cfg.dir==='both'?(Math.random()<.5?'front':'back'):cfg.dir;
+    const canW=(hasJa(b.f)||hasJa(b.b));
+    const mcOk=()=>dS(dir==='front'?'b':'f')>=3;
+    let method=cfg.method;
+    if(method==='mixed'){const o=['type'];if(mcOk())o.push('mc');if(canW)o.push('write');method=o[Math.floor(Math.random()*o.length)]}
+    if(method==='write'){
+      // the answer must be the Japanese side, so show the other side as the question
+      const ans=dir==='front'?b.b:b.f,oth=dir==='front'?b.f:b.b;
+      if(!hasJa(ans)&&hasJa(oth))dir=dir==='front'?'back':'front';
+      const n=writeChars(dir==='front'?b.b:b.f).length;
+      if(!n||n>10)method='type';
+    }
+    if(method==='mc'&&!mcOk())method='type';
     return {deck:b.deck,f:b.f,b:b.b,dir,method};
   });
   return {items,pool,cfg:{...cfg},i:0,results:[],cur:null,showDeck:new Set(pool.map(x=>x.deck)).size>1};
@@ -588,15 +694,21 @@ function drawTest(){
   let body;
   if(it.method==='mc'){
     body=`<div class="opts">${cu.opts.map((o,i)=>`<button class="opt ${cu.pick!==null?(o.ok?'right':(cu.pick===i?'wrong':'')):''}" data-act="tpick" data-i="${i}">${esc(o.t)}</button>`).join('')}</div>`;
+  }else if(it.method==='write'){
+    cu.w=cu.w||{chars:writeChars(a),idx:0,mistakes:0,warns:[],keys:new Set(),writer:null,cd:null,started:false};
+    body=cu.verdict===null
+      ?`<p class="sub" id="wnote" style="text-align:center;margin:12px 0 4px">Loading stroke data...</p><div class="wchips" id="wchips"></div><div class="hwbox" id="hw"></div><div id="hwwarn"></div><div class="row" style="justify-content:center;margin-top:10px"><button data-act="tgive">Show answer</button></div>`
+      :`<div id="hwfb"></div>`;
   }else if(cu.verdict===null){
-    body=`<div class="typed"><input id="tans" placeholder="Type the ${it.dir==='front'?'back':'front'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer"><button class="pri" data-act="tcheck">Check</button><button data-act="tskip">Skip</button></div>${parts(a).length>1?'<p class="sub" style="margin:8px 0 0">Any one of the listed answers is accepted.</p>':''}`;
+    body=`<div class="typed"><input id="tans" placeholder="Type the ${it.dir==='front'?'back':'front'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer"><button class="pri" data-act="tcheck">Check</button><button data-act="tskip">Skip</button></div>${cu.note?`<p class="sub" style="margin:8px 0 0">${esc(cu.note)}</p>`:''}${parts(a).length>1?'<p class="sub" style="margin:8px 0 0">Any one of the listed answers is accepted.</p>':''}`;
   }else{
     const v=cu.verdict;
     body=`<div class="typed"><input value="${esc(cu.given)}" disabled aria-label="Your answer"></div><div class="fb ${v==='wrong'?'bad':'ok'}"><b>${v==='ok'?'Correct':v==='accent'?'Correct, but check the accents':(cu.given.trim()?'Not quite':'Skipped')}</b>${v==='ok'?'':`<span>Answer: ${esc(a)}</span>`}</div>`;
   }
   app.innerHTML=testHead(`Question ${r.i+1} of ${r.items.length}`)+`<div class="bar2" style="margin:14px 0"><i style="width:${Math.round(r.i/r.items.length*100)}%"></i></div>
-  <div class="study"><div class="qlabel">${it.dir==='front'?'Front':'Back'}${r.showDeck?', '+esc(it.deck):''}</div><div class="flash q">${esc(q)}</div>${body}
+  <div class="study"><div class="qlabel">${it.dir==='front'?'Front':'Back'}${r.showDeck?', '+esc(it.deck):''}</div><div class="flash q${it.method==='write'?' w':''}">${esc(q)}</div>${body}
   ${answered?`<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" id="tnext" data-act="tnext">${r.i+1>=r.items.length?'See results':'Next'}</button></div>`:''}</div>`;
+  if(it.method==='write'&&!answered&&!cu.w.started)initWrite();
   if(answered){const nb=document.getElementById('tnext');if(nb)nb.focus()}
   else if(it.method==='type'){const inp=document.getElementById('tans');if(inp)inp.focus()}
 }
@@ -604,9 +716,77 @@ function drawResults(){
   const r=T,ok=r.results.filter(x=>x.ok).length,tot=r.results.length,missed=r.results.filter(x=>!x.ok);
   app.innerHTML=testHead('Finished')+`<div class="study" style="margin-top:18px"><div class="score">${Math.round(ok/tot*100)}%</div><p class="sub">${ok} of ${tot} correct</p>
   <div class="row" style="justify-content:center">${missed.length?`<button class="pri" data-act="tretry">Retry missed (${missed.length})</button>`:''}<button class="${missed.length?'':'pri'}" data-act="tnew">New test</button><button data-act="tquit">Change settings</button></div></div>
+  ${(()=>{const wr=r.results.filter(x=>x.ok&&x.warn&&x.warn.length);return wr.length?`<div class="panel"><h2>Stroke order warnings</h2>${wr.map(m=>`<div class="miss"><b>${esc(m.a)}</b>${m.warn.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`).join('')}</div>`:''})()}
   ${missed.length?`<div class="panel"><h2>Missed</h2>${missed.map(m=>`<div class="miss"><b>${esc(m.q)}</b><span>${m.given?'You answered: '+esc(m.given):'Skipped'}</span><span class="ans">Answer: ${esc(m.a)}</span></div>`).join('')}</div>`:'<div class="empty">Perfect score.</div>'}`;
 }
-const TACT=['tmode','tdeck','tall','tnone','tdir','tmethod','tcount','tstart','tpick','tcheck','tskip','tnext','tquit','tretry','tnew'];
+
+// ----- "Write it": Hanzi Writer quiz, one character at a time -----
+function writeFallback(msg){
+  const r=T,cu=r.cur,it=r.items[r.i];
+  it.method='type';r.cur={opts:null,pick:null,verdict:null,given:'',note:msg};drawTest();
+}
+async function initWrite(){
+  const r=T,cu=r.cur,w=cu.w,it=r.items[r.i];w.started=true;
+  try{
+    await loadHW();
+    await Promise.all(w.chars.map(loadChar));
+  }catch(e){if(T===r&&r.cur===cu)writeFallback('Stroke data could not be loaded (check your connection), so this one is a typed answer.');return}
+  if(T!==r||r.cur!==cu)return;
+  document.getElementById('wnote').textContent='Draw each stroke in the correct order.';
+  nextWriteChar();
+}
+function paintChips(){
+  const w=T&&T.cur&&T.cur.w,el=document.getElementById('wchips');if(!w||!el)return;
+  el.innerHTML=w.chars.map((c,i)=>`<span class="wchip ${i<w.idx?'done':i===w.idx?'cur':''}">${i<w.idx?esc(c):'?'}</span>`).join('');
+}
+function showWarn(msg){const el=document.getElementById('hwwarn');if(el)el.innerHTML=msg?`<div class="fb warn"><b>Stroke order</b><span>${esc(msg)}</span></div>`:''}
+function nextWriteChar(){
+  const r=T,cu=r.cur,w=cu&&cu.w,box=document.getElementById('hw');
+  if(!w||!box||!document.body.contains(box)||cu.verdict!==null)return;
+  if(w.idx>=w.chars.length)return finishWrite();
+  paintChips();showWarn(null);
+  const ch=w.chars[w.idx],size=Math.max(220,Math.min(340,(app.clientWidth||340)-8)),cs=getComputedStyle(document.documentElement),col=n=>cs.getPropertyValue(n).trim();
+  box.innerHTML='';box.style.width=size+'px';box.style.height=size+'px';
+  charCache.get(ch).then(cd=>{
+    if(T!==r||r.cur!==cu||!document.body.contains(box))return;
+    w.cd=cd;
+    w.writer=HanziWriter.create(box,ch,{
+      width:size,height:size,padding:14,showCharacter:false,showOutline:false,leniency:r.cfg.sens||1,showHintAfterMisses:3,drawingWidth:7,
+      strokeColor:col('--ink'),drawingColor:col('--ink'),outlineColor:col('--line'),highlightColor:col('--accent'),highlightCompleteColor:col('--accent'),
+      charDataLoader:(c,ok,bad)=>loadChar(c).then(ok,bad)
+    });
+    w.writer.quiz({
+      onMistake:sd=>{
+        const n=sd.strokeNum,j=laterStroke(sd.drawnPath.points,cd.medians,n,r.cfg.sens||1);
+        if(j>=0){
+          const k=`${ch}:${n}:${j}`;if(!w.keys.has(k)){w.keys.add(k);w.warns.push(`In ${ch}, stroke ${j+1} was drawn before stroke ${n+1}.`)}
+          showWarn(`That looks like stroke ${j+1}. Order matters: draw stroke ${n+1} first.`);
+        }else if(sd.isBackwards){
+          const k=`${ch}:${n}:dir`;if(!w.keys.has(k)){w.keys.add(k);w.warns.push(`In ${ch}, stroke ${n+1} was drawn in the wrong direction.`)}
+          showWarn(`Stroke ${n+1} is drawn the other way.`);
+        }else showWarn(null);
+      },
+      onCorrectStroke:()=>showWarn(null),
+      onComplete:sum=>{w.mistakes+=sum.totalMistakes;w.idx++;paintChips();if(w.idx>=w.chars.length)finishWrite();else setTimeout(nextWriteChar,550)}
+    });
+  }).catch(()=>{if(T===r&&r.cur===cu)writeFallback('Stroke data could not be loaded, so this one is a typed answer.')});
+}
+function writeFeedback(ok){
+  const r=T,it=r.items[r.i],cu=r.cur,w=cu.w,a=it.dir==='front'?it.b:it.f,box=document.getElementById('hwfb')||document.getElementById('hwwarn');
+  const give=document.querySelector('[data-act="tgive"]');if(give)give.remove();
+  showWarn(null);
+  const wn=ok&&w.warns.length?`<div class="fb warn"><b>Stroke order warning</b>${w.warns.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:'';
+  const html=`<div class="fb ${ok?'ok':'bad'}"><b>${ok?'Correct':'Not this time'}</b><span>${ok?esc(w.chars.join('')):'Answer: '+esc(a)}</span></div>${wn}<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" id="tnext" data-act="tnext">${r.i+1>=r.items.length?'See results':'Next'}</button></div>`;
+  const holder=document.getElementById('hwfb')||(()=>{const d=document.createElement('div');d.id='hwfb';document.querySelector('.study').appendChild(d);return d})();
+  holder.innerHTML=html;const nb=document.getElementById('tnext');if(nb)nb.focus();
+}
+function finishWrite(){
+  const r=T,it=r.items[r.i],cu=r.cur,w=cu.w;if(cu.verdict!==null)return;
+  cu.verdict='ok';cu.given=w.chars.join('');
+  r.results.push({q:it.dir==='front'?it.f:it.b,a:it.dir==='front'?it.b:it.f,given:cu.given,ok:true,warn:w.warns.slice(),dir:it.dir,deck:it.deck,f:it.f,b:it.b});
+  writeFeedback(true);
+}
+const TACT=['tsens','tgive','tmode','tdeck','tall','tnone','tdir','tmethod','tcount','tstart','tpick','tcheck','tskip','tnext','tquit','tretry','tnew'];
 async function testAct(act,t){
   const c=testCfg,v=t.dataset.v;
   if(act==='tmode')c.mode=v;
@@ -615,8 +795,9 @@ async function testAct(act,t){
   else if(act==='tnone')c.decks=[];
   else if(act==='tdir')c.dir=v;
   else if(act==='tmethod')c.method=v;
+  else if(act==='tsens')c.sens=+v;
   else if(act==='tcount'){const n=v==='all'?'all':+v;if(c.mode==='random')c.nRandom=n;else c.nPick=n}
-  if(['tmode','tdeck','tall','tnone','tdir','tmethod','tcount'].includes(act)){saveCfg();drawSetup();return}
+  if(['tmode','tdeck','tall','tnone','tdir','tmethod','tcount','tsens'].includes(act)){saveCfg();drawSetup();return}
   if(act==='tstart'||act==='tnew'){T=buildTest();if(T)drawTest();else drawSetup();return}
   if(act==='tquit'){
     if(T&&T.i<T.items.length&&T.results.length&&!(await confirmBox('Leave this test? Your progress will be lost.')))return;
@@ -629,6 +810,12 @@ async function testAct(act,t){
   const rec=(ok,given)=>r.results.push({q,a,given,ok,dir:it.dir,deck:it.deck,f:it.f,b:it.b});
   if(act==='tpick'){if(cu.pick!==null)return;cu.pick=+t.dataset.i;const o=cu.opts[cu.pick];rec(o.ok,o.t);drawTest()}
   else if(act==='tcheck'){if(cu.verdict!==null)return;const inp=document.getElementById('tans'),val=inp?inp.value:'';if(!val.trim()){if(inp)inp.focus();return}cu.given=val;cu.verdict=judge(val,a);rec(cu.verdict!=='wrong',val);drawTest()}
+  else if(act==='tgive'){
+    if(cu.verdict!==null)return;const w=cu.w;cu.verdict='wrong';
+    r.results.push({q,a,given:'',ok:false,warn:[],dir:it.dir,deck:it.deck,f:it.f,b:it.b});
+    try{if(w&&w.writer){w.writer.cancelQuiz();w.writer.showCharacter()}}catch(e){}
+    writeFeedback(false);
+  }
   else if(act==='tskip'){if(cu.verdict!==null)return;cu.given='';cu.verdict='wrong';rec(false,'');drawTest()}
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='tans'){e.preventDefault();const b=document.querySelector('[data-act="tcheck"]');if(b)b.click()}});
