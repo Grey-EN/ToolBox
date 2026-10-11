@@ -84,8 +84,6 @@ nav{flex:none}
 .circle{width:34px;height:34px;padding:0;border:0;border-radius:50%;display:inline-grid;place-items:center;flex:none;background:var(--accent);color:var(--accent-ink);text-decoration:none;cursor:pointer}
 .circle:hover:not(:disabled){filter:brightness(1.1)}
 .circle svg{width:18px;height:18px;margin:0}
-#theme{background:#f2f2f0;color:#0a0a0a}
-[data-theme=light] #theme{background:#2a2a28;color:#f4f4f1}
 .menuwrap{position:relative}
 .menu{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 nav .menu{left:0;right:auto}
@@ -229,19 +227,37 @@ background-image:linear-gradient(var(--line),var(--line)),linear-gradient(var(--
 .seg{flex-wrap:wrap}
 .flash.q.w{min-height:84px;font-size:1.4rem}
 .pick.radio .chk{border-radius:50%}
+.xpbar{position:fixed;left:0;right:0;bottom:0;height:6px;background:var(--panel2);z-index:30}
+.xpbar i{display:block;height:100%;background:var(--accent);transition:width .4s ease}
+.xpbar::after,.pbar::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to right,transparent 0,transparent calc(10% - 1px),var(--bg) calc(10% - 1px),var(--bg) 10%)}
+main{padding-bottom:84px}
+.menu svg{width:16px;height:16px;margin:0 10px 0 0;vertical-align:-3px}
+#usermenu .menu{min-width:190px}
+.lvl{text-align:right;text-decoration:none;color:var(--ink);line-height:1;flex:none;padding-left:12px}
+.lvl span,.lvlbig span{display:block;font-size:.78rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.lvl b{display:block;font-size:3.2rem;font-weight:800;color:var(--acc-t);letter-spacing:-1px}
+.lvlbig b{display:block;font-size:3.6rem;line-height:1;font-weight:800;color:var(--acc-t);letter-spacing:-1px}
+.xpnum{font-size:1.05rem}.xpnum b{font-size:1.5rem}
+.pbar{position:relative;height:12px;border-radius:99px;background:var(--panel2);overflow:hidden;margin-top:14px}
+.pbar i{display:block;height:100%;background:var(--accent);border-radius:99px 0 0 99px}
+.multbig{font-size:2rem;color:var(--acc-t);letter-spacing:-.5px}
+.howxp p{margin:0 0 10px;color:var(--soft);font-size:.92rem}.howxp p:last-child{margin:0}.howxp b{color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--accent);color:var(--ink);padding:8px 16px;border-radius:99px;font-weight:700;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.35);pointer-events:none;white-space:nowrap}
+.toast small{color:var(--acc-t);font-weight:600}
+.toast.big{background:var(--accent);color:var(--accent-ink);font-size:1.1rem;padding:12px 22px}
 </style>
 </head>
 <body>
 <header><div class="bar"><a class="brand" href="#/home" aria-label="Toolbox home"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></i><b>Toolbox</b></a>
 <nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/write">Write</a><a href="#/habits">Habits</a><a href="#/notes">Notes</a></div></div></nav>
 <div class="acts"><div class="menuwrap notifwrap" id="notifwrap" hidden><button class="circle ghost" id="bell" data-act="menu" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button><div class="menu notifs" id="notifs"></div></div>
-<button class="circle" id="theme" title="Switch theme" aria-label="Switch theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg></button>
-<button class="circle" id="out" title="Sign out" aria-label="Sign out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button></div></div></header>
+<div class="menuwrap" id="usermenu"><button class="circle ghost" id="burger" data-act="menu" title="Menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="menu"><a href="#/profile" id="mProfile" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profile</a><button id="theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Switch theme</button><button id="out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></div></div></div></div></header>
 <main id="app"></main>
+<div class="xpbar" id="xpbar" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" hidden><i id="xpfill"></i></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {initializeFirestore,persistentLocalCache,persistentMultipleTabManager,collection,doc,getDoc,getDocs,setDoc,deleteDoc} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {initializeFirestore,persistentLocalCache,persistentMultipleTabManager,collection,doc,getDoc,getDocs,setDoc,deleteDoc,increment} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 // ---------- Firebase ----------
 const fb=initializeApp({
@@ -266,8 +282,8 @@ const del=(s,id)=>wait(deleteDoc(doc(fs,'users',me,s,id)));
 // ---------- sign-in ----------
 let pending=null;
 async function flush(){if(!pending)return;clearTimeout(saveTimer);const f=pending;pending=null;await f()}
-document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
-addEventListener('pagehide',flush);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){flush();flushXp()}});
+addEventListener('pagehide',()=>{flush();flushXp()});
 function signedOut(){
   app.innerHTML=`<div class="panel" style="max-width:420px;margin:40px auto;text-align:center"><h1>My Toolbox</h1><p class="sub">Sign in to open your flashcards and notes.</p><button class="pri" id="gin">Sign in with Google</button><p class="sub" id="aerr" style="color:var(--warn);margin-top:12px"></p></div>`;
   document.getElementById('gin').onclick=async()=>{
@@ -280,15 +296,15 @@ function signedOut(){
   };
 }
 onAuthStateChanged(auth,u=>{
-  me=u?u.uid:null;
+  me=u?u.uid:null;ME_EMAIL=u?(u.email||''):'';
   document.querySelector('nav').style.display=u?'':'none';
-  document.getElementById('out').hidden=!u;document.getElementById('notifwrap').hidden=!u;
-  if(!u){NOTIFS=[];signedOut();return}
-  route();syncNotifs();
+  ['out','mProfile','notifwrap','xpbar'].forEach(i=>document.getElementById(i).hidden=!u);
+  if(!u){NOTIFS=[];PROF=blankProf();MULT={total:1,parts:[]};signedOut();return}
+  (async()=>{await Promise.all([loadProfile(),refreshMult()]);route();syncNotifs()})();
 });
 document.getElementById('out').onclick=()=>signOut(auth);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncNotifs()});
-setInterval(()=>{if(!document.hidden)syncNotifs()},5*60e3);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){syncNotifs();loadProfile();refreshMult()}});
+setInterval(()=>{if(!document.hidden){syncNotifs();loadProfile();refreshMult()}},5*60e3);
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -303,6 +319,76 @@ function confirmBox(msg){return new Promise(res=>{
   o.onclick=e=>{const b=e.target.closest('button');if(b||e.target===o){o.remove();res(b?b.dataset.v==='1':false)}};
   document.body.appendChild(o);o.querySelector('button').focus();
 })}
+
+// ---------- levels and XP ----------
+const blankProf=()=>({xp:0,xpBy:{},stats:{}});
+let PROF=blankProf(),MULT={total:1,parts:[]},ME_EMAIL='',xpPend=null,xpTimer=null,bigUntil=0,toastEl=null,toastTimer=null,toastSum=0;
+// XP needed to go from level L to L+1: about 20 minutes of use at level 1, rising slowly to about an hour at level 50
+const needFor=L=>Math.round(12*(20+40*(L-1)/49)/5)*5;
+function levelInfo(xp){let L=1,r=xp;while(r>=needFor(L)){r-=needFor(L);L++}return {level:L,cur:r,need:needFor(L)}}
+const fmtXp=n=>n>=10?Math.round(n).toLocaleString():String(Math.round(n*10)/10);
+const countBonus=n=>n>=50?1.5:n>=20?1.25:n>=10?1.1:1;
+const SENS={0.7:1.3,1:1,1.5:0.9,2.2:0.8};
+// each habit adds 0.01 per streak day, up to +0.50 (a 50 day streak); the bonuses add together
+function calcMult(habits){
+  const parts=habits.map(h=>{const st=hstats(h).cur;return {name:h.name||'Untitled habit',streak:st,bonus:Math.min(st*0.01,0.5)}}).filter(p=>p.bonus>0).sort((a,b)=>b.bonus-a.bonus);
+  return {total:Math.round((1+parts.reduce((a,p)=>a+p.bonus,0))*100)/100,parts};
+}
+async function refreshMult(){try{MULT=calcMult(await all('habits'))}catch(e){}}
+async function loadProfile(){
+  if(!me)return;
+  try{
+    await flushXp();
+    const d=await get('profile','main');
+    PROF={...blankProf(),...(d||{})};PROF.xpBy=PROF.xpBy||{};PROF.stats=PROF.stats||{};
+  }catch(e){}
+  paintXp();
+}
+function paintXp(){
+  const li=levelInfo(PROF.xp),f=document.getElementById('xpfill'),b=document.getElementById('xpbar');if(!f||!b)return;
+  f.style.width=Math.min(100,li.cur/li.need*100)+'%';
+  b.title='Level '+li.level+': '+Math.floor(li.cur)+' / '+li.need+' XP';b.setAttribute('aria-valuenow',Math.round(li.cur/li.need*100));
+}
+function queueXp(tool,gain,stats){
+  xpPend=xpPend||{xp:0,xpBy:{},stats:{}};
+  xpPend.xp+=gain;xpPend.xpBy[tool]=(xpPend.xpBy[tool]||0)+gain;
+  for(const k in stats)xpPend.stats[k]=(xpPend.stats[k]||0)+stats[k];
+  clearTimeout(xpTimer);xpTimer=setTimeout(flushXp,2000);
+}
+async function flushXp(){
+  if(!xpPend||!me)return;
+  const p=xpPend;xpPend=null;clearTimeout(xpTimer);
+  const data={xp:increment(p.xp),xpBy:{},stats:{}};
+  for(const k in p.xpBy)data.xpBy[k]=increment(p.xpBy[k]);
+  for(const k in p.stats)data.stats[k]=increment(p.stats[k]);
+  try{await wait(setDoc(doc(fs,'users',me,'profile','main'),data,{merge:true}))}
+  catch(e){xpPend=xpPend||{xp:0,xpBy:{},stats:{}};xpPend.xp+=p.xp;for(const k in p.xpBy)xpPend.xpBy[k]=(xpPend.xpBy[k]||0)+p.xpBy[k];for(const k in p.stats)xpPend.stats[k]=(xpPend.stats[k]||0)+p.stats[k]}
+}
+function toast(html,cls=''){
+  if(!toastEl){toastEl=document.createElement('div');document.body.appendChild(toastEl)}
+  toastEl.className='toast '+cls;toastEl.innerHTML=html;toastEl.hidden=false;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>{toastEl.hidden=true;toastSum=0},cls==='big'?3200:1400);
+}
+// base XP in, streak multiplier applied, XP out
+function award(tool,base,stats){
+  const gain=base*MULT.total,before=levelInfo(PROF.xp).level;
+  PROF.xp+=gain;PROF.xpBy[tool]=(PROF.xpBy[tool]||0)+gain;
+  for(const k in (stats||{}))PROF.stats[k]=(PROF.stats[k]||0)+stats[k];
+  queueXp(tool,gain,stats||{});paintXp();
+  if(gain>0){
+    const after=levelInfo(PROF.xp).level;
+    if(after>before){bigUntil=Date.now()+3200;toast('Level up! You are now level '+after,'big')}
+    else if(Date.now()>bigUntil){toastSum+=gain;toast('+'+fmtXp(toastSum)+' XP'+(MULT.total>1?' <small>x'+MULT.total.toFixed(2)+'</small>':''))}
+  }
+  return gain;
+}
+// Test XP: base per question, then bonuses for the options chosen
+const testBase=it=>it.method==='mc'?2:it.method==='type'?3:5*writeChars(it.dir==='front'?it.b:it.f).length;
+function testMult(r){
+  const c=r.cfg,withCards=testDecks.filter(d=>d.cards.length).length;
+  let scope=1;if(c.mode==='random')scope=1.25;else if(withCards>1&&c.decks.length>=withCards)scope=1.25;else if(c.decks.length>=2)scope=1.1;
+  return (c.method==='mixed'?1.25:1)*scope*(c.dir==='both'?1.1:1)*countBonus(r.items.length);
+}
 
 // ---------- notifications (in-site only) ----------
 let NOTIFS=[],syncing=false;
@@ -347,6 +433,7 @@ async function render(){
   document.getElementById('n-home').className=page==='home'?'on':'';
   document.getElementById('n-tools').className='navbtn'+(['cards','study','test','write','notes','note','habits','habit'].includes(page)?' on':'');
   if(page==='home')return homeView();
+  if(page==='profile')return profileView();
   if(page==='cards'&&id)return deckView(id);
   if(page==='cards')return decksView();
   if(page==='study')return studyView(id);
@@ -359,6 +446,33 @@ async function render(){
   location.hash='#/home';
 }
 addEventListener('hashchange',route);
+
+// ---------- profile ----------
+async function profileView(){
+  const [decks,notes,habits]=await Promise.all([all('decks'),all('notes'),all('habits')]);
+  MULT=calcMult(habits);
+  const li=levelInfo(PROF.xp),pct=Math.min(100,li.cur/li.need*100),st=PROF.stats||{},by=PROF.xpBy||{};
+  const cardsN=decks.reduce((a,d)=>a+d.cards.length,0),checks=habits.reduce((a,h)=>a+Object.keys(h.log||{}).length,0),best=habits.reduce((m,h)=>Math.max(m,hstats(h).best),0);
+  const blk=(v,l)=>`<div><b>${v}</b><span>${l}</span></div>`,pc=(c,t)=>t?Math.round((c||0)/t*100)+'%':'none yet',n=x=>(Math.round(x||0)).toLocaleString();
+  app.innerHTML=`<h1>Profile</h1><p class="sub">${esc(ME_EMAIL)}</p>
+  <div class="panel"><div class="row between" style="align-items:flex-end;flex-wrap:nowrap"><div class="lvlbig"><span>Level</span><b>${li.level}</b></div><div style="text-align:right"><div class="xpnum"><b>${n(Math.floor(li.cur))}</b> / ${n(li.need)} XP</div><div class="sub" style="margin:0">${n(Math.ceil(li.need-li.cur))} XP to level ${li.level+1}</div></div></div>
+  <div class="pbar"><i style="width:${pct}%"></i></div><p class="sub" style="margin:10px 0 0">${n(PROF.xp)} XP earned in total</p></div>
+  <h2 class="h2">Streak bonus</h2>
+  <div class="panel"><div class="row between" style="flex-wrap:nowrap"><b class="multbig">x${MULT.total.toFixed(2)}</b><span class="sub" style="margin:0;text-align:right">applied to all XP you earn</span></div>
+  ${MULT.parts.length?MULT.parts.map(p=>`<div class="hrow"><span style="flex:1;min-width:0;overflow-wrap:anywhere">${esc(p.name)}</span><span class="pill">${p.streak} day streak</span><b>+${p.bonus.toFixed(2)}</b></div>`).join(''):'<p class="sub" style="margin:10px 0 0">No habit streaks yet. Check off habits day after day to boost your XP.</p>'}
+  <p class="sub" style="margin:10px 0 0;font-size:.82rem">Each habit adds 0.01 per streak day, up to +0.50 per habit (a 50 day streak). The bonuses add together.</p></div>
+  <h2 class="h2">XP earned</h2>
+  <div class="stats">${blk(n(by.flash),'Flashcards')}${blk(n(by.test),'Test')}${blk(n(by.write),'Write')}</div>
+  <h2 class="h2">Activity</h2>
+  <div class="stats">${blk(n(st.flashCards),'cards studied')}${blk(pc(st.flashCorrect,st.flashCards),'flashcard accuracy')}${blk(n(st.testsDone),'tests finished')}${blk(n(st.testQs),'test questions')}${blk(pc(st.testCorrect,st.testQs),'test accuracy')}${blk(n(st.writeChars),'characters written')}${blk(n(st.writeCards),'cards written')}</div>
+  <div class="stats">${blk(n(checks),'habit check-ins')}${blk(n(best),'best habit streak (days)')}${blk(n(habits.length),'habits')}${blk(n(decks.length),'decks')}${blk(n(cardsN),'flashcards made')}${blk(n(notes.length),'notes')}</div>
+  <h2 class="h2">How XP works</h2>
+  <div class="panel howxp">
+  <p><b>Flashcards:</b> 1 XP per correct card. x1.5 for multiple choice, x1.1 for studying all cards, and longer sessions earn more (10 cards x1.1, 20 x1.25, 50 x1.5).</p>
+  <p><b>Test:</b> the most XP. 2 per multiple choice answer, 3 per typed answer and 5 per character written. Bonuses: Mixed x1.25, Either side x1.1, several decks x1.1, all decks or a random mix x1.25, and the same question count bonuses.</p>
+  <p><b>Write:</b> 4 XP per character, about the same as flashcards. x1.5 when hints only appear after a miss, x1.3 on Strict (x0.9 Relaxed, x0.8 Very relaxed), x1.25 for no mistakes, plus the session size bonus.</p>
+  <p><b>Wrong answers</b> earn a quarter of the XP. <b>Streaks</b> multiply everything, as shown above.</p></div>`;
+}
 
 // ---------- home ----------
 const SVG=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
@@ -399,7 +513,7 @@ async function homeView(){
   const habits=!hs.length
     ?`<div class="empty" style="padding:8px 0">No habits yet. <a href="#/habits">Add your first habit</a></div>`
     :`<div class="hhead"><span>${sched.length?(doneN===sched.length?'All done for today':`${doneN} of ${sched.length} done today`):'Nothing scheduled today'}${sched.length>8?` (showing 8 of ${sched.length})`:''}</span></div>${tiles?`<div class="grid">${tiles}</div>`:''}`;
-  app.innerHTML=`<h1>Toolbox</h1><p class="sub">Your personal tools, synced to your Google account.</p>
+  app.innerHTML=`<div class="row between" style="align-items:flex-start;flex-wrap:nowrap"><div style="min-width:0"><h1>Toolbox</h1><p class="sub">Your personal tools, synced to your Google account.</p></div><a class="lvl" href="#/profile" title="View your profile"><span>Level</span><b>${levelInfo(PROF.xp).level}</b></a></div>
   <h2 class="h2">Tools</h2>
   <div class="grid"><a class="tile tool" href="#/cards"><b>Flashcards</b><p>Make decks, paste in lists, and study.</p></a>
   <a class="tile tool" href="#/test"><b>Test</b><p>Quiz yourself on any decks.</p></a>
@@ -460,6 +574,8 @@ function grade(c,ok){
   if(ok){c.right=(c.right||0)+1;c.box=Math.min(5,(c.box||0)+1)}else c.box=0;
   c.due=STEPS[c.box]?(()=>{const d=new Date(Date.now()+STEPS[c.box]);d.setHours(0,0,0,0);return d.getTime()})():Date.now();
   put('decks',study.deck).catch(()=>{});
+  const s=study,g=award('flash',(ok?1:0.25)*(s.style==='choice'&&canChoice(s.deck)?1.5:1)*(s.mode==='all'?1.1:1)*countBonus(s.total),{flashCards:1,flashCorrect:ok?1:0});
+  s.xp=(s.xp||0)+g;
   setTimeout(syncNotifs,1500);
 }
 async function studyView(id){
@@ -480,7 +596,7 @@ function drawStudy(){
     const next=d.cards.reduce((m,c)=>Math.min(m,c.due||0),Infinity);
     body=`<div class="empty">You are all caught up.${next>Date.now()&&isFinite(next)?` The next card is due in ${inText(next-Date.now())}.`:''}</div><div class="row" style="justify-content:center"><button class="pri" data-act="smode" data-v="all">Study all cards</button>${edit}</div>`;
   }else if(!s.q.length){
-    body=`<div class="empty">Session complete. ${s.right} correct${s.wrong?`, ${s.wrong} to retry`:''}.</div><div class="row" style="justify-content:center"><button class="pri" data-act="restart" data-id="${s.id}">Study again</button>${edit}</div>`;
+    body=`<div class="empty">Session complete. ${s.right} correct${s.wrong?`, ${s.wrong} to retry`:''}.${s.xp?` You earned ${fmtXp(s.xp)} XP.`:''}</div><div class="row" style="justify-content:center"><button class="pri" data-act="restart" data-id="${s.id}">Study again</button>${edit}</div>`;
   }else{
     const c=cardOf(s.q[0]),prog=`<div class="prog">${s.done} of ${s.total} done, ${s.q.length} left</div>`;
     if(s.style==='choice'&&canChoice(d)){
@@ -676,7 +792,7 @@ function makeRun(base,pool,cfg){
     if(method==='mc'&&!mcOk())method='type';
     return {deck:b.deck,f:b.f,b:b.b,dir,method};
   });
-  return {items,pool,cfg:{...cfg},i:0,results:[],cur:null,showDeck:new Set(pool.map(x=>x.deck)).size>1};
+  return {items,pool,cfg:{...cfg},i:0,results:[],cur:null,xp:0,showDeck:new Set(pool.map(x=>x.deck)).size>1};
 }
 function buildTest(){
   const c=testCfg,withCards=testDecks.filter(d=>d.cards.length);
@@ -719,8 +835,9 @@ function drawTest(){
   else if(it.method==='type'){const inp=document.getElementById('tans');if(inp)inp.focus()}
 }
 function drawResults(){
+  if(!T.counted){T.counted=true;award('test',0,{testsDone:1})}
   const r=T,ok=r.results.filter(x=>x.ok).length,tot=r.results.length,missed=r.results.filter(x=>!x.ok);
-  app.innerHTML=testHead('Finished')+`<div class="study" style="margin-top:18px"><div class="score">${Math.round(ok/tot*100)}%</div><p class="sub">${ok} of ${tot} correct</p>
+  app.innerHTML=testHead('Finished')+`<div class="study" style="margin-top:18px"><div class="score">${Math.round(ok/tot*100)}%</div><p class="sub">${ok} of ${tot} correct</p><p class="sub" style="margin-top:-8px">+${fmtXp(r.xp)} XP earned</p>
   <div class="row" style="justify-content:center">${missed.length?`<button class="pri" data-act="tretry">Retry missed (${missed.length})</button>`:''}<button class="${missed.length?'':'pri'}" data-act="tnew">New test</button><button data-act="tquit">Change settings</button></div></div>
   ${(()=>{const wr=r.results.filter(x=>x.ok&&x.warn&&x.warn.length);return wr.length?`<div class="panel"><h2>Stroke order warnings</h2>${wr.map(m=>`<div class="miss"><b>${esc(m.a)}</b>${m.warn.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`).join('')}</div>`:''})()}
   ${missed.length?`<div class="panel"><h2>Missed</h2>${missed.map(m=>`<div class="miss"><b>${esc(m.q)}</b><span>${m.given?'You answered: '+esc(m.given):'Skipped'}</span><span class="ans">Answer: ${esc(m.a)}</span></div>`).join('')}</div>`:'<div class="empty">Perfect score.</div>'}`;
@@ -789,6 +906,7 @@ function writeFeedback(ok){
 function finishWrite(){
   const r=T,it=r.items[r.i],cu=r.cur,w=cu.w;if(cu.verdict!==null)return;
   cu.verdict='ok';cu.given=w.chars.join('');
+  r.xp+=award('test',5*w.chars.length*(SENS[r.cfg.sens]||1)*(w.mistakes?1:1.25)*testMult(r),{testQs:1,testCorrect:1});
   r.results.push({q:it.dir==='front'?it.f:it.b,a:it.dir==='front'?it.b:it.f,given:cu.given,ok:true,warn:w.warns.slice(),dir:it.dir,deck:it.deck,f:it.f,b:it.b});
   writeFeedback(true);
 }
@@ -813,11 +931,11 @@ async function testAct(act,t){
   if(act==='tretry'){const base=r.results.filter(x=>!x.ok).map(x=>({deck:x.deck,f:x.f,b:x.b}));T=makeRun(shuffle(base),r.pool,r.cfg);T.showDeck=r.showDeck;drawTest();return}
   if(act==='tnext'){r.i++;r.cur=null;drawTest();return}
   const it=r.items[r.i],cu=r.cur,q=it.dir==='front'?it.f:it.b,a=it.dir==='front'?it.b:it.f;
-  const rec=(ok,given)=>r.results.push({q,a,given,ok,dir:it.dir,deck:it.deck,f:it.f,b:it.b});
+  const rec=(ok,given)=>{const g=award('test',testBase(it)*testMult(r)*(ok?1:0.25),{testQs:1,testCorrect:ok?1:0});r.xp+=g;r.results.push({q,a,given,ok,dir:it.dir,deck:it.deck,f:it.f,b:it.b})};
   if(act==='tpick'){if(cu.pick!==null)return;cu.pick=+t.dataset.i;const o=cu.opts[cu.pick];rec(o.ok,o.t);drawTest()}
   else if(act==='tcheck'){if(cu.verdict!==null)return;const inp=document.getElementById('tans'),val=inp?inp.value:'';if(!val.trim()){if(inp)inp.focus();return}cu.given=val;cu.verdict=judge(val,a);rec(cu.verdict!=='wrong',val);drawTest()}
   else if(act==='tgive'){
-    if(cu.verdict!==null)return;const w=cu.w;cu.verdict='wrong';
+    if(cu.verdict!==null)return;const w=cu.w;cu.verdict='wrong';r.xp+=award('test',5*(w?w.chars.length:1)*0.25*testMult(r),{testQs:1});
     r.results.push({q,a,given:'',ok:false,warn:[],dir:it.dir,deck:it.deck,f:it.f,b:it.b});
     try{if(w&&w.writer){w.writer.cancelQuiz();w.writer.showCharacter()}}catch(e){}
     writeFeedback(false);
@@ -886,7 +1004,7 @@ function wNextChar(){
   const r=W,cu=r&&r.cur,box=document.getElementById('hw');
   if(!cu||!box||!document.body.contains(box)||cu.finished)return;
   if(cu.idx>=cu.chars.length)return wFinish();
-  wChips();showWarn(null);cu.next=0;
+  wChips();showWarn(null);cu.next=0;cu.cm=0;
   const ch=cu.chars[cu.idx],size=Math.max(220,Math.min(340,(app.clientWidth||340)-8)),cs=getComputedStyle(document.documentElement),col=n=>cs.getPropertyValue(n).trim(),every=r.cfg.hints==='every';
   box.innerHTML='';box.style.width=size+'px';box.style.height=size+'px';
   charCache.get(ch).then(cd=>{
@@ -899,7 +1017,7 @@ function wNextChar(){
     });
     wr.quiz({
       onMistake:sd=>{
-        cu.mistakes++;
+        cu.mistakes++;cu.cm=(cu.cm||0)+1;
         const n=sd.strokeNum,j=laterStroke(sd.drawnPath.points,cd.medians,n,r.cfg.sens||1);
         if(j>=0){
           const k=`${ch}:${n}:${j}`;if(!cu.keys.has(k)){cu.keys.add(k);cu.warns.push(`In ${ch}, stroke ${j+1} was drawn before stroke ${n+1}.`)}
@@ -911,21 +1029,23 @@ function wNextChar(){
         if(every)wr.highlightStroke(n);
       },
       onCorrectStroke:sd=>{showWarn(null);cu.next=sd.strokeNum+1;if(every&&sd.strokesRemaining>0)wr.highlightStroke(sd.strokeNum+1)},
-      onComplete:()=>{cu.idx++;wChips();if(cu.idx>=cu.chars.length)wFinish();else setTimeout(wNextChar,550)}
+      onComplete:()=>{
+        const g=award('write',4*(r.cfg.hints==='miss'?1.5:1)*(SENS[r.cfg.sens]||1)*(cu.cm?1:1.25)*countBonus(r.items.length),{writeChars:1});r.xp+=g;cu.xp=(cu.xp||0)+g;
+        cu.idx++;wChips();if(cu.idx>=cu.chars.length)wFinish();else setTimeout(wNextChar,550)}
     });
     if(every)wr.highlightStroke(0);
   }).catch(()=>{if(W===r&&r.cur===cu){const n=document.getElementById('wnote');if(n)n.textContent='Stroke data could not be loaded. Check your connection.'}});
 }
 function wFinish(){
-  const r=W,cu=r.cur;if(cu.finished)return;cu.finished=true;r.done++;if(!cu.mistakes)r.perfect++;
+  const r=W,cu=r.cur;if(cu.finished)return;cu.finished=true;r.done++;if(!cu.mistakes)r.perfect++;award('write',0,{writeCards:1});
   const b=document.getElementById('wbtns');if(b)b.remove();showWarn(null);
   const wn=cu.warns.length?`<div class="fb warn"><b>Stroke order warning</b>${cu.warns.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:'';
-  document.getElementById('hwfb').innerHTML=`<div class="fb ok"><b>${cu.mistakes?`Done, ${cu.mistakes} mistake${cu.mistakes==1?'':'s'}`:'Done, no mistakes'}</b><span>${esc(cu.chars.join(''))}</span></div>${wn}<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" id="wnext" data-act="wnext">${r.i+1>=r.items.length?'Finish':'Next'}</button></div>`;
+  document.getElementById('hwfb').innerHTML=`<div class="fb ok"><b>${cu.mistakes?`Done, ${cu.mistakes} mistake${cu.mistakes==1?'':'s'}`:'Done, no mistakes'}</b><span>${esc(cu.chars.join(''))}${cu.xp?`, +${fmtXp(cu.xp)} XP`:''}</span></div>${wn}<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" id="wnext" data-act="wnext">${r.i+1>=r.items.length?'Finish':'Next'}</button></div>`;
   const nb=document.getElementById('wnext');if(nb)nb.focus();
 }
 function drawWDone(){
   const r=W;
-  app.innerHTML=wHead('Finished')+`<div class="study" style="margin-top:18px"><div class="score">${r.perfect}/${r.items.length}</div><p class="sub">cards written with no mistakes${r.skipped?`, ${r.skipped} skipped`:''}</p>
+  app.innerHTML=wHead('Finished')+`<div class="study" style="margin-top:18px"><div class="score">${r.perfect}/${r.items.length}</div><p class="sub">cards written with no mistakes${r.skipped?`, ${r.skipped} skipped`:''}</p><p class="sub" style="margin-top:-8px">+${fmtXp(r.xp)} XP earned</p>
   <div class="row" style="justify-content:center"><button class="pri" data-act="wagain">Practise again</button><button data-act="wquit">Change deck</button></div></div>`;
 }
 const WACT=['wdeck','whints','wsens','word','wstart','wagain','whint','wshow','wskip','wnext','wquit','wretry'];
@@ -938,7 +1058,7 @@ async function writeAct(act,t){
   if(act==='wstart'||act==='wagain'){
     const d=wDecks.find(x=>x.id===c.deck);if(!d)return;
     let items=wItems(d);if(c.order==='shuffle')items=shuffle(items.slice());
-    W={deck:d.name||'Untitled deck',items,i:0,cfg:{...c},cur:null,done:0,perfect:0,skipped:0};drawWrite();return;
+    W={deck:d.name||'Untitled deck',items,i:0,cfg:{...c},cur:null,done:0,perfect:0,skipped:0,xp:0};drawWrite();return;
   }
   if(act==='wquit'){W=null;drawWSetup();return}
   const r=W;if(!r)return;
@@ -1040,7 +1160,7 @@ document.addEventListener('click',async e=>{
   else if(act==='nreadall'){await Promise.all(NOTIFS.filter(n=>!n.read).map(n=>{n.read=true;return put('notifications',n)}));paintBell()}
   else if(act==='nclear'){await Promise.all(NOTIFS.filter(n=>!n.dismissed).map(n=>{n.read=true;n.dismissed=true;return put('notifications',n)}));paintBell()}
   else if(act==='newhabit'){const h={id:uid(),name:'',sched:ALLD,log:{},created:Date.now(),updated:Date.now()};await put('habits',h);location.hash='#/habit/'+h.id}
-  else if(act==='hab'){const h=await get('habits',id);if(!h)return;const k=t.dataset.d;h.log=h.log||{};if(h.log[k])delete h.log[k];else h.log[k]=1;h.updated=Date.now();await put('habits',h);render()}
+  else if(act==='hab'){const h=await get('habits',id);if(!h)return;const k=t.dataset.d;h.log=h.log||{};if(h.log[k])delete h.log[k];else h.log[k]=1;h.updated=Date.now();await put('habits',h);await refreshMult();render()}
   else if(act==='hsched'){const h=await get('habits',id),n=+t.dataset.n;let sc=h.sched&&h.sched.length?[...h.sched]:[...ALLD];sc=sc.includes(n)?sc.filter(x=>x!==n):[...sc,n];if(!sc.length)return;h.sched=sc;h.updated=Date.now();await put('habits',h);habitView(id)}
   else if(act==='hmonth'){hOff+=Number(t.dataset.n);habitView(id)}
   else if(act==='askdelh'){if(await confirmBox('Delete this habit and its history?')){await del('habits',id);habitsView()}}
