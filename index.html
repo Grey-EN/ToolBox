@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@700&text=Toolbox&display=swap">
 <script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
 <style>
-:root,[data-theme=dark]{--bg:#0a0a0a;--panel:#141414;--panel2:#1d1d1d;--line:#272727;--ink:#f2f2ef;--soft:#8d8d88;--accent:#CAB14D;--accent-ink:#0a0a0a;--acc-t:#CAB14D;--warn:#ef6f63;color-scheme:dark}
-[data-theme=light]{--bg:#f4f4f1;--panel:#fff;--panel2:#efefeb;--line:#e1e1da;--ink:#151512;--soft:#6a6a63;--accent:#CAB14D;--accent-ink:#161610;--acc-t:#7a670d;--warn:#b3392f;color-scheme:light}
+:root,[data-theme=dark]{--bg:#0d0d0a;--panel:#141414;--panel2:#1d1d1d;--line:#272727;--ink:#f2f2ef;--soft:#8d8d88;--accent:#CAB14D;--accent-ink:#0a0a0a;--acc-t:#CAB14D;--warn:#ef6f63;--grid:color-mix(in srgb,var(--accent) 13%,transparent);--grid2:color-mix(in srgb,var(--accent) 21%,transparent);color-scheme:dark}
+[data-theme=light]{--bg:#f4f4f1;--panel:#fff;--panel2:#efefeb;--line:#e1e1da;--ink:#151512;--soft:#6a6a63;--accent:#CAB14D;--accent-ink:#161610;--acc-t:#7a670d;--warn:#b3392f;--grid:color-mix(in srgb,var(--accent) 20%,transparent);--grid2:color-mix(in srgb,var(--accent) 34%,transparent);color-scheme:light}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:env(safe-area-inset-bottom);-webkit-font-smoothing:antialiased}
@@ -253,6 +253,11 @@ main{padding-bottom:84px}
 .panel .sub-h{font-size:.76rem;color:var(--soft);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 2px}
 .panel .sub-h:first-child{margin-top:4px}
 select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 12px;min-width:0;max-width:100%}
+/* blueprint paper: faint yellow grid that fades out toward the bottom of the screen */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+background-image:linear-gradient(to right,var(--grid2) 1px,transparent 1px),linear-gradient(to bottom,var(--grid2) 1px,transparent 1px),linear-gradient(to right,var(--grid) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);
+background-size:224px 224px,224px 224px,56px 56px,56px 56px;background-position:-1px -1px;
+-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 30%,transparent 88%);mask-image:linear-gradient(to bottom,#000 0,#000 30%,transparent 88%)}
 </style>
 </head>
 <body>
