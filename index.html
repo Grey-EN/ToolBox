@@ -101,10 +101,10 @@ nav .menu{left:0;right:auto}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:50;padding:16px}
 .dialog{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;max-width:380px;width:100%}
 .dialog p{margin:0 0 16px;font-size:1rem;font-weight:600}
-.title,.desc{display:block;width:calc(100% + 20px);margin:14px -10px;padding:8px 10px;border:0;border-radius:12px;background:transparent}
-.title:focus-visible,.desc:focus-visible{outline-offset:0}
+.title,.desc{display:block;width:100%;margin:12px 0;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.title:focus,.desc:focus,.title:focus-visible,.desc:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .title{font-size:1.8rem;font-weight:700;letter-spacing:-.5px}
-.desc{font-size:.98rem;color:var(--soft);min-height:44px;resize:none;overflow:hidden;margin:0 -10px 16px;line-height:1.5}
+.desc{font-size:.98rem;color:var(--ink);min-height:46px;resize:none;overflow:hidden;margin:0 0 14px;line-height:1.5}
 .pre{white-space:pre-wrap}
 .editwrap{display:flex;gap:10px;align-items:flex-start;margin-top:6px}
 .edcol{position:relative;flex:1;min-width:0}
@@ -701,7 +701,19 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()
 // forgiving comparison: ignores case, extra/leading/trailing spaces, curly quotes and end punctuation
 const nrm=s=>String(s).normalize('NFC').replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/\s+/g,' ').trim().replace(/^[\s"'.,;:!?\u00A1\u00BF]+|[\s"'.,;:!?\u00A1\u00BF]+$/g,'').trim().toLowerCase();
 const fold=s=>nrm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-const parts=side=>{const set=new Set([side.trim()]);side.split(/\s*[;|\/]\s*/).forEach(x=>{if(x.trim())set.add(x.trim())});return [...set]};
+// Accepted answers for one side of a card: the whole text, each variant split by / ; |, each variant without its (bracketed note),
+// and any Japanese reading in brackets, e.g. "階 (かい)" accepts 階 and かい, and "floor (counter)" accepts floor
+const BR=/[\uFF08(]([^\uFF09)]*)[\uFF09)]/g;
+const parts=side=>{
+  const set=new Set([side.trim()]);
+  side.split(/\s*[;|\/]\s*/).forEach(v=>{
+    v=v.trim();if(!v)return;set.add(v);
+    const plain=v.replace(BR,' ').replace(/\s+/g,' ').trim();if(plain)set.add(plain);
+    for(const m of v.matchAll(BR)){const inner=m[1].trim();if(inner&&hasJa(inner))set.add(inner)}
+  });
+  return [...set];
+};
+const hasAlts=side=>side.split(/\s*[;|\/]\s*/).filter(x=>x.trim()).length>1||[...side.matchAll(BR)].some(m=>hasJa(m[1]));
 function judge(input,side){
   const i=nrm(input);if(!i)return 'wrong';
   const a=parts(side);
@@ -873,7 +885,7 @@ function drawTest(){
       ?`<p class="sub" id="wnote" style="text-align:center;margin:12px 0 4px">Loading stroke data...</p><div class="wchips" id="wchips"></div><div class="hwbox" id="hw"></div><div id="hwwarn"></div><div class="row" style="justify-content:center;margin-top:10px"><button data-act="tgive">Show answer</button></div>`
       :`<div id="hwfb"></div>`;
   }else if(cu.verdict===null){
-    body=`<div class="typed"><input id="tans" placeholder="Type the ${it.dir==='front'?'back':'front'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer"><button class="pri" data-act="tcheck">Check</button><button data-act="tskip">Skip</button></div>${cu.note?`<p class="sub" style="margin:8px 0 0">${esc(cu.note)}</p>`:''}${parts(a).length>1?'<p class="sub" style="margin:8px 0 0">Any one of the listed answers is accepted.</p>':''}`;
+    body=`<div class="typed"><input id="tans" placeholder="Type the ${it.dir==='front'?'back':'front'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer"><button class="pri" data-act="tcheck">Check</button><button data-act="tskip">Skip</button></div>${cu.note?`<p class="sub" style="margin:8px 0 0">${esc(cu.note)}</p>`:''}${hasAlts(a)?'<p class="sub" style="margin:8px 0 0">Any one of the listed answers is accepted.</p>':''}`;
   }else{
     const v=cu.verdict;
     body=`<div class="typed"><input value="${esc(cu.given)}" disabled aria-label="Your answer"></div><div class="fb ${v==='wrong'?'bad':'ok'}"><b>${v==='ok'?'Correct':v==='accent'?'Correct, but check the accents':(cu.given.trim()?'Not quite':'Skipped')}</b>${v==='ok'?'':`<span>Answer: ${esc(a)}</span>`}</div>`;
