@@ -108,7 +108,7 @@ nav .menu{left:0;right:auto}
 .pre{white-space:pre-wrap}
 .editwrap{display:flex;gap:10px;align-items:flex-start;margin-top:6px}
 .edcol{position:relative;flex:1;min-width:0}
-.tools{position:sticky;top:calc(56px + env(safe-area-inset-top) + 10px);flex:none;width:46px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px;background:var(--panel);border:1px solid var(--line);border-radius:12px;max-height:calc(100vh - 56px - env(safe-area-inset-top) - 20px);max-height:calc(100dvh - 56px - env(safe-area-inset-top) - 20px);overflow-y:auto;z-index:4}
+.tools{position:sticky;top:calc(61px + env(safe-area-inset-top) + 10px);flex:none;width:46px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px;background:var(--panel);border:1px solid var(--line);border-radius:12px;max-height:calc(100vh - 61px - env(safe-area-inset-top) - 20px);max-height:calc(100dvh - 61px - env(safe-area-inset-top) - 20px);overflow-y:auto;z-index:4}
 .tools button{width:34px;height:34px;padding:0;display:grid;place-items:center;flex:none;background:transparent;border-color:transparent;border-radius:8px;font-size:.8rem}
 .tools button:hover{background:var(--panel2);border-color:var(--line)}
 .tools button svg{margin:0;width:17px;height:17px}
@@ -227,10 +227,10 @@ background-image:linear-gradient(var(--line),var(--line)),linear-gradient(var(--
 .seg{flex-wrap:wrap}
 .flash.q.w{min-height:84px;font-size:1.4rem}
 .pick.radio .chk{border-radius:50%}
-.xpbar{position:fixed;left:0;right:0;bottom:0;height:6px;background:var(--panel2);z-index:30}
+.xpbar{position:relative;height:5px;margin:0 -16px;background:var(--panel2)}
 .xpbar i{display:block;height:100%;background:var(--accent);transition:width .4s ease}
 .xpbar::after,.pbar::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to right,transparent 0,transparent calc(10% - 1px),var(--bg) calc(10% - 1px),var(--bg) 10%)}
-main{padding-bottom:84px}
+main{padding-bottom:70px}
 .menu svg{width:16px;height:16px;margin:0 10px 0 0;vertical-align:-3px}
 #usermenu .menu{min-width:190px}
 .lvl{text-align:right;text-decoration:none;color:var(--ink);line-height:1;flex:none;padding-left:12px}
@@ -258,15 +258,34 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 background-image:linear-gradient(to right,var(--grid2) 1px,transparent 1px),linear-gradient(to bottom,var(--grid2) 1px,transparent 1px),linear-gradient(to right,var(--grid) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);
 background-size:224px 224px,224px 224px,56px 56px,56px 56px;background-position:-1px -1px;
 -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 30%,transparent 88%);mask-image:linear-gradient(to bottom,#000 0,#000 30%,transparent 88%)}
+.script{min-height:240px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92rem;line-height:1.7}
+.chat{display:grid;gap:12px;margin-top:14px}
+.panel .chat{margin-top:6px}
+.msg{display:flex;gap:10px;align-items:flex-end}
+.msg.b{flex-direction:row-reverse}
+.msg .who{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.82rem;background:var(--panel2);color:var(--soft)}
+.msg.b .who{background:color-mix(in srgb,var(--accent) 25%,var(--panel2));color:var(--acc-t)}
+.bub{background:var(--panel);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:8px 14px;line-height:2.2;overflow-wrap:anywhere;max-width:min(82%,600px)}
+.msg.b .bub{border-radius:16px 16px 4px 16px;border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.gap{display:inline-block;vertical-align:baseline;padding:1px 8px;margin:0 2px;border-radius:8px;border:1px dashed var(--accent);background:var(--bg);color:var(--ink);font:inherit;font-weight:600;text-align:center;line-height:1.6;min-height:1.6em}
+input.gap{width:auto;padding:1px 6px}
+button.gap{cursor:pointer}
+.gap.filled{border-style:solid}
+.gap.ok{border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 22%,var(--bg))}
+.gap.bad{border:1px solid var(--warn);color:var(--warn)}
+.gap.ghost{border-style:dashed;color:var(--acc-t);background:transparent}
+.fix{display:inline-block;margin-left:2px;font-size:.85em;color:var(--acc-t);font-weight:700}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);position:sticky;bottom:12px;z-index:5;box-shadow:0 -6px 20px rgba(0,0,0,.25)}
+.chipw{padding:7px 14px;border-radius:99px;background:var(--panel2);font-weight:600}
 </style>
 </head>
 <body>
 <header><div class="bar"><a class="brand" href="#/home" aria-label="Toolbox home"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></i><b>Toolbox</b></a>
-<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/write">Write</a><a href="#/habits">Habits</a><a href="#/notes">Notes</a></div></div></nav>
+<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/write">Write</a><a href="#/convos">Conversations</a><a href="#/habits">Habits</a><a href="#/notes">Notes</a></div></div></nav>
 <div class="acts"><div class="menuwrap notifwrap" id="notifwrap" hidden><button class="circle ghost" id="bell" data-act="menu" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button><div class="menu notifs" id="notifs"></div></div>
-<div class="menuwrap" id="usermenu"><button class="circle ghost" id="burger" data-act="menu" title="Menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="menu"><a href="#/profile" id="mProfile" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profile</a><button id="theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Switch theme</button><button id="out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></div></div></div></div></header>
+<div class="menuwrap" id="usermenu"><button class="circle ghost" id="burger" data-act="menu" title="Menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="menu"><a href="#/profile" id="mProfile" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profile</a><button id="theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Switch theme</button><button id="out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></div></div></div></div>
+<div class="xpbar" id="xpbar" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" hidden><i id="xpfill"></i></div></header>
 <main id="app"></main>
-<div class="xpbar" id="xpbar" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" hidden><i id="xpfill"></i></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
@@ -444,7 +463,7 @@ async function route(){
 async function render(){
   const [,page,id]=(location.hash||'#/home').split('/');
   document.getElementById('n-home').className=page==='home'?'on':'';
-  document.getElementById('n-tools').className='navbtn'+(['cards','folder','study','test','write','notes','note','habits','habit'].includes(page)?' on':'');
+  document.getElementById('n-tools').className='navbtn'+(['cards','folder','study','test','write','convos','convo','convoedit','notes','note','habits','habit'].includes(page)?' on':'');
   if(page==='home')return homeView();
   if(page==='profile')return profileView();
   if(page==='folder')return folderView(id);
@@ -453,6 +472,9 @@ async function render(){
   if(page==='study')return studyView(id);
   if(page==='test')return testView();
   if(page==='write')return writeView();
+  if(page==='convos')return convosView();
+  if(page==='convo')return convoView(id);
+  if(page==='convoedit')return convoEdit(id);
   if(page==='habits')return habitsView();
   if(page==='habit')return habitView(id);
   if(page==='notes')return notesView();
@@ -476,15 +498,16 @@ async function profileView(){
   ${MULT.parts.length?MULT.parts.map(p=>`<div class="hrow"><span style="flex:1;min-width:0;overflow-wrap:anywhere">${esc(p.name)}</span><span class="pill">${p.streak} day streak</span><b>+${p.bonus.toFixed(2)}</b></div>`).join(''):'<p class="sub" style="margin:10px 0 0">No habit streaks yet. Check off habits day after day to boost your XP.</p>'}
   <p class="sub" style="margin:10px 0 0;font-size:.82rem">Each habit adds 0.01 per streak day, up to +0.50 per habit (a 50 day streak). The bonuses add together.</p></div>
   <h2 class="h2">XP earned</h2>
-  <div class="stats">${blk(n(by.flash),'Flashcards')}${blk(n(by.test),'Test')}${blk(n(by.write),'Write')}</div>
+  <div class="stats">${blk(n(by.flash),'Flashcards')}${blk(n(by.test),'Test')}${blk(n(by.write),'Write')}${blk(n(by.convo),'Conversations')}</div>
   <h2 class="h2">Activity</h2>
-  <div class="stats">${blk(n(st.flashCards),'cards studied')}${blk(pc(st.flashCorrect,st.flashCards),'flashcard accuracy')}${blk(n(st.testsDone),'tests finished')}${blk(n(st.testQs),'test questions')}${blk(pc(st.testCorrect,st.testQs),'test accuracy')}${blk(n(st.writeChars),'characters written')}${blk(n(st.writeCards),'cards written')}</div>
+  <div class="stats">${blk(n(st.flashCards),'cards studied')}${blk(pc(st.flashCorrect,st.flashCards),'flashcard accuracy')}${blk(n(st.testsDone),'tests finished')}${blk(n(st.testQs),'test questions')}${blk(pc(st.testCorrect,st.testQs),'test accuracy')}${blk(n(st.writeChars),'characters written')}${blk(n(st.writeCards),'cards written')}${blk(n(st.convoGaps),'gaps filled')}${blk(pc(st.convoCorrect,st.convoGaps),'gap accuracy')}</div>
   <div class="stats">${blk(n(checks),'habit check-ins')}${blk(n(best),'best habit streak (days)')}${blk(n(habits.length),'habits')}${blk(n(decks.length),'decks')}${blk(n(cardsN),'flashcards made')}${blk(n(notes.length),'notes')}</div>
   <h2 class="h2">How XP works</h2>
   <div class="panel howxp">
   <p><b>Flashcards:</b> 1 XP per correct card. x1.5 for multiple choice, x1.1 for studying all cards, and longer sessions earn more (10 cards x1.1, 20 x1.25, 50 x1.5).</p>
   <p><b>Test:</b> the most XP. 2 per multiple choice answer, 3 per typed answer and 5 per character written. Bonuses: Mixed x1.25, Either side x1.1, several decks x1.1, all decks or a random mix x1.25, and the same question count bonuses.</p>
   <p><b>Write:</b> 4 XP per character, about the same as flashcards. x1.5 when hints only appear after a miss, x1.3 on Strict (x0.9 Relaxed, x0.8 Very relaxed), x1.25 for no mistakes, plus the session size bonus.</p>
+  <p><b>Conversations:</b> 2 XP per correct gap with the word bank and 3 when you type it, plus the same session size bonuses (10 gaps x1.1, 20 x1.25, 50 x1.5).</p>
   <p><b>Wrong answers</b> earn a quarter of the XP. <b>Streaks</b> multiply everything, as shown above.</p></div>`;
 }
 
@@ -532,6 +555,7 @@ async function homeView(){
   <div class="grid"><a class="tile tool" href="#/cards"><b>Flashcards</b><p>Make decks, paste in lists, and study.</p></a>
   <a class="tile tool" href="#/test"><b>Test</b><p>Quiz yourself on any decks.</p></a>
   <a class="tile tool" href="#/write"><b>Write</b><p>Practise kana and kanji stroke by stroke.</p></a>
+  <a class="tile tool" href="#/convos"><b>Conversations</b><p>Fill in the gaps in A/B scripts.</p></a>
   <a class="tile tool" href="#/habits"><b>Habits</b><p>Daily check-offs and streaks.</p></a>
   <a class="tile tool" href="#/notes"><b>Notes</b><p>Rich text notes with photos.</p></a></div>
   <h2 class="h2">Habits</h2>
@@ -1143,6 +1167,116 @@ async function writeAct(act,t){
   }
 }
 
+// ---------- conversations (A/B scripts with gaps) ----------
+const GAP=/[\[\uFF3B]([^\]\uFF3D]+)[\]\uFF3D]/g;
+// one line per turn; "A:" / "B:" at the start picks the speaker, otherwise the speakers alternate
+function parseScript(text){
+  const out=[];let next='A';
+  String(text||'').split(/\r?\n/).forEach(raw=>{
+    const l=raw.trim();if(!l)return;
+    const m=l.match(/^([ABab])\s*[:\uFF1A.\uFF0E)\uFF09]\s*(.*)$/);
+    const who=m?m[1].toUpperCase():next,body=(m?m[2]:l).trim();
+    if(!body)return;out.push({who,text:body});next=who==='A'?'B':'A';
+  });
+  return out;
+}
+const segs=text=>{const out=[];let last=0;for(const m of text.matchAll(GAP)){if(m.index>last)out.push({t:'text',v:text.slice(last,m.index)});out.push({t:'gap',v:m[1].trim()});last=m.index+m[0].length}if(last<text.length)out.push({t:'text',v:text.slice(last)});return out};
+const gapCount=text=>parseScript(text).reduce((a,l)=>a+segs(l.text).filter(x=>x.t==='gap').length,0);
+const bankLabel=a=>a.split(/\s*[;|\/]\s*/)[0].replace(BR,' ').replace(/\s+/g,' ').trim()||a;
+const gapWidth=a=>Math.max(5,[...a].reduce((n,c)=>n+(c.charCodeAt(0)>255?2:1),0)+2);
+function convoTile(c){
+  const n=parseScript(c.script).length,g=gapCount(c.script);
+  return `<div class="deckwrap"><a class="tile" href="#/convo/${c.id}"><b>${esc(c.name||'Untitled conversation')}</b>${c.desc?`<p>${esc(c.desc)}</p>`:''}<div class="pills"><span class="pill">${n} line${n==1?'':'s'}</span><span class="pill">${g} gap${g==1?'':'s'}</span></div></a><div class="menuwrap">${dotsBtn('Conversation options')}<div class="menu"><a href="#/convoedit/${c.id}">Edit</a><button class="del" data-act="askdelc" data-id="${c.id}">Delete</button></div></div></div>`;
+}
+async function convosView(){
+  const cs=(await all('convos')).sort((a,b)=>(b.updated||0)-(a.updated||0));
+  app.innerHTML=`<h1>Conversations</h1><p class="sub">Practise A/B scripts by filling in the missing words.</p>
+  <div class="row between"><button class="pri" data-act="newconvo">+ New conversation</button><span class="row">${backupBtns('convos')}</span></div>
+  ${cs.length?`<div class="grid">${cs.map(convoTile).join('')}</div>`:'<div class="empty">No conversations yet. Create one and paste in a script.</div>'}`;
+}
+const bubbles=(lines,gapHtml)=>lines.map(l=>`<div class="msg ${l.who==='A'?'a':'b'}"><span class="who">${l.who}</span><div class="bub">${segs(l.text).map(x=>x.t==='text'?esc(x.v):gapHtml(x.v)).join('')}</div></div>`).join('');
+async function convoEdit(id){
+  const c=await get('convos',id);if(!c){location.hash='#/convos';return}
+  app.innerHTML=`<div class="row" style="justify-content:flex-end">${BACK('#/convos')}</div>
+  <input class="title" id="ctitle" placeholder="Conversation name" value="${esc(c.name)}">
+  <textarea class="desc" id="cdesc" rows="1" placeholder="Add a description">${esc(c.desc||'')}</textarea>
+  <div class="row between"><p class="sub" id="csum" style="margin:0"></p><div class="row"><button class="pri" data-act="cstudy" data-id="${id}">Practise</button><button class="del" data-act="delconvo" data-id="${id}">Delete</button></div></div>
+  <div class="panel"><h2>Script</h2><p class="sub" style="margin:0 0 8px">Paste or type the conversation, one line per turn. Start a line with <b>A:</b> or <b>B:</b> (lines without it alternate A, B). Put the words to hide in <b>[square brackets]</b>. A gap can list several accepted answers, like <b>[はい/ええ]</b>.</p>
+  <textarea id="cscript" class="script" placeholder="A: [はじめまして]。わたしは[タナカ]です。&#10;B: [はじめまして]。よろしくおねがいします。">${esc(c.script||'')}</textarea></div>
+  <div class="panel"><h2>Preview</h2><div class="chat" id="cprev"></div></div>`;
+  const ti=document.getElementById('ctitle'),de=document.getElementById('cdesc'),sc=document.getElementById('cscript');
+  if(!c.name)ti.focus();grow(de);
+  const refresh=()=>{
+    const ls=parseScript(sc.value),g=gapCount(sc.value);
+    document.getElementById('csum').textContent=`${ls.length} line${ls.length==1?'':'s'}, ${g} gap${g==1?'':'s'}`;
+    document.getElementById('cprev').innerHTML=ls.length?bubbles(ls,v=>`<span class="gap ghost">${esc(v)}</span>`):'<div class="empty" style="padding:14px 0">Nothing to preview yet.</div>';
+  };
+  refresh();
+  const sv=()=>{clearTimeout(saveTimer);pending=async()=>{const x=await get('convos',id);if(!x)return;x.name=ti.value;x.desc=de.value;x.script=sc.value;x.updated=Date.now();await put('convos',x)};saveTimer=setTimeout(flush,600)};
+  ti.addEventListener('input',sv);de.addEventListener('input',()=>{grow(de);sv()});sc.addEventListener('input',()=>{refresh();sv()});
+}
+// ----- practice -----
+let CV=null;
+const convoMode=()=>{try{return localStorage.getItem('convoMode')==='bank'?'bank':'type'}catch(e){return 'type'}};
+function makeConvo(c,mode){
+  const lines=parseScript(c.script),gaps=[];
+  const L=lines.map(l=>({who:l.who,segs:segs(l.text).map(x=>x.t==='gap'?(gaps.push({answer:x.v,val:'',chip:null,res:null}),{t:'gap',i:gaps.length-1}):x)}));
+  const bank=shuffle(gaps.map((g,i)=>({id:i,label:bankLabel(g.answer),used:false})));
+  return {id:c.id,c,L,gaps,bank,mode,checked:false,score:0,xp:0};
+}
+async function convoView(id){
+  const c=await get('convos',id);if(!c){location.hash='#/convos';return}
+  CV=makeConvo(c,convoMode());drawConvo();
+}
+function drawConvo(){
+  const v=CV,c=v.c,n=v.gaps.length,empty=v.gaps.filter(g=>g.chip===null).length,bk=id=>v.bank.find(x=>x.id===id);
+  const seg=`<div class="ctl" style="justify-content:flex-start;margin:12px 0"><div class="seg"><button class="${v.mode==='type'?'on':''}" data-act="cmode" data-v="type">Type the words</button><button class="${v.mode==='bank'?'on':''}" data-act="cmode" data-v="bank">Word bank</button></div></div>`;
+  const gapHtml=i=>{
+    const g=v.gaps[i],w=gapWidth(bankLabel(g.answer)),cls=g.res?(g.res==='ok'?'ok':'bad'):'';
+    const fix=g.res==='bad'?`<span class="fix">${esc(bankLabel(g.answer))}</span>`:'';
+    if(v.mode==='type')return `<input class="gap ${cls}" data-g="${i}" value="${esc(g.val)}" style="width:${w}ch" ${v.checked?'readonly':''} autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Gap ${i+1}">${fix}`;
+    const label=g.chip!==null?esc(bk(g.chip).label):'';
+    return `<button class="gap ${cls} ${g.chip===null?'':'filled'}" data-act="cslot" data-g="${i}" style="min-width:${w}ch" ${v.checked?'disabled':''} aria-label="Gap ${i+1}">${label||'&nbsp;'}</button>${fix}`;
+  };
+  const chat=v.L.length?`<div class="chat">${v.L.map(l=>`<div class="msg ${l.who==='A'?'a':'b'}"><span class="who">${l.who}</span><div class="bub">${l.segs.map(x=>x.t==='text'?esc(x.v):(x.t==='gap'?gapHtml(x.i):'')).join('')}</div></div>`).join('')}</div>`:'<div class="empty">This conversation has no script yet.</div>';
+  let foot='';
+  if(!n&&v.L.length)foot='<div class="empty">No gaps yet. Put the words to hide in [square brackets] in the script.</div>';
+  else if(n&&!v.checked){
+    foot=(v.mode==='bank'?`<div class="bank">${v.bank.filter(b=>!b.used).map(b=>`<button class="chipw" data-act="cchip" data-b="${b.id}">${esc(b.label)}</button>`).join('')||'<span class="sub" style="margin:0">All words placed. Tap a filled gap to take its word back.</span>'}</div>`:'')
+      +`<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" data-act="ccheck" ${v.mode==='bank'&&empty?'disabled':''}>Check answers</button></div>`;
+  }else if(n){
+    foot=`<div class="panel" style="text-align:center"><div class="score">${v.score}/${n}</div><p class="sub">${v.score===n?'Perfect. ':''}gaps correct${v.xp?`, +${fmtXp(v.xp)} XP`:''}</p><div class="row" style="justify-content:center"><button class="pri" data-act="cagain">Try again</button><a class="btn" href="#/convoedit/${c.id}" style="text-decoration:none">Edit script</a></div></div>`;
+  }
+  app.innerHTML=`<div class="row between" style="align-items:flex-start"><div style="min-width:0"><h1>${esc(c.name||'Untitled conversation')}</h1>${c.desc?`<p class="sub pre" style="margin:0">${esc(c.desc)}</p>`:''}</div>${BACK('#/convos')}</div>${n?seg:''}${chat}${foot}`;
+}
+const CACT=['cmode','cchip','cslot','ccheck','cagain'];
+function convoAct(act,t){
+  const v=CV;if(!v)return;const bk=id=>v.bank.find(x=>x.id===id);
+  if(act==='cmode'){try{localStorage.setItem('convoMode',t.dataset.v)}catch(e){}CV=makeConvo(v.c,t.dataset.v);drawConvo()}
+  else if(act==='cagain'){CV=makeConvo(v.c,v.mode);drawConvo()}
+  else if(act==='cchip'){const b=bk(+t.dataset.b),gi=v.gaps.findIndex(g=>g.chip===null);if(!b||b.used||gi<0||v.checked)return;v.gaps[gi].chip=b.id;b.used=true;drawConvo()}
+  else if(act==='cslot'){const g=v.gaps[+t.dataset.g];if(v.checked||!g||g.chip===null)return;bk(g.chip).used=false;g.chip=null;drawConvo()}
+  else if(act==='ccheck'){
+    if(v.checked)return;
+    if(v.mode==='type')document.querySelectorAll('input.gap[data-g]').forEach(inp=>{v.gaps[+inp.dataset.g].val=inp.value});
+    let ok=0,base=0;const per=v.mode==='type'?3:2;
+    v.gaps.forEach(g=>{
+      const given=v.mode==='type'?g.val:(g.chip!==null?bk(g.chip).label:'');
+      g.res=given.trim()&&judge(given,g.answer)!=='wrong'?'ok':'bad';
+      if(g.res==='ok'){ok++;base+=per}else base+=per*0.25;
+    });
+    v.checked=true;v.score=ok;
+    v.xp=award('convo',base*countBonus(v.gaps.length),{convoGaps:v.gaps.length,convoCorrect:ok,convoDone:ok===v.gaps.length?1:0});
+    drawConvo();
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'||!e.target.matches||!e.target.matches('input.gap[data-g]'))return;
+  e.preventDefault();
+  const nx=document.querySelector(`input.gap[data-g="${+e.target.dataset.g+1}"]`);
+  if(nx)nx.focus();else{const b=document.querySelector('[data-act="ccheck"]');if(b)b.click()}
+});
+
 // ---------- notes ----------
 async function notesView(){
   const notes=(await all('notes')).sort((a,b)=>b.updated-a.updated);
@@ -1239,6 +1373,12 @@ document.addEventListener('click',async e=>{
       if(act==='delfolder')location.hash='#/cards';else decksView();
     }
   }
+  else if(CACT.includes(act)){convoAct(act,t)}
+  else if(act==='newconvo'){const c={id:uid(),name:'',desc:'',script:'',created:Date.now(),updated:Date.now()};await put('convos',c);location.hash='#/convoedit/'+c.id}
+  else if(act==='cstudy'){location.hash='#/convo/'+id}
+  else if(act==='delconvo'||act==='askdelc'){
+    if(await confirmBox('Delete this conversation?')){pending=null;clearTimeout(saveTimer);await del('convos',id);if(act==='delconvo')location.hash='#/convos';else convosView()}
+  }
   else if(act==='newhabit'){const h={id:uid(),name:'',sched:ALLD,log:{},created:Date.now(),updated:Date.now()};await put('habits',h);location.hash='#/habit/'+h.id}
   else if(act==='hab'){const h=await get('habits',id);if(!h)return;const k=t.dataset.d;h.log=h.log||{};if(h.log[k])delete h.log[k];else h.log[k]=1;h.updated=Date.now();await put('habits',h);await refreshMult();render()}
   else if(act==='hsched'){const h=await get('habits',id),n=+t.dataset.n;let sc=h.sched&&h.sched.length?[...h.sched]:[...ALLD];sc=sc.includes(n)?sc.filter(x=>x!==n):[...sc,n];if(!sc.length)return;h.sched=sc;h.updated=Date.now();await put('habits',h);habitView(id)}
@@ -1254,9 +1394,9 @@ document.addEventListener('click',async e=>{
   else if(act==='export'){
     const k=t.dataset.kind,data=JSON.stringify({[k]:await all(k),...(k==='decks'?{folders:await all('folders')}:{})});
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
-    a.download='toolbox-'+({decks:'flashcards',notes:'notes',habits:'habits'}[k])+'-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+    a.download='toolbox-'+({decks:'flashcards',notes:'notes',habits:'habits',convos:'conversations'}[k])+'-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
   }
-  else if(act==='import'){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=async()=>{try{const j=JSON.parse(await inp.files[0].text());for(const f of j.folders||[])await put('folders',f);for(const d of j.decks||[])await put('decks',d);for(const n of j.notes||[])await put('notes',n);for(const h of j.habits||[])await put('habits',h);alert('Backup restored.');route()}catch{alert('That file is not a valid backup.')}};inp.click()}
+  else if(act==='import'){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=async()=>{try{const j=JSON.parse(await inp.files[0].text());for(const f of j.folders||[])await put('folders',f);for(const d of j.decks||[])await put('decks',d);for(const n of j.notes||[])await put('notes',n);for(const h of j.habits||[])await put('habits',h);for(const c of j.convos||[])await put('convos',c);alert('Backup restored.');route()}catch{alert('That file is not a valid backup.')}};inp.click()}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('flash'))e.target.click()});
 </script>
