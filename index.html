@@ -4729,19 +4729,38 @@ const convoMode = () => {
   }
 };
 /** Set up a practice attempt: parse the script, number the gaps and shuffle the word bank. */
-function makeConvo(c, mode) {
+/** Is this text written only in kana (hiragana or katakana)? */
+const KANA_ONLY = /^[\u3041-\u3096\u309D\u309E\u30A1-\u30FA\u30FC\s]+$/;
+
+/** The kana-only forms of a gap's answer (its readings), or the answer itself if it has none. */
+function kanaOnly(answer) {
+  const kana = parts(answer).filter((p) => KANA_ONLY.test(p));
+  return kana.length ? kana.join('/') : answer;
+}
+
+/** The remembered practice writing: false = normal, true = kana only. */
+const convoKana = () => {
+  try {
+    return localStorage.getItem('convoKana') === '1';
+  } catch (e) {
+    return false;
+  }
+};
+
+function makeConvo(c, mode, kana) {
   const lines = parseScript(c.script),
     gaps = [];
   const L = lines.map((l) => ({
     who: l.who,
     segs: segs(l.text).map((x) =>
       x.t === 'gap'
-        ? (gaps.push({ answer: x.v, val: '', chip: null, res: null }), { t: 'gap', i: gaps.length - 1 })
+        ? (gaps.push({ answer: kana ? kanaOnly(x.v) : x.v, val: '', chip: null, res: null }),
+          { t: 'gap', i: gaps.length - 1 })
         : x
     ),
   }));
   const bank = shuffle(gaps.map((g, i) => ({ id: i, label: bankLabel(g.answer), used: false })));
-  return { id: c.id, c, L, gaps, bank, mode, checked: false, score: 0, xp: 0 };
+  return { id: c.id, c, L, gaps, bank, mode, kana: !!kana, checked: false, score: 0, xp: 0 };
 }
 /** Load a conversation and start practising it. */
 async function convoView(id) {
@@ -4750,7 +4769,7 @@ async function convoView(id) {
     location.hash = '#/convos';
     return;
   }
-  CV = makeConvo(c, convoMode());
+  CV = makeConvo(c, convoMode(), convoKana());
   drawConvo();
 }
 /** Draw the practice screen: chat, word bank or typed gaps, and the result. */
@@ -4765,7 +4784,12 @@ function drawConvo() {
       <button class="${v.mode === 'type' ? 'on' : ''}" data-act="cmode" data-v="type">Type the words</button
       ><button class="${v.mode === 'bank' ? 'on' : ''}" data-act="cmode" data-v="bank">Word bank</button>
     </div>
-  </div>`;
+    <div class="seg">
+      <button class="${v.kana ? '' : 'on'}" data-act="ckana" data-v="0">Normal</button
+      ><button class="${v.kana ? 'on' : ''}" data-act="ckana" data-v="1">Kana only</button>
+    </div>
+  </div>
+  ${v.kana ? '<p class="sub" style="margin:0 0 4px">Kana only: answers are the readings, written in kana.</p>' : ''}`;
   const gapHtml = (i) => {
     const g = v.gaps[i],
       w = gapWidth(bankLabel(g.answer)),
@@ -4856,8 +4880,8 @@ function drawConvo() {
     </div>
     ${n ? seg : ''}${chat}${foot}`;
 }
-const CACT = ['cmode', 'cchip', 'cslot', 'ccheck', 'cagain'];
-/** Handle the practice buttons: mode, word bank, check answers, try again. */
+const CACT = ['cmode', 'ckana', 'cchip', 'cslot', 'ccheck', 'cagain'];
+/** Handle the practice buttons: mode, kana only, word bank, check answers, try again. */
 function convoAct(act, t) {
   const v = CV;
   if (!v) return;
@@ -4866,10 +4890,16 @@ function convoAct(act, t) {
     try {
       localStorage.setItem('convoMode', t.dataset.v);
     } catch (e) {}
-    CV = makeConvo(v.c, t.dataset.v);
+    CV = makeConvo(v.c, t.dataset.v, v.kana);
+    drawConvo();
+  } else if (act === 'ckana') {
+    try {
+      localStorage.setItem('convoKana', t.dataset.v);
+    } catch (e) {}
+    CV = makeConvo(v.c, v.mode, t.dataset.v === '1');
     drawConvo();
   } else if (act === 'cagain') {
-    CV = makeConvo(v.c, v.mode);
+    CV = makeConvo(v.c, v.mode, v.kana);
     drawConvo();
   } else if (act === 'cchip') {
     const b = bk(+t.dataset.b),
