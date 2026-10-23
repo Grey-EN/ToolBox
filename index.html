@@ -4688,7 +4688,9 @@ async function convoEdit(id) {
       <p class="sub" style="margin:0 0 8px">
         Paste or type the conversation, one line per turn. Start a line with <b>A:</b> or <b>B:</b> (lines
         without it alternate A, B). Put the words to hide in <b>[square brackets]</b>. A gap can list several
-        accepted answers, like <b>[はい/ええ]</b>.
+        accepted answers, like <b>[はい/ええ]</b>. For kana only practice, put a kanji's reading in (brackets)
+        straight after it, like <b>私(わたし)</b> or <b>行きます(いきます)</b>: kana only shows the reading,
+        normal practice shows the kanji.
       </p>
       <textarea
         id="cscript"
@@ -4729,6 +4731,56 @@ const convoMode = () => {
   }
 };
 /** Set up a practice attempt: parse the script, number the gaps and shuffle the word bank. */
+const KANJI_CHAR = /[\u3400-\u4DBF\u4E00-\u9FFF\u3005]/;
+const KANJI_RUN = /[\u3400-\u4DBF\u4E00-\u9FFF\u3005]+/;
+const KANA_CHAR = /[\u3041-\u3096\u30A1-\u30FA\u30FC]/;
+// a word (kanji and kana) directly followed by a reading in brackets: 私(わたし), 行きます(いきます)
+const WORD_WITH_READING =
+  /([\u3400-\u4DBF\u4E00-\u9FFF\u3005\u3041-\u3096\u30A1-\u30FA\u30FC]+)[(\uFF08]([\u3041-\u3096\u30A1-\u30FA\u30FC]+)[)\uFF09]/g;
+
+/**
+ * Could `reading` be the reading of `word` (kanji plus any kana around them)?
+ * The kana already in the word must show up in the reading: at its start, at its end, and in order in between.
+ * So 行きます fits いきます, and お国 fits おくに, but 私は does not fit がくせい.
+ */
+function fitsReading(word, reading) {
+  const chars = Array.from(word);
+  let first = 0;
+  while (first < chars.length && KANA_CHAR.test(chars[first])) first++;      // kana before the first kanji
+  if (first >= chars.length) return false;                                   // no kanji at all
+  let end = chars.length;
+  while (end > first && KANA_CHAR.test(chars[end - 1])) end--;               // kana after the last kanji
+  const lead = chars.slice(0, first).join('');
+  const tail = chars.slice(end).join('');
+  if (lead && !reading.startsWith(lead)) return false;
+  if (tail && !reading.endsWith(tail)) return false;
+  const limit = reading.length - tail.length;
+  let pos = lead.length;
+  const kanaBetween = chars.slice(first, end).join('').split(KANJI_RUN).filter(Boolean);
+  for (const kana of kanaBetween) {
+    const at = reading.indexOf(kana, pos);
+    if (at < 0 || at + kana.length > limit) return false;
+    pos = at + kana.length;
+  }
+  return limit > lead.length;   // the kanji themselves need some reading left
+}
+
+/**
+ * Handle readings written in brackets after kanji in a script line.
+ * Kana only: show the reading instead of the kanji. Normal: show the kanji and hide the reading.
+ * Brackets that do not look like a reading (notes, English, no kanji before them) are left alone.
+ */
+function applyReadings(text, kana) {
+  return text.replace(WORD_WITH_READING, (match, token, reading) => {
+    const chars = Array.from(token);
+    for (let start = 0; start < chars.length; start++) {       // try the longest word first
+      const word = chars.slice(start).join('');
+      if (fitsReading(word, reading)) return chars.slice(0, start).join('') + (kana ? reading : word);
+    }
+    return match;
+  });
+}
+
 /** Is this text written only in kana (hiragana or katakana)? */
 const KANA_ONLY = /^[\u3041-\u3096\u309D\u309E\u30A1-\u30FA\u30FC\s]+$/;
 
@@ -4756,7 +4808,7 @@ function makeConvo(c, mode, kana) {
       x.t === 'gap'
         ? (gaps.push({ answer: kana ? kanaOnly(x.v) : x.v, val: '', chip: null, res: null }),
           { t: 'gap', i: gaps.length - 1 })
-        : x
+        : { t: 'text', v: applyReadings(x.v, kana) }
     ),
   }));
   const bank = shuffle(gaps.map((g, i) => ({ id: i, label: bankLabel(g.answer), used: false })));
@@ -4789,7 +4841,7 @@ function drawConvo() {
       ><button class="${v.kana ? 'on' : ''}" data-act="ckana" data-v="1">Kana only</button>
     </div>
   </div>
-  ${v.kana ? '<p class="sub" style="margin:0 0 4px">Kana only: answers are the readings, written in kana.</p>' : ''}`;
+  ${v.kana ? '<p class="sub" style="margin:0 0 4px">Kana only: words with a reading in (brackets) are shown in kana, and answers are written in kana.</p>' : ''}`;
   const gapHtml = (i) => {
     const g = v.gaps[i],
       w = gapWidth(bankLabel(g.answer)),
