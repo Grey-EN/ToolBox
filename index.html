@@ -1748,11 +1748,84 @@ button.gap {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+/* Stages */
+.rich p {
+  margin: 0 0 12px;
+  line-height: 1.7;
+}
+.rich ul {
+  margin: 0 0 12px;
+  padding-left: 22px;
+  line-height: 1.7;
+}
+.rich b {
+  color: var(--acc-t);
+}
+.stitle {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+}
+.step {
+  padding: 18px;
+}
+.comp {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.comp summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.comp summary::-webkit-details-marker {
+  display: none;
+}
+.ctype {
+  flex: none;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--acc-t);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.csum {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cbody {
+  padding: 0 14px 14px;
+}
+.fld {
+  display: block;
+  margin-bottom: 12px;
+}
+.fld span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.fld small {
+  display: block;
+  margin-top: 4px;
+  color: var(--soft);
+  font-size: 0.78rem;
+}
 </style>
 </head>
 <body>
 <header><div class="bar"><a class="brand" href="#/home" aria-label="Toolbox home"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></i><b>Toolbox</b></a>
-<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><span class="grp">Study</span><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/write">Write</a><a href="#/convos">Conversations</a><span class="grp">General</span><a href="#/habits">Habits</a><a href="#/notes">Notes</a><a href="#/dictionary">Dictionary</a></div></div></nav>
+<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><span class="grp">Study</span><a href="#/stages">Stages</a><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/write">Write</a><a href="#/convos">Conversations</a><span class="grp">General</span><a href="#/habits">Habits</a><a href="#/notes">Notes</a><a href="#/dictionary">Dictionary</a></div></div></nav>
 <div class="acts"><div class="menuwrap notifwrap" id="notifwrap" hidden><button class="circle ghost" id="bell" data-act="menu" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button><div class="menu notifs" id="notifs"></div></div>
 <div class="menuwrap" id="usermenu"><button class="circle ghost" id="burger" data-act="menu" title="Menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="menu"><a href="#/profile" id="mProfile" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profile</a><button id="theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Switch theme</button><button id="out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></div></div></div></div>
 <div class="xpbar" id="xpbar" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" hidden><i id="xpfill"></i></div></header>
@@ -2356,6 +2429,9 @@ async function render() {
       'habits',
       'habit',
       'dictionary',
+      'stages',
+      'stage',
+      'stageedit',
     ].includes(page)
       ? ' on'
       : '');
@@ -2371,6 +2447,9 @@ async function render() {
   if (page === 'convo') return convoView(id);
   if (page === 'convoedit') return convoEdit(id);
   if (page === 'dictionary') return dictionaryView();
+  if (page === 'stages') return stagesView();
+  if (page === 'stage') return stageView(id);
+  if (page === 'stageedit') return stageEdit(id);
   if (page === 'habits') return habitsView();
   if (page === 'habit') return habitView(id);
   if (page === 'notes') return notesView();
@@ -2422,11 +2501,11 @@ async function profileView() {
     </div>
     <h2 class="h2">XP earned</h2>
     <div class="stats">
-      ${blk(n(by.flash), 'Flashcards')}${blk(n(by.test), 'Test')}${blk(n(by.write), 'Write')}${blk(n(by.convo), 'Conversations')}
+      ${blk(n(by.flash), 'Flashcards')}${blk(n(by.test), 'Test')}${blk(n(by.write), 'Write')}${blk(n(by.convo), 'Conversations')}${blk(n(by.stage), 'Stages')}
     </div>
     <h2 class="h2">Activity</h2>
     <div class="stats">
-      ${blk(n(st.flashCards), 'cards studied')}${blk(pc(st.flashCorrect, st.flashCards), 'flashcard accuracy')}${blk(n(st.testsDone), 'tests finished')}${blk(n(st.testQs), 'test questions')}${blk(pc(st.testCorrect, st.testQs), 'test accuracy')}${blk(n(st.writeChars), 'characters written')}${blk(n(st.writeCards), 'cards written')}${blk(n(st.convoGaps), 'gaps filled')}${blk(pc(st.convoCorrect, st.convoGaps), 'gap accuracy')}
+      ${blk(n(st.flashCards), 'cards studied')}${blk(pc(st.flashCorrect, st.flashCards), 'flashcard accuracy')}${blk(n(st.testsDone), 'tests finished')}${blk(n(st.testQs), 'test questions')}${blk(pc(st.testCorrect, st.testQs), 'test accuracy')}${blk(n(st.writeChars), 'characters written')}${blk(n(st.writeCards), 'cards written')}${blk(n(st.convoGaps), 'gaps filled')}${blk(pc(st.convoCorrect, st.convoGaps), 'gap accuracy')}${blk(n(st.stagesDone), 'stages finished')}${blk(n(st.stageQs), 'stage questions')}${blk(pc(st.stageCorrect, st.stageQs), 'stage accuracy')}
     </div>
     <div class="stats">
       ${blk(n(checks), 'habit check-ins')}${blk(n(best), 'best habit streak (days)')}${blk(n(habits.length), 'habits')}${blk(n(decks.length), 'decks')}${blk(n(cardsN), 'flashcards made')}${blk(n(notes.length), 'notes')}
@@ -2450,6 +2529,10 @@ async function profileView() {
       <p>
         <b>Conversations:</b> 2 XP per correct gap with the word bank and 3 when you type it, plus the same
         session size bonuses (10 gaps x1.1, 20 x1.25, 50 x1.5).
+      </p>
+      <p>
+        <b>Stages:</b> 2 XP per multiple choice answer, 3 per written answer, 1 per flashcard, and 10 XP the first
+        time you finish a stage. Conversation steps earn the same XP as the Conversations tool.
       </p>
       <p>
         <b>Wrong answers</b> earn a quarter of the XP. <b>Streaks</b> multiply everything, as shown above.
@@ -2601,6 +2684,7 @@ async function homeView() {
     </div>
     <h2 class="h2">Study tools</h2>
     <div class="grid">
+      <a class="tile tool" href="#/stages"><b>Stages</b><p>Lessons built from your textbook, step by step.</p></a>
       <a class="tile tool" href="#/cards"><b>Flashcards</b><p>Make decks, paste in lists, and study.</p></a>
       <a class="tile tool" href="#/test"><b>Test</b><p>Quiz yourself on any decks.</p></a>
       <a class="tile tool" href="#/write"><b>Write</b><p>Practise kana and kanji stroke by stroke.</p></a>
@@ -4919,18 +5003,22 @@ function drawConvo() {
       </p>
       <div class="row" style="justify-content:center">
         <button class="pri" data-act="cagain">Try again</button
-        ><a class="btn" href="#/convoedit/${c.id}" style="text-decoration:none">Edit script</a>
+        >${v.embed ? '' : /* HTML */ `<a class="btn" href="#/convoedit/${c.id}" style="text-decoration:none">Edit script</a>`}
       </div>
     </div>`;
   }
-  app.innerHTML = /* HTML */ `<div class="row between" style="align-items:flex-start">
-      <div style="min-width:0">
-        <h1>${esc(c.name || 'Untitled conversation')}</h1>
-        ${c.desc ? /* HTML */ `<p class="sub pre" style="margin:0">${esc(c.desc)}</p>` : ''}
-      </div>
-      ${BACK('#/convos')}
-    </div>
-    ${n ? seg : ''}${chat}${foot}`;
+  // Inside a stage step there is no page heading: the stage shows its own.
+  const head = v.embed
+    ? ''
+    : /* HTML */ `<div class="row between" style="align-items:flex-start">
+        <div style="min-width:0">
+          <h1>${esc(c.name || 'Untitled conversation')}</h1>
+          ${c.desc ? /* HTML */ `<p class="sub pre" style="margin:0">${esc(c.desc)}</p>` : ''}
+        </div>
+        ${BACK('#/convos')}
+      </div>`;
+  const host = v.embed ? document.getElementById('convohost') : app;
+  host.innerHTML = `${head}${n ? seg : ''}${chat}${foot}`;
 }
 const CACT = ['cmode', 'ckana', 'cchip', 'cslot', 'ccheck', 'cagain'];
 /** Handle the practice buttons: mode, kana only, word bank, check answers, try again. */
@@ -4943,15 +5031,18 @@ function convoAct(act, t) {
       localStorage.setItem('convoMode', t.dataset.v);
     } catch (e) {}
     CV = makeConvo(v.c, t.dataset.v, v.kana);
+    CV.embed = v.embed;
     drawConvo();
   } else if (act === 'ckana') {
     try {
       localStorage.setItem('convoKana', t.dataset.v);
     } catch (e) {}
     CV = makeConvo(v.c, v.mode, t.dataset.v === '1');
+    CV.embed = v.embed;
     drawConvo();
   } else if (act === 'cagain') {
     CV = makeConvo(v.c, v.mode, v.kana);
+    CV.embed = v.embed;
     drawConvo();
   } else if (act === 'cchip') {
     const b = bk(+t.dataset.b),
@@ -4990,6 +5081,7 @@ function convoAct(act, t) {
       convoCorrect: ok,
       convoDone: ok === v.gaps.length ? 1 : 0,
     });
+    if (v.embed) v.embed.onChecked(v);   // a stage step is told the result
     drawConvo();
   }
 }
@@ -5203,6 +5295,707 @@ function dictionaryAct(act, t) {
   }
   paintDictionary();
 }
+
+// ---------- stages (lessons made of steps) ----------
+/** Format lesson text: paragraphs, "- " bullet lists and **bold**. */
+function richText(text) {
+  const bold = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  return String(text || '')
+    .split(/\n{2,}/)
+    .map((block) => {
+      const lines = block.split('\n').filter((l) => l.trim());
+      if (lines.length && lines.every((l) => /^\s*[-\u2022]\s+/.test(l))) {
+        return (
+          '<ul>' +
+          lines.map((l) => '<li>' + bold(l.replace(/^\s*[-\u2022]\s+/, '')) + '</li>').join('') +
+          '</ul>'
+        );
+      }
+      return lines.length ? '<p>' + lines.map(bold).join('<br>') + '</p>' : '';
+    })
+    .join('');
+}
+
+/** Cards typed as "front, back" lines (the same format as the flashcard import). */
+function cardLines(text) {
+  return String(text || '')
+    .split(/\r?\n/)
+    .map((line) => {
+      const k = line.search(/,|\t/);
+      if (k < 1) return null;
+      const f = line.slice(0, k).trim();
+      const b = line.slice(k + 1).trim();
+      return f && b ? { f, b } : null;
+    })
+    .filter(Boolean);
+}
+
+/** Options typed one per line; a * at the start marks the correct one. */
+function parseOptions(text) {
+  const options = String(text || '')
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => (l.startsWith('*') ? { t: l.slice(1).trim(), ok: true } : { t: l, ok: false }))
+    .filter((o) => o.t);
+  if (options.length && !options.some((o) => o.ok)) options[0].ok = true; // nothing marked: the first is correct
+  return options;
+}
+
+const firstLine = (text) =>
+  String(text || '')
+    .split(/\r?\n/)
+    .find((l) => l.trim()) || '';
+const stageHeading = (c) => (c.title ? /* HTML */ `<h2 class="stitle">${esc(c.title)}</h2>` : '');
+
+/**
+ * The kinds of step a stage can hold. To add a new kind, add an entry here:
+ *   label, interactive   what it is called, and whether the learner has to do something
+ *   blank()              the fields of a new step
+ *   fields               the editor form (key, label, area = textarea rows, hint)
+ *   summary(c)           one line shown in the editor list
+ *   empty(c)             true if the step has nothing to do yet (it then counts as done)
+ *   start(run, c)        fresh state when the learner arrives at the step
+ *   play(run, c)         the HTML shown while running the stage
+ *   after(run, c)        optional: runs once the HTML is on the page
+ */
+const STAGE_TYPES = {
+  text: {
+    label: 'Text',
+    interactive: false,
+    blank: () => ({ title: '', body: '' }),
+    fields: [
+      { key: 'title', label: 'Heading (optional)' },
+      {
+        key: 'body',
+        label: 'Text',
+        area: 8,
+        hint: 'A blank line starts a new paragraph. Start lines with - for a list, and put **two stars** around words for bold.',
+      },
+    ],
+    summary: (c) => c.title || firstLine(c.body) || 'Empty text',
+    play: (run, c) => `${stageHeading(c)}<div class="rich">${richText(c.body)}</div>`,
+  },
+
+  cards: {
+    label: 'Flashcards',
+    interactive: true,
+    deckable: true,
+    blank: () => ({ title: '', list: '' }),
+    fields: [
+      { key: 'title', label: 'Title (optional)' },
+      {
+        key: 'list',
+        label: 'Cards',
+        area: 8,
+        hint: 'One card per line: front, back. Put a reading after a kanji like 学生(がくせい), and / between other accepted answers.',
+      },
+    ],
+    summary: (c) => `${c.title || 'Flashcards'}, ${cardLines(c.list).length} cards`,
+    empty: (c) => !cardLines(c.list).length,
+    start: (run, c) => {
+      const total = cardLines(c.list).length;
+      return { queue: shuffle([...Array(total).keys()]), total, got: 0, flip: false };
+    },
+    play: (run, c) => {
+      const cards = cardLines(c.list);
+      const s = run.step;
+      if (!cards.length) return `${stageHeading(c)}<div class="empty">This step has no cards yet.</div>`;
+      if (!s.queue.length) return `${stageHeading(c)}<div class="empty">All ${s.total} cards done.</div>`;
+      const card = cards[s.queue[0]];
+      return /* HTML */ `${stageHeading(c)}
+        <div class="study">
+          <div class="prog">${s.got} of ${s.total} known, ${s.queue.length} left</div>
+          <div class="flash ${s.flip ? 'back' : ''}" data-act="sfflip" tabindex="0">
+            ${esc(s.flip ? card.b : card.f)}
+          </div>
+          <p class="sub" style="margin-top:10px">
+            ${s.flip ? 'Did you know it?' : 'Tap the card to see the answer'}
+          </p>
+          <div class="row" style="justify-content:center">
+            ${
+              s.flip
+                ? '<button class="del" data-act="sfagain">Again</button><button class="pri" data-act="sfgot">Got it</button>'
+                : '<button data-act="sfflip">Show answer</button>'
+            }
+          </div>
+        </div>`;
+    },
+  },
+
+  convo: {
+    label: 'Conversation',
+    interactive: true,
+    blank: () => ({ title: '', script: '' }),
+    fields: [
+      { key: 'title', label: 'Title (optional)' },
+      {
+        key: 'script',
+        label: 'Script',
+        area: 8,
+        hint: "Start each line with A: or B:. Put the words to hide in [square brackets]. Put a kanji's reading in (brackets) right after it for kana only practice.",
+      },
+    ],
+    summary: (c) => `${c.title || 'Conversation'}, ${gapCount(c.script)} gaps`,
+    empty: (c) => !gapCount(c.script),
+    play: (run, c) => `${stageHeading(c)}<div id="convohost"></div>`,
+    after: (run, c) => startStepConvo(run, c),
+  },
+
+  choice: {
+    label: 'Multiple choice',
+    interactive: true,
+    blank: () => ({ question: '', options: '', explain: '' }),
+    fields: [
+      { key: 'question', label: 'Question', area: 3 },
+      {
+        key: 'options',
+        label: 'Options',
+        area: 5,
+        hint: 'One option per line. Put a * at the start of the correct one.',
+      },
+      { key: 'explain', label: 'Explanation (optional)', area: 3, hint: 'Shown after the learner answers.' },
+    ],
+    summary: (c) => firstLine(c.question) || 'Multiple choice question',
+    empty: (c) => parseOptions(c.options).length < 2,
+    start: (run, c) => ({ opts: shuffle(parseOptions(c.options)), pick: null }),
+    play: (run, c) => {
+      const s = run.step;
+      const answered = s.pick !== null;
+      const ok = answered && s.opts[s.pick].ok;
+      return /* HTML */ `<div class="rich">${richText(c.question)}</div>
+        <div class="opts">
+          ${s.opts
+            .map(
+              (o, i) =>
+                /* HTML */ `<button
+                  class="opt ${answered ? (o.ok ? 'right' : s.pick === i ? 'wrong' : '') : ''}"
+                  data-act="smc"
+                  data-i="${i}"
+                >
+                  ${esc(o.t)}
+                </button>`
+            )
+            .join('')}
+        </div>
+        ${
+          answered
+            ? /* HTML */ `<div class="fb ${ok ? 'ok' : 'bad'}">
+                <b>${ok ? 'Correct' : 'Not quite'}</b
+                >${c.explain ? /* HTML */ `<span>${esc(c.explain)}</span>` : ''}
+              </div>`
+            : ''
+        }`;
+    },
+  },
+
+  written: {
+    label: 'Written answer',
+    interactive: true,
+    blank: () => ({ question: '', answers: '', explain: '' }),
+    fields: [
+      { key: 'question', label: 'Question', area: 3 },
+      {
+        key: 'answers',
+        label: 'Accepted answers',
+        area: 4,
+        hint: 'One per line. Use / between alternatives, and put a reading after a kanji like 私(わたし): either form is accepted.',
+      },
+      { key: 'explain', label: 'Explanation (optional)', area: 3, hint: 'Shown after the learner answers.' },
+    ],
+    summary: (c) => firstLine(c.question) || 'Written answer question',
+    empty: (c) => !String(c.answers || '').trim(),
+    start: () => ({ verdict: null, given: '' }),
+    play: (run, c) => {
+      const s = run.step;
+      const shown = writtenAnswers(c).join(' / ');
+      const result =
+        s.verdict === null
+          ? ''
+          : /* HTML */ `<div class="fb ${s.verdict === 'wrong' ? 'bad' : 'ok'}">
+              <b
+                >${s.verdict === 'ok' ? 'Correct' : s.verdict === 'accent' ? 'Correct, but check the accents' : 'Not quite'}</b
+              >
+              ${s.verdict === 'ok' ? '' : /* HTML */ `<span>Answer: ${esc(shown)}</span>`}
+              ${c.explain ? /* HTML */ `<span>${esc(c.explain)}</span>` : ''}
+            </div>`;
+      return /* HTML */ `<div class="rich">${richText(c.question)}</div>
+        <div class="typed">
+          <input
+            id="sans"
+            value="${esc(s.given)}"
+            ${s.verdict === null ? '' : 'readonly'}
+            placeholder="Type your answer"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            aria-label="Your answer"
+          />
+          ${s.verdict === null ? '<button class="pri" data-act="swcheck">Check</button>' : ''}
+        </div>
+        ${result}`;
+    },
+  },
+};
+
+/** The accepted answers of a written step, one per line. */
+const writtenAnswers = (c) =>
+  String(c.answers || '')
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+/** Mark a typed answer against every accepted answer: "ok", "accent" or "wrong". */
+function judgeWritten(input, c) {
+  let best = 'wrong';
+  for (const answer of writtenAnswers(c)) {
+    // an answer may carry readings: accept the kanji version and the kana version
+    for (const form of new Set([applyReadings(answer, false), applyReadings(answer, true)])) {
+      const verdict = judge(input, form);
+      if (verdict === 'ok') return 'ok';
+      if (verdict === 'accent') best = 'accent';
+    }
+  }
+  return best;
+}
+
+/**
+ * One run through a stage: where the learner is, what they have scored and earned,
+ * and the state of the step they are on.
+ */
+class StageRunner {
+  constructor(stage, saved) {
+    this.stage = stage;
+    this.saved = saved || null;
+    this.wasCompleted = !!(saved && saved.completed); // the stage bonus is only paid once
+    this.i = 0;
+    this.xp = 0;
+    this.scores = new Map(); // step id -> { asked, right }
+    this.paid = new Set(); // steps that have already given XP this run
+    this.completed = new Set(); // steps finished this run
+    this.enter();
+  }
+
+  get comp() {
+    return this.stage.comps[this.i];
+  }
+
+  get finished() {
+    return this.i >= this.stage.comps.length;
+  }
+
+  get type() {
+    return STAGE_TYPES[this.comp.type];
+  }
+
+  /** Get ready for the step we have arrived at. */
+  enter() {
+    this.step = null;
+    this.stepDone = true;
+    if (this.finished) return;
+    const type = this.type;
+    const c = this.comp;
+    this.step = type.start ? type.start(this, c) : {};
+    this.stepDone = !type.interactive || !!(type.empty && type.empty(c)) || this.completed.has(c.id);
+  }
+
+  go(delta) {
+    this.i = Math.max(0, this.i + delta);
+    this.enter();
+  }
+
+  /** The step is finished: the Continue button replaces Skip. */
+  markDone() {
+    this.stepDone = true;
+    this.completed.add(this.comp.id);
+    refreshStageFooter();
+  }
+
+  /** Record the result of a question step and give its XP (once per step per run). */
+  answer(ok, base, asked = 1, right = ok ? 1 : 0) {
+    const id = this.comp.id;
+    this.scores.set(id, { asked, right });
+    if (!this.paid.has(id)) {
+      this.paid.add(id);
+      this.xp += xpSystem.award('stage', base * (ok ? 1 : 0.25), { stageQs: 1, stageCorrect: ok ? 1 : 0 });
+    }
+    this.markDone();
+  }
+
+  get totals() {
+    let asked = 0;
+    let right = 0;
+    for (const s of this.scores.values()) {
+      asked += s.asked;
+      right += s.right;
+    }
+    return { asked, right };
+  }
+}
+
+let SR = null; // the stage being run
+let STG = null; // the stage being edited: { stage, open, title, desc }
+
+// ----- stage list -----
+function stageTile(stage, state) {
+  const n = stage.comps.length;
+  return /* HTML */ `<div class="deckwrap">
+    <a class="tile" href="#/stage/${stage.id}">
+      <b>${esc(stage.name || 'Untitled stage')}</b>${stage.desc ? /* HTML */ `<p>${esc(stage.desc)}</p>` : ''}
+      <div class="pills">
+        <span class="pill">${n} step${n == 1 ? '' : 's'}</span
+        >${state && state.completed ? '<span class="pill due">Done</span>' : ''}
+      </div>
+    </a>
+    <div class="menuwrap">
+      ${dotsBtn('Stage options')}
+      <div class="menu">
+        <a href="#/stageedit/${stage.id}">Edit</a>
+        <button class="del" data-act="askdels" data-id="${stage.id}">Delete</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/** The Stages page: every lesson, in the order they were made. */
+async function stagesView() {
+  const [stages, states] = await Promise.all([all('stages'), all('stagestate')]);
+  stages.sort((a, b) => (a.created || 0) - (b.created || 0));
+  const stateOf = (id) => states.find((s) => s.id === id);
+  app.innerHTML = /* HTML */ `<h1>Stages</h1>
+    <p class="sub">Lessons made of steps: text, flashcards, conversations and questions.</p>
+    <div class="row between">
+      <button class="pri" data-act="newstage">+ New stage</button>
+      <span class="row">${backupBtns('stages')}</span>
+    </div>
+    ${
+      stages.length
+        ? /* HTML */ `<div class="grid">${stages.map((s) => stageTile(s, stateOf(s.id))).join('')}</div>`
+        : '<div class="empty">No stages yet. Make one, then add steps from your textbook.</div>'
+    }`;
+}
+
+// ----- stage editor -----
+function fieldHtml(f, c) {
+  const value = esc(c[f.key] || '');
+  const control = f.area
+    ? /* HTML */ `<textarea data-key="${f.key}" rows="${f.area}">${value}</textarea>`
+    : /* HTML */ `<input data-key="${f.key}" value="${value}" />`;
+  return /* HTML */ `<label class="fld"
+    ><span>${esc(f.label)}</span>${control}${f.hint ? /* HTML */ `<small>${esc(f.hint)}</small>` : ''}</label
+  >`;
+}
+
+function compCard(c, i, count) {
+  const type = STAGE_TYPES[c.type];
+  return /* HTML */ `<details
+    class="comp"
+    data-i="${i}"
+    data-id="${c.id}"
+    ${STG.open.has(c.id) ? 'open' : ''}
+  >
+    <summary>
+      <span class="ctype">${i + 1}. ${type.label}</span><span class="csum">${esc(type.summary(c))}</span>
+    </summary>
+    <div class="cbody">
+      ${type.fields.map((f) => fieldHtml(f, c)).join('')}
+      <div class="row">
+        <button data-act="compup" data-i="${i}" ${i ? '' : 'disabled'}>Move up</button>
+        <button data-act="compdown" data-i="${i}" ${i < count - 1 ? '' : 'disabled'}>Move down</button>
+        ${type.deckable ? /* HTML */ `<button data-act="compdeck" data-i="${i}">Make a deck</button>` : ''}
+        <button class="del" data-act="compdel" data-i="${i}">Delete step</button>
+      </div>
+    </div>
+  </details>`;
+}
+
+function paintComps() {
+  const comps = STG.stage.comps;
+  document.getElementById('comps').innerHTML = comps.length
+    ? comps.map((c, i) => compCard(c, i, comps.length)).join('')
+    : '<div class="empty">No steps yet. Add the first one below.</div>';
+  document.getElementById('ssum').textContent = `${comps.length} step${comps.length == 1 ? '' : 's'}`;
+}
+
+/** Save the whole stage after a pause in typing. */
+function saveStage() {
+  const stage = STG.stage;
+  saver.schedule(
+    Autosaver.mergeJob('stages', stage.id, () => ({
+      name: STG.title.value,
+      desc: STG.desc.value,
+      comps: stage.comps,
+    }))
+  );
+}
+
+/** The stage editor: name, description and the list of steps. */
+async function stageEdit(id) {
+  const stage = await get('stages', id);
+  if (!stage) {
+    location.hash = '#/stages';
+    return;
+  }
+  stage.comps = stage.comps || [];
+  const keepOpen = STG && STG.stage.id === id ? STG.open : new Set();
+  STG = { stage, open: keepOpen };
+  app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK('#/stages')}</div>
+    <input class="title" id="stitle" placeholder="Stage name" value="${esc(stage.name)}" />
+    <textarea class="desc" id="sdesc" rows="1" placeholder="Add a description">
+${esc(stage.desc || '')}</textarea>
+    <div class="row between">
+      <p class="sub" id="ssum" style="margin:0"></p>
+      <div class="row">
+        <button class="pri" data-act="sstart" data-id="${id}">Start</button>
+        <button class="del" data-act="delstage" data-id="${id}">Delete</button>
+      </div>
+    </div>
+    <h2 class="h2">Steps</h2>
+    <div id="comps"></div>
+    <div class="panel">
+      <h2>Add a step</h2>
+      <div class="row">
+        ${Object.entries(STAGE_TYPES)
+          .map(
+            ([key, type]) => /* HTML */ `<button data-act="addcomp" data-t="${key}">+ ${type.label}</button>`
+          )
+          .join('')}
+      </div>
+    </div>`;
+  STG.title = document.getElementById('stitle');
+  STG.desc = document.getElementById('sdesc');
+  if (!stage.name) STG.title.focus();
+  grow(STG.desc);
+  paintComps();
+  STG.title.addEventListener('input', saveStage);
+  STG.desc.addEventListener('input', () => {
+    grow(STG.desc);
+    saveStage();
+  });
+  const box = document.getElementById('comps');
+  box.addEventListener('input', (e) => {
+    // typing in any step's form
+    const el = e.target.closest('[data-key]');
+    const card = e.target.closest('.comp');
+    if (!el || !card) return;
+    const c = stage.comps[+card.dataset.i];
+    c[el.dataset.key] = el.value;
+    card.querySelector('.csum').textContent = STAGE_TYPES[c.type].summary(c);
+    saveStage();
+  });
+  box.addEventListener(
+    'toggle', // remember which steps are open
+    (e) => {
+      const card = e.target.closest && e.target.closest('.comp');
+      if (card) card.open ? STG.open.add(card.dataset.id) : STG.open.delete(card.dataset.id);
+    },
+    true
+  );
+}
+
+/** Editor buttons: add, move, delete steps, and turn a flashcard step into a deck. */
+async function stageEditAct(act, t) {
+  const stage = STG && STG.stage;
+  if (!stage) return;
+  const i = +t.dataset.i;
+  if (act === 'addcomp') {
+    const key = t.dataset.t;
+    const c = { id: uid(), type: key, ...STAGE_TYPES[key].blank() };
+    stage.comps.push(c);
+    STG.open.add(c.id);
+    paintComps();
+    document.querySelector(`.comp[data-id="${c.id}"]`).scrollIntoView({ block: 'center' });
+  } else if (act === 'compup' || act === 'compdown') {
+    const j = act === 'compup' ? i - 1 : i + 1;
+    [stage.comps[i], stage.comps[j]] = [stage.comps[j], stage.comps[i]];
+    paintComps();
+  } else if (act === 'compdel') {
+    if (!(await confirmBox('Delete this step?'))) return;
+    stage.comps.splice(i, 1);
+    paintComps();
+  } else if (act === 'compdeck') {
+    const c = stage.comps[i];
+    const cards = cardLines(c.list);
+    if (!cards.length) return alert('Add some cards to this step first.');
+    const name = (STG.title.value || 'Stage') + (c.title ? ': ' + c.title : '');
+    await put('decks', {
+      id: uid(),
+      name,
+      desc: '',
+      folder: null,
+      updated: Date.now(),
+      cards: cards.map((x) => newCard(x.f, x.b)),
+    });
+    return alert(`Made the deck "${name}" in Flashcards.`);
+  }
+  saveStage();
+}
+
+// ----- running a stage -----
+/** Start a stage: load it and its saved state, then show the first step. */
+async function stageView(id) {
+  const [stage, saved] = await Promise.all([get('stages', id), get('stagestate', id)]);
+  if (!stage) {
+    location.hash = '#/stages';
+    return;
+  }
+  stage.comps = stage.comps || [];
+  SR = new StageRunner(stage, saved);
+  drawStage();
+}
+
+/** Label of the button under a step: Skip until the step is done. */
+function stageNextLabel(run) {
+  const last = run.i === run.stage.comps.length - 1;
+  return run.stepDone ? (last ? 'Finish' : 'Continue') : 'Skip';
+}
+
+/** Update the Continue button without redrawing the step. */
+function refreshStageFooter() {
+  const next = document.querySelector('[data-act="snext"]');
+  if (next && SR) {
+    next.textContent = stageNextLabel(SR);
+    next.classList.toggle('pri', SR.stepDone);
+  }
+}
+
+/** Draw the current step with its progress bar and Back / Continue buttons. */
+function drawStage() {
+  const run = SR;
+  const stage = run.stage;
+  if (!stage.comps.length) {
+    app.innerHTML = /* HTML */ `<div class="row between" style="align-items:flex-start">
+        <h1>${esc(stage.name || 'Untitled stage')}</h1>
+        ${BACK('#/stages')}
+      </div>
+      <div class="empty">This stage has no steps yet.</div>
+      <div class="row" style="justify-content:center">
+        <a class="btn" href="#/stageedit/${stage.id}" style="text-decoration:none">Add steps</a>
+      </div>`;
+    return;
+  }
+  if (run.finished) return drawStageDone();
+  const c = run.comp;
+  const type = run.type;
+  const count = stage.comps.length;
+  app.innerHTML = /* HTML */ `<div class="row between" style="align-items:flex-start">
+      <div style="min-width:0">
+        <h1>${esc(stage.name || 'Untitled stage')}</h1>
+        <p class="sub" style="margin:0">Step ${run.i + 1} of ${count}, ${type.label}</p>
+      </div>
+      ${BACK('#/stages')}
+    </div>
+    <div class="bar2" style="margin:14px 0"><i style="width:${Math.round((run.i / count) * 100)}%"></i></div>
+    <div class="panel step" id="stepbody">${type.play(run, c)}</div>
+    <div class="row between" style="margin-top:14px">
+      <button data-act="sprev" ${run.i ? '' : 'disabled'}>Back</button>
+      <button class="${run.stepDone ? 'pri' : ''}" data-act="snext">${stageNextLabel(run)}</button>
+    </div>`;
+  if (type.after) type.after(run, c);
+}
+
+/** Every step is done: the summary, and the one-off bonus for finishing a stage. */
+function drawStageDone() {
+  const run = SR;
+  const stage = run.stage;
+  const { asked, right } = run.totals;
+  if (!run.reported) {
+    run.reported = true;
+    if (!run.wasCompleted) run.xp += xpSystem.award('stage', 10, { stagesDone: 1 });
+    put('stagestate', {
+      id: stage.id,
+      completed: true,
+      best: Math.max(right, (run.saved && run.saved.best) || 0),
+      total: asked,
+      at: Date.now(),
+    });
+  }
+  app.innerHTML = /* HTML */ `<div class="row between" style="align-items:flex-start">
+      <h1>${esc(stage.name || 'Untitled stage')}</h1>
+      ${BACK('#/stages')}
+    </div>
+    <div class="panel" style="text-align:center">
+      <div class="score">${asked ? `${right}/${asked}` : 'Done'}</div>
+      <p class="sub">
+        ${asked ? 'questions correct' : 'Stage complete'}${run.xp ? `, +${XpSystem.format(run.xp)} XP` : ''}
+      </p>
+      <div class="row" style="justify-content:center">
+        <button class="pri" data-act="srestart" data-id="${stage.id}">Do it again</button>
+        <a class="btn" href="#/stages" style="text-decoration:none">All stages</a>
+        <a class="btn" href="#/stageedit/${stage.id}" style="text-decoration:none">Edit</a>
+      </div>
+    </div>`;
+}
+
+/** Run a conversation step with the normal conversation practice, shown inside the step. */
+function startStepConvo(run, c) {
+  CV = makeConvo({ id: c.id, name: c.title, desc: '', script: c.script }, convoMode(), convoKana());
+  CV.embed = {
+    onChecked: (v) => {
+      run.scores.set(c.id, { asked: v.gaps.length, right: v.score });
+      run.xp += v.xp;
+      run.markDone();
+    },
+  };
+  drawConvo();
+}
+
+const SACT = ['sstart', 'sprev', 'snext', 'srestart', 'smc', 'swcheck', 'sfflip', 'sfgot', 'sfagain'];
+const STAGE_EDIT_ACTS = ['addcomp', 'compup', 'compdown', 'compdel', 'compdeck'];
+
+/** Buttons while running a stage. */
+function stageRunAct(act, t) {
+  if (act === 'sstart') {
+    location.hash = '#/stage/' + t.dataset.id;
+    return;
+  }
+  if (act === 'srestart') {
+    stageView(t.dataset.id);
+    return;
+  }
+  const run = SR;
+  if (!run) return;
+  if (act === 'sprev' || act === 'snext') {
+    run.go(act === 'sprev' ? -1 : 1);
+    drawStage();
+  } else if (act === 'smc') {
+    const s = run.step;
+    if (s.pick !== null) return;
+    s.pick = +t.dataset.i;
+    run.answer(s.opts[s.pick].ok, 2);
+    drawStage();
+  } else if (act === 'swcheck') {
+    const s = run.step;
+    const input = document.getElementById('sans');
+    if (!input || s.verdict !== null || !input.value.trim()) return;
+    s.given = input.value;
+    s.verdict = judgeWritten(s.given, run.comp);
+    run.answer(s.verdict !== 'wrong', 3);
+    drawStage();
+  } else if (act === 'sfflip') {
+    run.step.flip = !run.step.flip;
+    drawStage();
+  } else if (act === 'sfgot' || act === 'sfagain') {
+    const s = run.step;
+    const ok = act === 'sfgot';
+    run.xp += xpSystem.award('stage', ok ? 1 : 0.25, { stageCards: 1 });
+    const k = s.queue.shift();
+    if (ok) s.got++;
+    else s.queue.push(k);
+    s.flip = false;
+    if (!s.queue.length) run.markDone();
+    drawStage();
+  }
+}
+
+// Pressing Enter in the answer box checks it.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' || !e.target || e.target.id !== 'sans') return;
+  e.preventDefault();
+  const b = document.querySelector('[data-act="swcheck"]');
+  if (b) b.click();
+});
 
 // ---------- notes ----------
 async function notesView() {
@@ -5568,6 +6361,21 @@ document.addEventListener('click', async (e) => {
       if (act === 'delfolder') location.hash = '#/cards';
       else decksView();
     }
+  } else if (SACT.includes(act)) {
+    stageRunAct(act, t);
+  } else if (STAGE_EDIT_ACTS.includes(act)) {
+    await stageEditAct(act, t);
+  } else if (act === 'newstage') {
+    const stage = { id: uid(), name: '', desc: '', comps: [], created: Date.now(), updated: Date.now() };
+    await put('stages', stage);
+    location.hash = '#/stageedit/' + stage.id;
+  } else if (act === 'delstage' || act === 'askdels') {
+    if (await confirmBox('Delete this stage and all its steps?')) {
+      saver.cancel();
+      await del('stages', id);
+      if (act === 'delstage') location.hash = '#/stages';
+      else stagesView();
+    }
   } else if (act === 'dsort' || act === 'dmore') {
     dictionaryAct(act, t);
   } else if (CACT.includes(act)) {
@@ -5657,7 +6465,7 @@ document.addEventListener('click', async (e) => {
     a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
     a.download =
       'toolbox-' +
-      { decks: 'flashcards', notes: 'notes', habits: 'habits', convos: 'conversations' }[k] +
+      { decks: 'flashcards', notes: 'notes', habits: 'habits', convos: 'conversations', stages: 'stages' }[k] +
       '-backup-' +
       new Date().toISOString().slice(0, 10) +
       '.json';
@@ -5674,6 +6482,7 @@ document.addEventListener('click', async (e) => {
         for (const n of j.notes || []) await put('notes', n);
         for (const h of j.habits || []) await put('habits', h);
         for (const c of j.convos || []) await put('convos', c);
+        for (const c of j.stages || []) await put('stages', c);
         alert('Backup restored.');
         route();
       } catch {
