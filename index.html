@@ -5908,6 +5908,22 @@ ${esc(stage.desc || '')}</textarea>
           )
           .join('')}
       </div>
+    </div>
+    <div class="panel">
+      <h2>Import questions</h2>
+      <p class="sub" style="margin:0 0 8px">
+        Paste many questions at once and each one becomes its own step. Start each with <b>Q:</b>. For multiple
+        choice, put the options on the lines after it (a <b>*</b> marks the correct one). For written answers,
+        put the accepted answers after <b>A:</b>, one per line. An optional <b>Why:</b> adds the explanation.
+      </p>
+      <textarea
+        id="simport"
+        placeholder="Q: あした、ともだちに___。&#10;*あいます&#10;あいました&#10;Why: あした is the future.&#10;&#10;Q: Past: べんきょうします&#10;A: 勉強しました(べんきょうしました)"
+      ></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="pri" data-act="simport" data-t="choice">Import as multiple choice</button>
+        <button class="pri" data-act="simport" data-t="written">Import as written answers</button>
+      </div>
     </div>`;
   STG.title = document.getElementById('stitle');
   STG.desc = document.getElementById('sdesc');
@@ -5940,6 +5956,57 @@ ${esc(stage.desc || '')}</textarea>
   );
 }
 
+/**
+ * Turn pasted text into question steps.
+ *   Q:    starts a question (the next Q: starts the next one)
+ *   A:    written answers: the text after A: and any lines under it
+ *   Why:  the explanation (Explain: works too)
+ * For multiple choice the lines under the Q: line are the options (a * marks the correct one).
+ */
+function parseQuestions(text, kind) {
+  const tags = kind === 'choice' ? 'Q|Why|Explain' : 'Q|A|Why|Explain';
+  const head = new RegExp('^(' + tags + ')\\s*[:\uFF1A]\\s*(.*)$', 'i');
+  const blocks = [];
+  let cur = null;
+  let mode = null;
+  for (const raw of String(text || '').split(/\r?\n/)) {
+    const line = raw.trim();
+    const m = line.match(head);
+    if (m) {
+      const tag = m[1].toLowerCase();
+      if (tag === 'q') {
+        cur = { q: [m[2]], opts: [], ans: [], why: [] };
+        blocks.push(cur);
+        mode = 'q';
+      } else if (cur) {
+        mode = tag === 'a' ? 'ans' : 'why';
+        if (m[2]) cur[mode].push(m[2]);
+      }
+      continue;
+    }
+    if (!cur || !line) continue;
+    if (mode === 'q' && kind === 'choice') mode = 'opts';
+    (mode === 'q' ? cur.q : cur[mode]).push(line);
+  }
+  const items = [];
+  const notes = [];
+  blocks.forEach((b, n) => {
+    const question = b.q.join('\n').trim();
+    if (!question) return notes.push(`Question ${n + 1} has no text and was skipped.`);
+    const explain = b.why.join('\n');
+    if (kind === 'choice') {
+      if (b.opts.length < 2) notes.push(`Question ${n + 1} has fewer than 2 options, so it will be skipped when playing.`);
+      else if (!b.opts.some((o) => o.startsWith('*')))
+        notes.push(`Question ${n + 1} has no * on an option, so the first option counts as correct.`);
+      items.push({ question, options: b.opts.join('\n'), explain });
+    } else {
+      if (!b.ans.length) notes.push(`Question ${n + 1} has no A: answer, so it will be skipped when playing.`);
+      items.push({ question, answers: b.ans.join('\n'), explain });
+    }
+  });
+  return { items, notes };
+}
+
 /** Editor buttons: add, move, delete steps, and turn a flashcard step into a deck. */
 async function stageEditAct(act, t) {
   const stage = STG && STG.stage;
@@ -5960,6 +6027,18 @@ async function stageEditAct(act, t) {
     if (!(await confirmBox('Delete this step?'))) return;
     stage.comps.splice(i, 1);
     paintComps();
+  } else if (act === 'simport') {
+    const box = document.getElementById('simport');
+    const kind = t.dataset.t;
+    const { items, notes } = parseQuestions(box.value, kind);
+    if (!items.length) return alert('No questions found. Start each question with Q:');
+    items.forEach((it) => stage.comps.push({ id: uid(), type: kind, ...it }));
+    box.value = '';
+    paintComps();
+    saveStage();
+    return alert(
+      `Added ${items.length} step${items.length == 1 ? '' : 's'}.` + (notes.length ? '\n\n' + notes.join('\n') : '')
+    );
   } else if (act === 'stpick') {
     const c = stage.comps[i];
     const kind = t.dataset.k;
@@ -6104,7 +6183,7 @@ function startStepConvo(run, c) {
 }
 
 const SACT = ['sstart', 'sprev', 'snext', 'srestart', 'smc', 'swcheck', 'sfflip', 'sfgot', 'sfagain'];
-const STAGE_EDIT_ACTS = ['addcomp', 'compup', 'compdown', 'compdel', 'compdeck', 'stpick'];
+const STAGE_EDIT_ACTS = ['addcomp', 'compup', 'compdown', 'compdel', 'compdeck', 'stpick', 'simport'];
 
 /** Buttons while running a stage. */
 function stageRunAct(act, t) {
