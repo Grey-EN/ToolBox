@@ -1821,6 +1821,25 @@ button.gap {
   color: var(--soft);
   font-size: 0.78rem;
 }
+/* Deck and conversation pickers inside a stage step */
+.pickfld {
+  margin-bottom: 12px;
+}
+.pickfld > .pl {
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.pickfld .sub-h {
+  font-size: 0.76rem;
+  color: var(--soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 14px 0 2px;
+}
+.pickfld .picks {
+  margin-top: 8px;
+}
 </style>
 </head>
 <body>
@@ -5381,26 +5400,45 @@ const STAGE_TYPES = {
     label: 'Flashcards',
     interactive: true,
     deckable: true,
-    blank: () => ({ title: '', list: '' }),
+    blank: () => ({ title: '', decks: [], limit: 'all' }),
     fields: [
       { key: 'title', label: 'Title (optional)' },
       {
+        key: 'decks',
+        label: 'Cards to practise',
+        picker: 'decks',
+        hint: 'Tick folders or decks from Flashcards. Their cards are read each time the stage runs, so edits to a deck carry over.',
+      },
+      {
+        key: 'limit',
+        label: 'Cards per run',
+        options: [
+          ['all', 'All cards'],
+          ['10', '10 random cards'],
+          ['20', '20 random cards'],
+          ['50', '50 random cards'],
+        ],
+      },
+      {
         key: 'list',
-        label: 'Cards',
-        area: 8,
-        hint: 'One card per line: front, back. Put a reading after a kanji like 学生(がくせい), and / between other accepted answers.',
+        label: 'Typed cards (old way)',
+        area: 6,
+        legacy: true,
+        hint: 'Extra cards typed in before decks could be picked. Clear this to remove them.',
       },
     ],
-    summary: (c) => `${c.title || 'Flashcards'}, ${cardLines(c.list).length} cards`,
-    empty: (c) => !cardLines(c.list).length,
+    summary: (c, lib) => `${c.title || 'Flashcards'}, ${stageCards(lib, c).length} cards`,
+    empty: (c, lib) => !stageCards(lib, c).length,
     start: (run, c) => {
-      const total = cardLines(c.list).length;
-      return { queue: shuffle([...Array(total).keys()]), total, got: 0, flip: false };
+      let cards = shuffle(stageCards(run.lib, c));
+      const n = +c.limit;
+      if (n > 0 && n < cards.length) cards = cards.slice(0, n);
+      return { cards, queue: cards.map((_, i) => i), total: cards.length, got: 0, flip: false };
     },
     play: (run, c) => {
-      const cards = cardLines(c.list);
       const s = run.step;
-      if (!cards.length) return `${stageHeading(c)}<div class="empty">This step has no cards yet.</div>`;
+      const cards = s.cards;
+      if (!cards.length) return `${stageHeading(c)}<div class="empty">No cards picked for this step.</div>`;
       if (!s.queue.length) return `${stageHeading(c)}<div class="empty">All ${s.total} cards done.</div>`;
       const card = cards[s.queue[0]];
       return /* HTML */ `${stageHeading(c)}
@@ -5426,20 +5464,32 @@ const STAGE_TYPES = {
   convo: {
     label: 'Conversation',
     interactive: true,
-    blank: () => ({ title: '', script: '' }),
+    blank: () => ({ title: '', convoId: '' }),
     fields: [
       { key: 'title', label: 'Title (optional)' },
       {
+        key: 'convoId',
+        label: 'Conversation',
+        picker: 'convo',
+        hint: 'Pick one from Conversations. Tap it again to unpick. The script is read each time the stage runs.',
+      },
+      {
         key: 'script',
-        label: 'Script',
-        area: 8,
-        hint: "Start each line with A: or B:. Put the words to hide in [square brackets]. Put a kanji's reading in (brackets) right after it for kana only practice.",
+        label: 'Typed script (old way)',
+        area: 6,
+        legacy: true,
+        hint: 'Used only when no conversation is picked above. Clear this to remove it.',
       },
     ],
-    summary: (c) => `${c.title || 'Conversation'}, ${gapCount(c.script)} gaps`,
-    empty: (c) => !gapCount(c.script),
-    play: (run, c) => `${stageHeading(c)}<div id="convohost"></div>`,
-    after: (run, c) => startStepConvo(run, c),
+    summary: (c, lib) => `${c.title || 'Conversation'}, ${gapCount(stageScript(lib, c))} gaps`,
+    empty: (c, lib) => !gapCount(stageScript(lib, c)),
+    play: (run, c) =>
+      gapCount(stageScript(run.lib, c))
+        ? `${stageHeading(c)}<div id="convohost"></div>`
+        : `${stageHeading(c)}<div class="empty">No conversation with gaps picked for this step.</div>`,
+    after: (run, c) => {
+      if (gapCount(stageScript(run.lib, c))) startStepConvo(run, c);
+    },
   },
 
   choice: {
@@ -5565,8 +5615,9 @@ function judgeWritten(input, c) {
  * and the state of the step they are on.
  */
 class StageRunner {
-  constructor(stage, saved) {
+  constructor(stage, saved, lib) {
     this.stage = stage;
+    this.lib = lib; // decks, folders and conversations the steps draw from
     this.saved = saved || null;
     this.wasCompleted = !!(saved && saved.completed); // the stage bonus is only paid once
     this.i = 0;
@@ -5597,7 +5648,7 @@ class StageRunner {
     const type = this.type;
     const c = this.comp;
     this.step = type.start ? type.start(this, c) : {};
-    this.stepDone = !type.interactive || !!(type.empty && type.empty(c)) || this.completed.has(c.id);
+    this.stepDone = !type.interactive || !!(type.empty && type.empty(c, this.lib)) || this.completed.has(c.id);
   }
 
   go(delta) {
@@ -5677,11 +5728,106 @@ async function stagesView() {
 }
 
 // ----- stage editor -----
-function fieldHtml(f, c) {
+/** The decks, folders and conversations a stage can pull from. */
+async function loadStageLib() {
+  const [decks, folders, convos] = await Promise.all([all('decks'), all('folders'), all('convos')]);
+  const recent = (a, b) => (b.updated || 0) - (a.updated || 0);
+  return { decks: decks.sort(recent), folders: folders.sort(recent), convos: convos.sort(recent) };
+}
+
+/** Every card a flashcards step uses: the picked decks, plus any old typed cards. */
+function stageCards(lib, c) {
+  const picked = new Set(c.decks || []);
+  const out = [];
+  for (const d of lib.decks)
+    if (picked.has(d.id)) for (const card of d.cards) if (card.f && card.b) out.push({ f: card.f, b: card.b });
+  return out.concat(cardLines(c.list));
+}
+
+/** The script a conversation step uses: the picked conversation, or an old typed script. */
+function stageScript(lib, c) {
+  const picked = c.convoId && lib.convos.find((x) => x.id === c.convoId);
+  return picked ? picked.script || '' : c.script || '';
+}
+
+/** Deck / folder / conversation checklist shown inside a step in the stage editor. */
+function pickerHtml(f, c, i) {
+  const lib = STG.lib;
+  const plural = (n, word) => `${n} ${word}${n == 1 ? '' : 's'}`;
+  if (f.picker === 'convo') {
+    if (!lib.convos.length)
+      return '<div class="empty" style="padding:12px 0">No conversations yet. <a href="#/convos">Make one in Conversations</a>.</div>';
+    return /* HTML */ `<div class="picks">
+      ${lib.convos
+        .map((cv) => {
+          const on = c.convoId === cv.id;
+          const g = gapCount(cv.script);
+          return /* HTML */ `<button
+            class="pick radio ${on ? 'on' : ''}"
+            data-act="stpick"
+            data-k="convo"
+            data-i="${i}"
+            data-id="${cv.id}"
+            ${g || on ? '' : 'disabled'}
+          >
+            <span class="chk">${on ? SVG(CHECK) : ''}</span
+            ><span class="nm">${esc(cv.name || 'Untitled conversation')}</span
+            ><small>${plural(g, 'gap')}</small>
+          </button>`;
+        })
+        .join('')}
+    </div>`;
+  }
+  const chosen = new Set(c.decks || []);
+  const decks = lib.decks.filter((d) => d.cards.length);
+  if (!decks.length)
+    return '<div class="empty" style="padding:12px 0">No decks yet. <a href="#/cards">Make one in Flashcards</a>.</div>';
+  const folderBtns = lib.folders
+    .map((fo) => {
+      const ds = decks.filter((d) => d.folder === fo.id);
+      if (!ds.length) return '';
+      const k = ds.filter((d) => chosen.has(d.id)).length;
+      const st = k && k === ds.length ? 'on' : k ? 'part' : '';
+      return /* HTML */ `<button class="pick ${st}" data-act="stpick" data-k="folder" data-i="${i}" data-id="${fo.id}">
+        <span class="chk">${st === 'on' ? SVG(CHECK) : st === 'part' ? '<i class="dash"></i>' : ''}</span
+        ><span class="nm">${SVG(FOLDER)}${esc(fo.name || 'Untitled folder')}</span
+        ><small>${plural(ds.length, 'deck')}</small>
+      </button>`;
+    })
+    .join('');
+  const deckBtns = decks
+    .map((d) => {
+      const on = chosen.has(d.id);
+      return /* HTML */ `<button class="pick ${on ? 'on' : ''}" data-act="stpick" data-k="deck" data-i="${i}" data-id="${d.id}">
+        <span class="chk">${on ? SVG(CHECK) : ''}</span><span class="nm">${esc(d.name || 'Untitled deck')}</span
+        ><small>${plural(d.cards.length, 'card')}</small>
+      </button>`;
+    })
+    .join('');
+  return (
+    (folderBtns
+      ? `<div class="sub-h">Folders</div><div class="picks">${folderBtns}</div><div class="sub-h">Decks</div>`
+      : '') +
+    `<div class="picks">${deckBtns}</div>` +
+    `<p class="sub" style="margin:10px 0 0">${plural(stageCards(lib, c).length, 'card')} selected</p>`
+  );
+}
+
+function fieldHtml(f, c, i) {
+  if (f.picker)
+    return /* HTML */ `<div class="pickfld">
+      <div class="pl">${esc(f.label)}</div>
+      ${pickerHtml(f, c, i)}
+      ${f.hint ? /* HTML */ `<p class="sub" style="font-size:.78rem;margin:8px 0 0">${esc(f.hint)}</p>` : ''}
+    </div>`;
   const value = esc(c[f.key] || '');
-  const control = f.area
-    ? /* HTML */ `<textarea data-key="${f.key}" rows="${f.area}">${value}</textarea>`
-    : /* HTML */ `<input data-key="${f.key}" value="${value}" />`;
+  const control = f.options
+    ? /* HTML */ `<select data-key="${f.key}">
+        ${f.options.map(([v, l]) => /* HTML */ `<option value="${v}" ${String(c[f.key] || f.options[0][0]) === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}
+      </select>`
+    : f.area
+      ? /* HTML */ `<textarea data-key="${f.key}" rows="${f.area}">${value}</textarea>`
+      : /* HTML */ `<input data-key="${f.key}" value="${value}" />`;
   return /* HTML */ `<label class="fld"
     ><span>${esc(f.label)}</span>${control}${f.hint ? /* HTML */ `<small>${esc(f.hint)}</small>` : ''}</label
   >`;
@@ -5696,14 +5842,14 @@ function compCard(c, i, count) {
     ${STG.open.has(c.id) ? 'open' : ''}
   >
     <summary>
-      <span class="ctype">${i + 1}. ${type.label}</span><span class="csum">${esc(type.summary(c))}</span>
+      <span class="ctype">${i + 1}. ${type.label}</span><span class="csum">${esc(type.summary(c, STG.lib))}</span>
     </summary>
     <div class="cbody">
-      ${type.fields.map((f) => fieldHtml(f, c)).join('')}
+      ${type.fields.filter((f) => !f.legacy || c[f.key]).map((f) => fieldHtml(f, c, i)).join('')}
       <div class="row">
         <button data-act="compup" data-i="${i}" ${i ? '' : 'disabled'}>Move up</button>
         <button data-act="compdown" data-i="${i}" ${i < count - 1 ? '' : 'disabled'}>Move down</button>
-        ${type.deckable ? /* HTML */ `<button data-act="compdeck" data-i="${i}">Make a deck</button>` : ''}
+        ${type.deckable && cardLines(c.list).length ? /* HTML */ `<button data-act="compdeck" data-i="${i}">Make a deck from typed cards</button>` : ''}
         <button class="del" data-act="compdel" data-i="${i}">Delete step</button>
       </div>
     </div>
@@ -5732,14 +5878,14 @@ function saveStage() {
 
 /** The stage editor: name, description and the list of steps. */
 async function stageEdit(id) {
-  const stage = await get('stages', id);
+  const [stage, lib] = await Promise.all([get('stages', id), loadStageLib()]);
   if (!stage) {
     location.hash = '#/stages';
     return;
   }
   stage.comps = stage.comps || [];
   const keepOpen = STG && STG.stage.id === id ? STG.open : new Set();
-  STG = { stage, open: keepOpen };
+  STG = { stage, open: keepOpen, lib };
   app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK('#/stages')}</div>
     <input class="title" id="stitle" placeholder="Stage name" value="${esc(stage.name)}" />
     <textarea class="desc" id="sdesc" rows="1" placeholder="Add a description">
@@ -5781,7 +5927,7 @@ ${esc(stage.desc || '')}</textarea>
     if (!el || !card) return;
     const c = stage.comps[+card.dataset.i];
     c[el.dataset.key] = el.value;
-    card.querySelector('.csum').textContent = STAGE_TYPES[c.type].summary(c);
+    card.querySelector('.csum').textContent = STAGE_TYPES[c.type].summary(c, STG.lib);
     saveStage();
   });
   box.addEventListener(
@@ -5814,6 +5960,22 @@ async function stageEditAct(act, t) {
     if (!(await confirmBox('Delete this step?'))) return;
     stage.comps.splice(i, 1);
     paintComps();
+  } else if (act === 'stpick') {
+    const c = stage.comps[i];
+    const kind = t.dataset.k;
+    const pickedId = t.dataset.id;
+    if (kind === 'convo') c.convoId = c.convoId === pickedId ? '' : pickedId;
+    else {
+      const have = new Set(c.decks || []);
+      const ids =
+        kind === 'folder'
+          ? STG.lib.decks.filter((d) => d.folder === pickedId && d.cards.length).map((d) => d.id)
+          : [pickedId];
+      const every = ids.every((x) => have.has(x));
+      ids.forEach((x) => (every ? have.delete(x) : have.add(x)));
+      c.decks = [...have];
+    }
+    paintComps();
   } else if (act === 'compdeck') {
     const c = stage.comps[i];
     const cards = cardLines(c.list);
@@ -5835,13 +5997,13 @@ async function stageEditAct(act, t) {
 // ----- running a stage -----
 /** Start a stage: load it and its saved state, then show the first step. */
 async function stageView(id) {
-  const [stage, saved] = await Promise.all([get('stages', id), get('stagestate', id)]);
+  const [stage, saved, lib] = await Promise.all([get('stages', id), get('stagestate', id), loadStageLib()]);
   if (!stage) {
     location.hash = '#/stages';
     return;
   }
   stage.comps = stage.comps || [];
-  SR = new StageRunner(stage, saved);
+  SR = new StageRunner(stage, saved, lib);
   drawStage();
 }
 
@@ -5930,7 +6092,7 @@ function drawStageDone() {
 
 /** Run a conversation step with the normal conversation practice, shown inside the step. */
 function startStepConvo(run, c) {
-  CV = makeConvo({ id: c.id, name: c.title, desc: '', script: c.script }, convoMode(), convoKana());
+  CV = makeConvo({ id: c.id, name: c.title, desc: '', script: stageScript(run.lib, c) }, convoMode(), convoKana());
   CV.embed = {
     onChecked: (v) => {
       run.scores.set(c.id, { asked: v.gaps.length, right: v.score });
@@ -5942,7 +6104,7 @@ function startStepConvo(run, c) {
 }
 
 const SACT = ['sstart', 'sprev', 'snext', 'srestart', 'smc', 'swcheck', 'sfflip', 'sfgot', 'sfagain'];
-const STAGE_EDIT_ACTS = ['addcomp', 'compup', 'compdown', 'compdel', 'compdeck'];
+const STAGE_EDIT_ACTS = ['addcomp', 'compup', 'compdown', 'compdel', 'compdeck', 'stpick'];
 
 /** Buttons while running a stage. */
 function stageRunAct(act, t) {
