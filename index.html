@@ -4251,7 +4251,8 @@ const saveW = () => {
 };
 let W = null,
   wDecks = [],
-  wFolders = [];
+  wFolders = [],
+  wConvos = [];
 // cards that have Japanese on a side: the Japanese side is what you write, the other side is the prompt
 function wItems(d) {
   return d.cards
@@ -4261,8 +4262,11 @@ function wItems(d) {
       if (!b && !f) return null;
       const answer = b ? c.b : c.f,
         prompt = b ? c.f : c.b,
-        chars = writeChars(answer);
-      return chars.length && chars.length <= 10 ? { prompt, answer, chars } : null;
+        chars = writeChars(answer).filter((ch) => KANJI_CHAR.test(ch)); // kanji only
+      if (!chars.length || chars.length > 10) return null;
+      const v = answer.split(/\s*[;|\/]\s*/).find((x) => JA.test(x.replace(BR, ' '))) || '';
+      const reading = [...v.matchAll(BR)].map((m) => m[1].trim()).find((x) => KANA_ONLY.test(x)) || '';
+      return { prompt, answer, chars, word: v.replace(BR, '').trim(), reading };
     })
     .filter(Boolean);
 }
@@ -4270,6 +4274,7 @@ function wItems(d) {
 async function writeView() {
   wDecks = (await all('decks')).sort((a, b) => (b.updated || 0) - (a.updated || 0));
   wFolders = (await all('folders')).sort((a, b) => (b.updated || 0) - (a.updated || 0));
+  wConvos = await all('convos'); // sentences for the reading step come from here
   if (!wDecks.some((d) => d.id === wCfg.deck)) wCfg.deck = null;
   if (!wFolders.some((f) => f.id === wCfg.folder)) wCfg.folder = null;
   if (W) drawWrite();
@@ -4309,7 +4314,7 @@ function drawWSetup() {
     : '';
   app.innerHTML = /* HTML */ `<h1>Write</h1>
     <p class="sub">
-      Practise writing kana and kanji. Each stroke is shown briefly, in order, and then you draw it.
+      Write each kanji stroke by stroke, then pick its reading in a sentence.
     </p>
     <div class="panel">
       <h2>Deck or folder</h2>
@@ -4335,14 +4340,14 @@ function drawWSetup() {
           : '<div class="empty">No decks yet. <a href="#/cards">Make one in Flashcards</a>.</div>'
       }
       <p class="sub" style="margin:12px 0 0">
-        Cards need Japanese on one side. The other side (English or romaji) is shown as the prompt.
+        Cards need a kanji word on one side with its reading in brackets, like 学生(がくせい). The other side is the meaning. Sentences for the reading step are found in your Conversations.
       </p>
     </div>
     <div class="panel">
-      <h2>Stroke hints</h2>
+      <h2>Assist</h2>
       ${segHtml('whints', c.hints, [
-        ['every', 'Every stroke'],
-        ['miss', 'After a miss'],
+        ['every', 'Assist'],
+        ['miss', 'No assist'],
       ])}
       <h2 style="margin-top:16px">Writing sensitivity</h2>
       ${segHtml('wsens', c.sens, [
@@ -4395,6 +4400,7 @@ function drawWrite() {
       next: 0,
       finished: false,
     };
+  if (r.cur.phase === 'read') return drawRead();
   app.innerHTML =
     wHead(`Card ${r.i + 1} of ${r.items.length}`) +
     /* HTML */ `<div class="bar2" style="margin:14px 0">
@@ -4402,7 +4408,8 @@ function drawWrite() {
       </div>
       <div class="study">
         <div class="qlabel">${esc(r.deck)}</div>
-        <div class="flash q w">${esc(it.prompt)}</div>
+        <div class="flash q w">${esc(it.prompt)}${it.reading ? ' (' + esc(it.reading) + ')' : ''}</div>
+        <div class="ctl" style="margin:10px 0 0"><div class="seg"><button class="${r.cfg.hints === 'every' ? 'on' : ''}" data-act="wassist" data-v="every">Assist</button><button class="${r.cfg.hints === 'every' ? '' : 'on'}" data-act="wassist" data-v="miss">No assist</button></div></div>
         <p class="sub" id="wnote" style="text-align:center;margin:12px 0 4px">Loading stroke data...</p>
         <div class="wchips" id="wchips"></div>
         <div class="hwbox" id="hw"></div>
@@ -4570,7 +4577,7 @@ function wFinish() {
     ${wn}
     <div class="row" style="justify-content:center;margin-top:14px">
       <button class="pri" id="wnext" data-act="wnext">
-        ${r.i + 1 >= r.items.length ? 'Finish' : 'Next'}
+        ${r.items[r.i].reading ? 'Continue' : r.i + 1 >= r.items.length ? 'Finish' : 'Next'}
       </button>
     </div>`;
   const nb = document.getElementById('wnext');
@@ -4591,7 +4598,55 @@ function drawWDone() {
       </div>
     </div>`;
 }
+/** A line from the user's Conversations that contains this word, split around the word. */
+function findSentence(word) {
+  const re = new RegExp(
+    word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?:[(\\uFF08][^)\\uFF09]*[)\\uFF09])?'
+  );
+  const hits = [];
+  for (const c of wConvos)
+    for (const l of parseScript(c.script)) {
+      const text = l.text.replace(GAP, (m, g) => g.split(/\s*[;|\/]\s*/)[0]);
+      const m = re.exec(text);
+      if (m)
+        hits.push({
+          who: l.who,
+          before: applyReadings(text.slice(0, m.index), false),
+          after: applyReadings(text.slice(m.index + m[0].length), false),
+        });
+    }
+  return hits.length ? hits[Math.floor(Math.random() * hits.length)] : null;
+}
+/** Step 2 of a Write card: tap the kanji for its meaning, then pick the reading that fills the gap. */
+function drawRead() {
+  const r = W,
+    cu = r.cur,
+    it = r.items[r.i];
+  if (!cu.rd) {
+    const others = shuffle([...new Set(r.pool.filter((x) => x.reading && x.reading !== it.reading).map((x) => x.reading))]).slice(0, 3);
+    cu.rd = { flip: false, pick: null, opts: shuffle([it.reading, ...others]), sent: findSentence(it.word) };
+  }
+  const s = cu.rd,
+    done = s.pick !== null,
+    sent = s.sent || { who: '', before: '', after: '' };
+  const gap = /* HTML */ `<span class="gap ${done ? (s.pick.ok ? 'ok' : 'bad') + ' filled' : ''}" style="min-width:${gapWidth(it.reading)}ch">${done ? esc(s.opts[s.pick.i]) : '&nbsp;'}</span>${done && !s.pick.ok ? `<span class="fix">${esc(it.reading)}</span>` : ''}`;
+  app.innerHTML =
+    wHead(`Card ${r.i + 1} of ${r.items.length}, reading`) +
+    /* HTML */ `<div class="bar2" style="margin:14px 0"><i style="width:${Math.round((r.i / r.items.length) * 100)}%"></i></div>
+      <div class="study">
+        <div class="qlabel">${esc(r.deck)}</div>
+        <div class="flash ${s.flip ? 'back' : ''}" data-act="kflip" tabindex="0" style="font-size:${s.flip ? '1.4rem' : '2.6rem'}">${esc(s.flip ? it.prompt.replace(/\s*[;|\/]\s*/g, ', ') : it.word)}</div>
+        <p class="sub" style="margin-top:10px">Tap the kanji to ${s.flip ? 'see it again' : 'see the meaning'}. Pick the reading for the gap.</p>
+        <div class="chat" style="text-align:left"><div class="msg ${sent.who === 'B' ? 'b' : 'a'}">${sent.who ? `<span class="who">${sent.who}</span>` : ''}<div class="bub">${esc(sent.before)}${gap}${esc(sent.after)}</div></div></div>
+        ${s.sent ? '' : '<p class="sub" style="margin:6px 0 0">No sentence with this word in your Conversations yet.</p>'}
+        <div class="opts">${s.opts.map((o, i) => /* HTML */ `<button class="opt ${done ? (o === it.reading ? 'right' : s.pick.i === i ? 'wrong' : '') : ''}" data-act="kpick" data-i="${i}">${esc(o)}</button>`).join('')}</div>
+        ${done ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" id="wnext" data-act="wnext">${r.i + 1 >= r.items.length ? 'Finish' : 'Next'}</button></div>` : ''}
+      </div>`;
+}
 const WACT = [
+  'wassist',
+  'kflip',
+  'kpick',
   'wfolder',
   'wdeck',
   'whints',
@@ -4639,7 +4694,7 @@ async function writeAct(act, t) {
     }
     if (!items.length) return;
     if (c.order === 'shuffle') items = shuffle(items.slice());
-    W = { deck: label, items, i: 0, cfg: { ...c }, cur: null, done: 0, perfect: 0, skipped: 0, xp: 0 };
+    W = { deck: label, pool: items.slice(), items, i: 0, cfg: { ...c }, cur: null, done: 0, perfect: 0, skipped: 0, xp: 0 };
     drawWrite();
     return;
   }
@@ -4650,7 +4705,36 @@ async function writeAct(act, t) {
   }
   const r = W;
   if (!r) return;
+  if (act === 'wassist') {
+    wCfg.hints = r.cfg.hints = v;
+    saveW();
+    if (r.cur && !r.cur.finished) drawWrite();
+    return;
+  }
+  if (act === 'kflip') {
+    const s = r.cur && r.cur.rd;
+    if (s) {
+      s.flip = !s.flip;
+      drawRead();
+    }
+    return;
+  }
+  if (act === 'kpick') {
+    const s = r.cur && r.cur.rd;
+    if (!s || s.pick !== null) return;
+    const ok = s.opts[+t.dataset.i] === r.items[r.i].reading;
+    s.pick = { i: +t.dataset.i, ok };
+    const g = xpSystem.award('write', ok ? 2 : 0.5, { writeReadings: 1 });
+    r.xp += g;
+    drawRead();
+    return;
+  }
   if (act === 'wnext') {
+    if (r.cur && r.cur.finished && !r.cur.phase && r.items[r.i].reading) {
+      r.cur.phase = 'read';
+      drawRead();
+      return;
+    }
     r.i++;
     r.cur = null;
     drawWrite();
