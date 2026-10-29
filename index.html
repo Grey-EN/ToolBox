@@ -1844,7 +1844,7 @@ button.gap {
 </head>
 <body>
 <header><div class="bar"><a class="brand" href="#/home" aria-label="Toolbox home"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></i><b>Toolbox</b></a>
-<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><span class="grp">Study</span><a href="#/stages">Stages</a><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/write">Write</a><a href="#/convos">Conversations</a><span class="grp">General</span><a href="#/habits">Habits</a><a href="#/notes">Notes</a><a href="#/dictionary">Dictionary</a></div></div></nav>
+<nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><span class="grp">Study</span><a href="#/stages">Stages</a><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/kanji">Kanji</a><a href="#/convos">Conversations</a><span class="grp">General</span><a href="#/habits">Habits</a><a href="#/notes">Notes</a><a href="#/dictionary">Dictionary</a></div></div></nav>
 <div class="acts"><div class="menuwrap notifwrap" id="notifwrap" hidden><button class="circle ghost" id="bell" data-act="menu" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button><div class="menu notifs" id="notifs"></div></div>
 <div class="menuwrap" id="usermenu"><button class="circle ghost" id="burger" data-act="menu" title="Menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="menu"><a href="#/profile" id="mProfile" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profile</a><button id="theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Switch theme</button><button id="out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></div></div></div></div>
 <div class="xpbar" id="xpbar" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" hidden><i id="xpfill"></i></div></header>
@@ -2423,7 +2423,7 @@ async function route() {
   if (!store.uid) return;
   if ((location.hash || '#/home').split('/')[1] !== 'study') study = null;
   if ((location.hash || '#/home').split('/')[1] !== 'test') T = null;
-  if ((location.hash || '#/home').split('/')[1] !== 'write') W = null;
+  if ((location.hash || '#/home').split('/')[1] !== 'kanji') W = null;
   closeMenus();
   window.scrollTo(0, 0);
   return render();
@@ -2439,7 +2439,8 @@ async function render() {
       'folder',
       'study',
       'test',
-      'write',
+      'kanji',
+      'kdeck',
       'convos',
       'convo',
       'convoedit',
@@ -2461,7 +2462,8 @@ async function render() {
   if (page === 'cards') return decksView();
   if (page === 'study') return studyView(id);
   if (page === 'test') return testView();
-  if (page === 'write') return writeView();
+  if (page === 'kanji') return writeView();
+  if (page === 'kdeck') return kdeckView(id);
   if (page === 'convos') return convosView();
   if (page === 'convo') return convoView(id);
   if (page === 'convoedit') return convoEdit(id);
@@ -2520,7 +2522,7 @@ async function profileView() {
     </div>
     <h2 class="h2">XP earned</h2>
     <div class="stats">
-      ${blk(n(by.flash), 'Flashcards')}${blk(n(by.test), 'Test')}${blk(n(by.write), 'Write')}${blk(n(by.convo), 'Conversations')}${blk(n(by.stage), 'Stages')}
+      ${blk(n(by.flash), 'Flashcards')}${blk(n(by.test), 'Test')}${blk(n(by.write), 'Kanji')}${blk(n(by.convo), 'Conversations')}${blk(n(by.stage), 'Stages')}
     </div>
     <h2 class="h2">Activity</h2>
     <div class="stats">
@@ -2541,7 +2543,7 @@ async function profileView() {
         and the same question count bonuses.
       </p>
       <p>
-        <b>Write:</b> 4 XP per character, about the same as flashcards. x1.5 when hints only appear after a
+        <b>Kanji:</b> 4 XP per character, about the same as flashcards. x1.5 when hints only appear after a
         miss, x1.3 on Strict (x0.9 Relaxed, x0.8 Very relaxed), x1.25 for no mistakes, plus the session size
         bonus.
       </p>
@@ -2706,7 +2708,7 @@ async function homeView() {
       <a class="tile tool" href="#/stages"><b>Stages</b><p>Lessons built from your textbook, step by step.</p></a>
       <a class="tile tool" href="#/cards"><b>Flashcards</b><p>Make decks, paste in lists, and study.</p></a>
       <a class="tile tool" href="#/test"><b>Test</b><p>Quiz yourself on any decks.</p></a>
-      <a class="tile tool" href="#/write"><b>Write</b><p>Practise kana and kanji stroke by stroke.</p></a>
+      <a class="tile tool" href="#/kanji"><b>Kanji</b><p>Your own kanji decks: write them, then read them in sentences.</p></a>
       <a class="tile tool" href="#/convos"><b>Conversations</b><p>Fill in the gaps in A/B scripts.</p></a>
     </div>
     <h2 class="h2">General tools</h2>
@@ -4253,96 +4255,56 @@ let W = null,
   wDecks = [],
   wFolders = [],
   wConvos = [];
-// cards that have Japanese on a side: the Japanese side is what you write, the other side is the prompt
+// Kanji decks live in their own collection ('kdecks'): each card is { k, kanji, meaning, sentence }.
+// The sentence has its readings in [square brackets]; those become the gaps after the kanji is written.
 function wItems(d) {
   return d.cards
     .map((c) => {
-      const b = hasJa(c.b),
-        f = hasJa(c.f);
-      if (!b && !f) return null;
-      const answer = b ? c.b : c.f,
-        prompt = b ? c.f : c.b,
-        chars = writeChars(answer).filter((ch) => KANJI_CHAR.test(ch)); // kanji only
-      if (!chars.length || chars.length > 10) return null;
-      const v = answer.split(/\s*[;|\/]\s*/).find((x) => JA.test(x.replace(BR, ' '))) || '';
-      const reading = [...v.matchAll(BR)].map((m) => m[1].trim()).find((x) => KANA_ONLY.test(x)) || '';
-      return { prompt, answer, chars, word: v.replace(BR, '').trim(), reading };
+      const chars = writeChars(c.kanji || '');
+      return chars.length && chars.length <= 10
+        ? { kanji: c.kanji, meaning: c.meaning || '', prompt: c.meaning || '', chars, sentence: c.sentence || '' }
+        : null;
     })
     .filter(Boolean);
 }
-/** Load the decks and folders, then show the Write page. */
+/** Load the kanji decks, then show the Kanji page. */
 async function writeView() {
-  wDecks = (await all('decks')).sort((a, b) => (b.updated || 0) - (a.updated || 0));
-  wFolders = (await all('folders')).sort((a, b) => (b.updated || 0) - (a.updated || 0));
-  wConvos = await all('convos'); // sentences for the reading step come from here
-  if (!wDecks.some((d) => d.id === wCfg.deck)) wCfg.deck = null;
-  if (!wFolders.some((f) => f.id === wCfg.folder)) wCfg.folder = null;
+  wDecks = (await all('kdecks')).sort((a, b) => (b.updated || 0) - (a.updated || 0));
   if (W) drawWrite();
   else drawWSetup();
 }
-/** The Write setup screen: deck or folder, hints, sensitivity and order. */
+/** The Kanji page: your decks (tap one to practise) and the practice settings. */
 function drawWSetup() {
-  const c = wCfg,
-    list = wDecks.map((d) => ({ d, n: wItems(d).length })),
-    flist = wFolders.map((f) => ({
-      f,
-      n: wDecks.filter((d) => d.folder === f.id).reduce((a, d) => a + wItems(d).length, 0),
-    }));
-  const n = c.folder
-    ? (flist.find((y) => y.f.id === c.folder) || {}).n || 0
-    : (list.find((y) => y.d.id === c.deck) || {}).n || 0;
-  const folderBlock = flist.length
-    ? /* HTML */ `<h2 class="sub-h">Folders</h2>
-        <div class="picks">
-          ${flist
-            .map(({ f, n }) => {
-              const on = c.folder === f.id;
-              return /* HTML */ `<button
-                class="pick radio ${on ? 'on' : ''}"
-                data-act="wfolder"
-                data-id="${f.id}"
-                ${n ? '' : 'disabled'}
-              >
-                <span class="chk">${on ? SVG(CHECK) : ''}</span
-                ><span class="nm">${SVG(FOLDER)}${esc(f.name || 'Untitled folder')}</span
-                ><small>${n ? n + ' to write' : 'No Japanese'}</small>
-              </button>`;
-            })
-            .join('')}
-        </div>
-        <h2 class="sub-h">Decks</h2>`
-    : '';
-  app.innerHTML = /* HTML */ `<h1>Write</h1>
-    <p class="sub">
-      Write each kanji stroke by stroke, then pick its reading in a sentence.
-    </p>
-    <div class="panel">
-      <h2>Deck or folder</h2>
-      ${folderBlock}${
-        list.length
-          ? /* HTML */ `<div class="picks">
-              ${list
-                .map(({ d, n }) => {
-                  const on = c.deck === d.id;
-                  return /* HTML */ `<button
-                    class="pick radio ${on ? 'on' : ''}"
-                    data-act="wdeck"
-                    data-id="${d.id}"
-                    ${n ? '' : 'disabled'}
-                  >
-                    <span class="chk">${on ? SVG(CHECK) : ''}</span
-                    ><span class="nm">${esc(d.name || 'Untitled deck')}</span
-                    ><small>${n ? n + ' to write' : 'No Japanese'}</small>
-                  </button>`;
-                })
-                .join('')}
-            </div>`
-          : '<div class="empty">No decks yet. <a href="#/cards">Make one in Flashcards</a>.</div>'
-      }
-      <p class="sub" style="margin:12px 0 0">
-        Cards need a kanji word on one side with its reading in brackets, like 学生(がくせい). The other side is the meaning. Sentences for the reading step are found in your Conversations.
-      </p>
+  const c = wCfg;
+  app.innerHTML = /* HTML */ `<h1>Kanji</h1>
+    <p class="sub">Tap a deck to write each kanji, then fill in the readings in its sentence.</p>
+    <div class="row between">
+      <button class="pri" data-act="newkdeck">+ New deck</button><span class="row">${backupBtns('kdecks')}</span>
     </div>
+    ${
+      wDecks.length
+        ? /* HTML */ `<div class="grid">
+            ${wDecks
+              .map((d) => {
+                const n = wItems(d).length;
+                return /* HTML */ `<div class="deckwrap">
+                  <button class="tile" data-act="kstart" data-id="${d.id}">
+                    <b>${esc(d.name || 'Untitled deck')}</b>${d.desc ? /* HTML */ `<p>${esc(d.desc)}</p>` : ''}
+                    <div class="pills"><span class="pill">${n ? n + ' kanji' : 'No cards yet'}</span></div>
+                  </button>
+                  <div class="menuwrap">
+                    ${dotsBtn('Deck options')}
+                    <div class="menu">
+                      <a href="#/kdeck/${d.id}">Edit</a
+                      ><button class="del" data-act="askdelk" data-id="${d.id}">Delete</button>
+                    </div>
+                  </div>
+                </div>`;
+              })
+              .join('')}
+          </div>`
+        : '<div class="empty">No kanji decks yet. Make one and add your kanji.</div>'
+    }
     <div class="panel">
       <h2>Assist</h2>
       ${segHtml('whints', c.hints, [
@@ -4362,21 +4324,126 @@ function drawWSetup() {
         ['deck', 'Deck order'],
       ])}
     </div>
-    <div class="row" style="margin-top:16px">
-      <button class="pri" data-act="wstart" ${n ? '' : 'disabled'}>
-        ${n ? `Start practice, ${n} card${n == 1 ? '' : 's'}` : 'Choose a deck or folder to start'}
-      </button>
-    </div>
     <p class="sub" style="margin-top:22px;font-size:.78rem">
       Stroke data loads from the internet (free): KanjiVG (CC BY-SA 3.0, Ulrich Apel), Hanzi Writer Japanese
       data (animCJK, Make Me a Hanzi) and the Hanzi Writer library (MIT).
     </p>`;
 }
+/** Edit one kanji deck: name, description, cards and bulk import. */
+async function kdeckView(id) {
+  const d = await get('kdecks', id);
+  if (!d) {
+    location.hash = '#/kanji';
+    return;
+  }
+  app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK('#/kanji')}</div>
+    <input class="title" id="ktitle" placeholder="Deck name" value="${esc(d.name)}" />
+    <textarea class="desc" id="kdesc" rows="1" placeholder="Add a description">${esc(d.desc || '')}</textarea>
+    <div class="row between">
+      <p class="sub" style="margin:0">${d.cards.length} card${d.cards.length == 1 ? '' : 's'}</p>
+      <div class="row">
+        <button class="pri" data-act="kstart" data-id="${id}" ${d.cards.length ? '' : 'disabled'}>Practise</button
+        ><button class="del" data-act="delkdeck" data-id="${id}">Delete deck</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Add a card</h2>
+      <div class="two"><input id="kk" placeholder="Kanji, e.g. 学生" /><input id="km" placeholder="Meaning(s), use / between" /></div>
+      <input id="ks" placeholder="Sentence, readings in [ ], e.g. 私は[がくせい]です" style="margin-bottom:8px" />
+      <button class="pri" data-act="kaddcard" data-id="${id}">Add card</button>
+    </div>
+    <div class="panel">
+      <h2>Paste a list</h2>
+      <p class="sub" style="margin:0 0 8px">One card per line: kanji, meaning, sentence. The first two commas split the line, so use / between meanings.</p>
+      <textarea id="kbulk" placeholder="学生, student, 私は[がくせい]です"></textarea>
+      <div class="row" style="margin-top:8px"><button class="pri" data-act="kbulk" data-id="${id}">Import cards</button></div>
+    </div>
+    <div class="panel list">
+      <h2>Cards</h2>
+      ${
+        d.cards.length
+          ? d.cards
+              .map(
+                (c, i) => /* HTML */ `<div class="item">
+                  <span>${esc(c.kanji)}</span><span>${esc(c.meaning)}${c.sentence ? /* HTML */ `<br /><small class="sub">${esc(c.sentence)}</small>` : ''}</span
+                  ><span class="row"
+                    ><button data-act="keditcard" data-id="${id}" data-i="${i}">Edit</button
+                    ><button class="del" data-act="kdelcard" data-id="${id}" data-i="${i}">Delete</button></span
+                  >
+                </div>`
+              )
+              .join('')
+          : '<div class="empty">This deck is empty.</div>'
+      }
+    </div>`;
+  const ti = document.getElementById('ktitle'),
+    de = document.getElementById('kdesc');
+  if (!d.name) ti.focus();
+  grow(de);
+  saver.bind('kdecks', id, { name: ti, desc: de });
+}
+const KACT = ['newkdeck', 'askdelk', 'delkdeck', 'kaddcard', 'kdelcard', 'keditcard', 'kbulk'];
+/** Buttons on the Kanji deck pages. */
+async function kanjiDeckAct(act, t) {
+  const id = t.dataset.id;
+  if (act === 'newkdeck') {
+    const d = { id: uid(), name: '', desc: '', cards: [], updated: Date.now() };
+    await put('kdecks', d);
+    location.hash = '#/kdeck/' + d.id;
+    return;
+  }
+  if (act === 'askdelk' || act === 'delkdeck') {
+    if (!(await confirmBox('Delete this kanji deck and all its cards?'))) return;
+    saver.cancel();
+    await del('kdecks', id);
+    if (act === 'delkdeck') location.hash = '#/kanji';
+    else writeView();
+    return;
+  }
+  const d = await get('kdecks', id);
+  if (!d) return;
+  const i = +t.dataset.i;
+  let msg = '';
+  if (act === 'kaddcard') {
+    const v = (x) => document.getElementById(x).value.trim();
+    if (!v('kk') || !v('km')) return alert('Add the kanji and its meaning.');
+    d.cards.push({ k: uid(), kanji: v('kk'), meaning: v('km'), sentence: v('ks') });
+  } else if (act === 'kdelcard') d.cards.splice(i, 1);
+  else if (act === 'keditcard') {
+    const c = d.cards[i];
+    const k = prompt('Kanji', c.kanji);
+    if (k === null) return;
+    const m = prompt('Meaning', c.meaning);
+    if (m === null) return;
+    const sn = prompt('Sentence, readings in [ ]', c.sentence || '');
+    if (sn === null || !k.trim() || !m.trim()) return;
+    d.cards[i] = { ...c, kanji: k.trim(), meaning: m.trim(), sentence: sn.trim() };
+  } else if (act === 'kbulk') {
+    let n = 0;
+    document.getElementById('kbulk').value.split(/\r?\n/).forEach((line) => {
+      const a = line.indexOf(','),
+        b = line.indexOf(',', a + 1);
+      if (a < 1) return;
+      const kanji = line.slice(0, a).trim(),
+        meaning = line.slice(a + 1, b < 0 ? undefined : b).trim(),
+        sentence = b < 0 ? '' : line.slice(b + 1).trim();
+      if (kanji && meaning) {
+        d.cards.push({ k: uid(), kanji, meaning, sentence });
+        n++;
+      }
+    });
+    msg = `Imported ${n} card${n == 1 ? '' : 's'}.`;
+  }
+  d.updated = Date.now();
+  await put('kdecks', d);
+  await kdeckView(id);
+  if (msg) alert(msg);
+}
 /** Heading of the Write practice pages. */
 const wHead = (sub) =>
   /* HTML */ `<div class="row between" style="align-items:flex-start">
     <div>
-      <h1>Write</h1>
+      <h1>Kanji</h1>
       <p class="sub" style="margin:0">${sub}</p>
     </div>
     <button class="circle" data-act="wquit" title="Exit practice" aria-label="Exit practice">
@@ -4577,7 +4644,7 @@ function wFinish() {
     ${wn}
     <div class="row" style="justify-content:center;margin-top:14px">
       <button class="pri" id="wnext" data-act="wnext">
-        ${r.items[r.i].reading ? 'Continue' : r.i + 1 >= r.items.length ? 'Finish' : 'Next'}
+        ${gapCount(r.items[r.i].sentence) ? 'Continue' : r.i + 1 >= r.items.length ? 'Finish' : 'Next'}
       </button>
     </div>`;
   const nb = document.getElementById('wnext');
@@ -4598,55 +4665,36 @@ function drawWDone() {
       </div>
     </div>`;
 }
-/** A line from the user's Conversations that contains this word, split around the word. */
-function findSentence(word) {
-  const re = new RegExp(
-    word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?:[(\\uFF08][^)\\uFF09]*[)\\uFF09])?'
-  );
-  const hits = [];
-  for (const c of wConvos)
-    for (const l of parseScript(c.script)) {
-      const text = l.text.replace(GAP, (m, g) => g.split(/\s*[;|\/]\s*/)[0]);
-      const m = re.exec(text);
-      if (m)
-        hits.push({
-          who: l.who,
-          before: applyReadings(text.slice(0, m.index), false),
-          after: applyReadings(text.slice(m.index + m[0].length), false),
-        });
-    }
-  return hits.length ? hits[Math.floor(Math.random() * hits.length)] : null;
-}
-/** Step 2 of a Write card: tap the kanji for its meaning, then pick the reading that fills the gap. */
+/** Step 2 of a Kanji card: tap the kanji for its meaning, then fill the sentence's [gaps] like a Conversation. */
 function drawRead() {
   const r = W,
     cu = r.cur,
     it = r.items[r.i];
-  if (!cu.rd) {
-    const others = shuffle([...new Set(r.pool.filter((x) => x.reading && x.reading !== it.reading).map((x) => x.reading))]).slice(0, 3);
-    cu.rd = { flip: false, pick: null, opts: shuffle([it.reading, ...others]), sent: findSentence(it.word) };
-  }
-  const s = cu.rd,
-    done = s.pick !== null,
-    sent = s.sent || { who: '', before: '', after: '' };
-  const gap = /* HTML */ `<span class="gap ${done ? (s.pick.ok ? 'ok' : 'bad') + ' filled' : ''}" style="min-width:${gapWidth(it.reading)}ch">${done ? esc(s.opts[s.pick.i]) : '&nbsp;'}</span>${done && !s.pick.ok ? `<span class="fix">${esc(it.reading)}</span>` : ''}`;
   app.innerHTML =
     wHead(`Card ${r.i + 1} of ${r.items.length}, reading`) +
     /* HTML */ `<div class="bar2" style="margin:14px 0"><i style="width:${Math.round((r.i / r.items.length) * 100)}%"></i></div>
       <div class="study">
         <div class="qlabel">${esc(r.deck)}</div>
-        <div class="flash ${s.flip ? 'back' : ''}" data-act="kflip" tabindex="0" style="font-size:${s.flip ? '1.4rem' : '2.6rem'}">${esc(s.flip ? it.prompt.replace(/\s*[;|\/]\s*/g, ', ') : it.word)}</div>
-        <p class="sub" style="margin-top:10px">Tap the kanji to ${s.flip ? 'see it again' : 'see the meaning'}. Pick the reading for the gap.</p>
-        <div class="chat" style="text-align:left"><div class="msg ${sent.who === 'B' ? 'b' : 'a'}">${sent.who ? `<span class="who">${sent.who}</span>` : ''}<div class="bub">${esc(sent.before)}${gap}${esc(sent.after)}</div></div></div>
-        ${s.sent ? '' : '<p class="sub" style="margin:6px 0 0">No sentence with this word in your Conversations yet.</p>'}
-        <div class="opts">${s.opts.map((o, i) => /* HTML */ `<button class="opt ${done ? (o === it.reading ? 'right' : s.pick.i === i ? 'wrong' : '') : ''}" data-act="kpick" data-i="${i}">${esc(o)}</button>`).join('')}</div>
-        ${done ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="pri" id="wnext" data-act="wnext">${r.i + 1 >= r.items.length ? 'Finish' : 'Next'}</button></div>` : ''}
+        <div class="flash" id="kflash" data-act="kflip" tabindex="0" style="font-size:2.6rem">${esc(it.kanji)}</div>
+        <p class="sub" style="margin:10px 0 0">Tap the kanji to see the meaning. Fill in the gaps.</p>
+      </div>
+      <div id="convohost"></div>
+      <div class="row" id="knext" style="justify-content:center;margin-top:14px" ${cu.rdone ? '' : 'hidden'}>
+        <button class="pri" id="wnext" data-act="wnext">${r.i + 1 >= r.items.length ? 'Finish' : 'Next'}</button>
       </div>`;
+  CV = makeConvo({ id: r.id, name: '', desc: '', script: it.sentence }, convoMode(), convoKana());
+  CV.embed = {
+    onChecked: () => {
+      cu.rdone = true;
+      document.getElementById('knext').hidden = false;
+    },
+  };
+  drawConvo();
 }
 const WACT = [
   'wassist',
   'kflip',
-  'kpick',
+  'kstart',
   'wfolder',
   'wdeck',
   'whints',
@@ -4679,23 +4727,15 @@ async function writeAct(act, t) {
     drawWSetup();
     return;
   }
-  if (act === 'wstart' || act === 'wagain') {
-    let label, items;
-    if (c.folder) {
-      const f = wFolders.find((x) => x.id === c.folder);
-      if (!f) return;
-      label = f.name || 'Untitled folder';
-      items = wDecks.filter((d) => d.folder === f.id).flatMap(wItems);
-    } else {
-      const d = wDecks.find((x) => x.id === c.deck);
-      if (!d) return;
-      label = d.name || 'Untitled deck';
-      items = wItems(d);
-    }
+  if (act === 'kstart' || act === 'wagain') {
+    const d = wDecks.find((x) => x.id === (act === 'kstart' ? t.dataset.id : W && W.id));
+    if (!d) return;
+    let items = wItems(d);
     if (!items.length) return;
     if (c.order === 'shuffle') items = shuffle(items.slice());
-    W = { deck: label, pool: items.slice(), items, i: 0, cfg: { ...c }, cur: null, done: 0, perfect: 0, skipped: 0, xp: 0 };
-    drawWrite();
+    W = { id: d.id, deck: d.name || 'Untitled deck', pool: items.slice(), items, i: 0, cfg: { ...c }, cur: null, done: 0, perfect: 0, skipped: 0, xp: 0 };
+    if (location.hash !== '#/kanji') location.hash = '#/kanji';
+    else drawWrite();
     return;
   }
   if (act === 'wquit') {
@@ -4712,25 +4752,16 @@ async function writeAct(act, t) {
     return;
   }
   if (act === 'kflip') {
-    const s = r.cur && r.cur.rd;
-    if (s) {
-      s.flip = !s.flip;
-      drawRead();
-    }
-    return;
-  }
-  if (act === 'kpick') {
-    const s = r.cur && r.cur.rd;
-    if (!s || s.pick !== null) return;
-    const ok = s.opts[+t.dataset.i] === r.items[r.i].reading;
-    s.pick = { i: +t.dataset.i, ok };
-    const g = xpSystem.award('write', ok ? 2 : 0.5, { writeReadings: 1 });
-    r.xp += g;
-    drawRead();
+    const it = r.items[r.i],
+      el = document.getElementById('kflash');
+    if (!el) return;
+    const back = el.classList.toggle('back');
+    el.textContent = back ? it.meaning.replace(/\s*[;|\/]\s*/g, ', ') : it.kanji;
+    el.style.fontSize = back ? '1.4rem' : '2.6rem';
     return;
   }
   if (act === 'wnext') {
-    if (r.cur && r.cur.finished && !r.cur.phase && r.items[r.i].reading) {
+    if (r.cur && r.cur.finished && !r.cur.phase && gapCount(r.items[r.i].sentence)) {
       r.cur.phase = 'read';
       drawRead();
       return;
@@ -6686,6 +6717,8 @@ document.addEventListener('click', async (e) => {
       if (act === 'delfolder') location.hash = '#/cards';
       else decksView();
     }
+  } else if (KACT.includes(act)) {
+    await kanjiDeckAct(act, t);
   } else if (SACT.includes(act)) {
     stageRunAct(act, t);
   } else if (STAGE_EDIT_ACTS.includes(act)) {
@@ -6790,7 +6823,7 @@ document.addEventListener('click', async (e) => {
     a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
     a.download =
       'toolbox-' +
-      { decks: 'flashcards', notes: 'notes', habits: 'habits', convos: 'conversations', stages: 'stages' }[k] +
+      { kdecks: 'kanji', decks: 'flashcards', notes: 'notes', habits: 'habits', convos: 'conversations', stages: 'stages' }[k] +
       '-backup-' +
       new Date().toISOString().slice(0, 10) +
       '.json';
@@ -6804,6 +6837,7 @@ document.addEventListener('click', async (e) => {
         const j = JSON.parse(await inp.files[0].text());
         for (const f of j.folders || []) await put('folders', f);
         for (const d of j.decks || []) await put('decks', d);
+        for (const d of j.kdecks || []) await put('kdecks', d);
         for (const n of j.notes || []) await put('notes', n);
         for (const h of j.habits || []) await put('habits', h);
         for (const c of j.convos || []) await put('convos', c);
