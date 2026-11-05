@@ -1848,6 +1848,13 @@ button.gap {
   border-color: var(--accent);
   color: var(--acc-t);
 }
+
+/* Kanji reading step: one row per word */
+.wlist { display: grid; gap: 10px; margin-top: 14px; }
+.wrow { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.wtext { flex: none; min-width: 2ch; font-size: 1.5rem; font-weight: 600; overflow-wrap: anywhere; }
+.tk { color: var(--acc-t); }
+.wrow .gap { flex: 1; min-width: 0; width: auto; margin: 0; padding: 8px 12px; border-radius: 10px; font-size: 1.05rem; }
 </style>
 </head>
 <body>
@@ -4327,14 +4334,34 @@ let W = null,
   wDecks = [],
   wFolders = [],
   wConvos = [];
-// Kanji decks live in their own collection ('kdecks'): each card is { k, kanji, meaning, sentence }.
-// The sentence has its readings in [square brackets]; those become the gaps after the kanji is written.
+// Kanji decks live in their own collection ('kdecks'): each card is { k, kanji, meaning, words }.
+// words is text like "山=やま; 富士(ふじ)山=さん": each word, then = and the reading of the kanji being learned.
+// Readings of the other kanji go in (brackets) so Kana only can show them. { } marks the kanji if it appears twice.
+function parseWords(text) {
+  return String(text || '')
+    .split(/\s*[;\uFF1B\n]\s*/)
+    .map((entry) => {
+      const k = Math.max(entry.lastIndexOf('='), entry.lastIndexOf('\uFF1D'));
+      if (k < 1) return null;
+      const word = entry.slice(0, k).trim();
+      const answer = entry.slice(k + 1).trim();
+      return word && answer ? { word, answer } : null;
+    })
+    .filter(Boolean);
+}
 function wItems(d) {
   return d.cards
     .map((c) => {
       const chars = writeChars(c.kanji || '');
       return chars.length && chars.length <= 10
-        ? { kanji: c.kanji, meaning: c.meaning || '', prompt: c.meaning || '', chars, sentence: c.sentence || '' }
+        ? {
+            kanji: c.kanji,
+            meaning: c.meaning || '',
+            prompt: c.meaning || '',
+            chars,
+            words: parseWords(c.words),
+            targets: [...new Set(Array.from(c.kanji).filter((ch) => KANJI_CHAR.test(ch)))],
+          }
         : null;
     })
     .filter(Boolean);
@@ -4349,7 +4376,7 @@ async function writeView() {
 function drawWSetup() {
   const c = wCfg;
   app.innerHTML = /* HTML */ `<h1>Kanji</h1>
-    <p class="sub">Tap a deck to write each kanji, then fill in the readings in its sentence.</p>
+    <p class="sub">Tap a deck to write each kanji, then give its reading in each word that uses it.</p>
     <div class="row between">
       <button class="pri" data-act="newkdeck">+ New deck</button><span class="row">${backupBtns('kdecks')}</span>
     </div>
@@ -4422,13 +4449,14 @@ async function kdeckView(id) {
     <div class="panel">
       <h2>Add a card</h2>
       <div class="two"><input id="kk" placeholder="Kanji, e.g. 学生" /><input id="km" placeholder="Meaning(s), use / between" /></div>
-      <input id="ks" placeholder="Sentence, readings in [ ], e.g. 私は[がくせい]です" style="margin-bottom:8px" />
+      <input id="kw" placeholder="Words, e.g. 山=やま; 富士(ふじ)山=さん" style="margin-bottom:8px" />
+      <p class="sub" style="margin:0 0 8px;font-size:.82rem">Words: each word, then = and the reading of this kanji in it, separated by ;. Put the reading of any other kanji in (brackets) so Kana only can show it. Use / for alternative readings, and wrap the kanji in { } if it appears twice in one word.</p>
       <button class="pri" data-act="kaddcard" data-id="${id}">Add card</button>
     </div>
     <div class="panel">
       <h2>Paste a list</h2>
-      <p class="sub" style="margin:0 0 8px">One card per line: kanji, meaning, sentence. The first two commas split the line, so use / between meanings.</p>
-      <textarea id="kbulk" placeholder="学生, student, 私は[がくせい]です"></textarea>
+      <p class="sub" style="margin:0 0 8px">One card per line: kanji, meaning, words. The first two commas split the line, so use / between meanings and ; between words.</p>
+      <textarea id="kbulk" placeholder="山, mountain, 山=やま; 富士(ふじ)山=さん"></textarea>
       <div class="row" style="margin-top:8px"><button class="pri" data-act="kbulk" data-id="${id}">Import cards</button></div>
     </div>
     <div class="panel list">
@@ -4438,7 +4466,7 @@ async function kdeckView(id) {
           ? d.cards
               .map(
                 (c, i) => /* HTML */ `<div class="item">
-                  <span>${esc(c.kanji)}</span><span>${esc(c.meaning)}${c.sentence ? /* HTML */ `<br /><small class="sub">${esc(c.sentence)}</small>` : ''}</span
+                  <span>${esc(c.kanji)}</span><span>${esc(c.meaning)}${c.words ? /* HTML */ `<br /><small class="sub">${esc(c.words)}</small>` : ''}</span
                   ><span class="row"
                     ><button data-act="keditcard" data-id="${id}" data-i="${i}">Edit</button
                     ><button class="del" data-act="kdelcard" data-id="${id}" data-i="${i}">Delete</button></span
@@ -4480,7 +4508,7 @@ async function kanjiDeckAct(act, t) {
   if (act === 'kaddcard') {
     const v = (x) => document.getElementById(x).value.trim();
     if (!v('kk') || !v('km')) return alert('Add the kanji and its meaning.');
-    d.cards.push({ k: uid(), kanji: v('kk'), meaning: v('km'), sentence: v('ks') });
+    d.cards.push({ k: uid(), kanji: v('kk'), meaning: v('km'), words: v('kw') });
   } else if (act === 'kdelcard') d.cards.splice(i, 1);
   else if (act === 'keditcard') {
     const c = d.cards[i];
@@ -4488,9 +4516,9 @@ async function kanjiDeckAct(act, t) {
     if (k === null) return;
     const m = prompt('Meaning', c.meaning);
     if (m === null) return;
-    const sn = prompt('Sentence, readings in [ ]', c.sentence || '');
+    const sn = prompt('Words, like 山=やま; 富士(ふじ)山=さん', c.words || '');
     if (sn === null || !k.trim() || !m.trim()) return;
-    d.cards[i] = { ...c, kanji: k.trim(), meaning: m.trim(), sentence: sn.trim() };
+    d.cards[i] = { ...c, kanji: k.trim(), meaning: m.trim(), words: sn.trim() };
   } else if (act === 'kbulk') {
     let n = 0;
     document.getElementById('kbulk').value.split(/\r?\n/).forEach((line) => {
@@ -4499,9 +4527,9 @@ async function kanjiDeckAct(act, t) {
       if (a < 1) return;
       const kanji = line.slice(0, a).trim(),
         meaning = line.slice(a + 1, b < 0 ? undefined : b).trim(),
-        sentence = b < 0 ? '' : line.slice(b + 1).trim();
+        words = b < 0 ? '' : line.slice(b + 1).trim();
       if (kanji && meaning) {
-        d.cards.push({ k: uid(), kanji, meaning, sentence });
+        d.cards.push({ k: uid(), kanji, meaning, words });
         n++;
       }
     });
@@ -4717,7 +4745,7 @@ function wFinish() {
     ${wn}
     <div class="row" style="justify-content:center;margin-top:14px">
       <button class="pri" id="wnext" data-act="wnext">
-        ${gapCount(r.items[r.i].sentence) ? 'Continue' : r.i + 1 >= r.items.length ? 'Finish' : 'Next'}
+        ${r.items[r.i].words.length ? 'Continue' : r.i + 1 >= r.items.length ? 'Finish' : 'Next'}
       </button>
     </div>`;
   const nb = document.getElementById('wnext');
@@ -4738,7 +4766,7 @@ function drawWDone() {
       </div>
     </div>`;
 }
-/** Step 2 of a Kanji card: tap the kanji for its meaning, then fill the sentence's [gaps] like a Conversation. */
+/** Step 2 of a Kanji card: a list of words using the kanji; give the kanji's reading in each (typed or from the word bank). */
 function drawRead() {
   const r = W,
     cu = r.cur,
@@ -4749,13 +4777,13 @@ function drawRead() {
       <div class="study">
         <div class="qlabel">${esc(r.deck)}</div>
         <div class="flash" id="kflash" data-act="kflip" tabindex="0" style="font-size:2.6rem">${esc(it.kanji)}</div>
-        <p class="sub" style="margin:10px 0 0">Tap the kanji to see the meaning. Fill in the gaps.</p>
+        <p class="sub" style="margin:10px 0 0">Tap the kanji to see its meaning. Give the reading of the highlighted kanji in each word.</p>
       </div>
       <div id="convohost"></div>
       <div class="row" id="knext" style="justify-content:center;margin-top:14px" ${cu.rdone ? '' : 'hidden'}>
         <button class="pri" id="wnext" data-act="wnext">${r.i + 1 >= r.items.length ? 'Finish' : 'Next'}</button>
       </div>`;
-  CV = makeConvo({ id: r.id, name: '', desc: '', script: it.sentence }, convoMode(), convoKana());
+  CV = makeConvo({ id: r.id, name: '', desc: '', script: it.words.map((w) => `A: ${w.word}[${w.answer}]`).join('\n'), targets: it.targets }, convoMode(), convoKana());
   CV.embed = {
     onChecked: () => {
       cu.rdone = true;
@@ -4834,7 +4862,7 @@ async function writeAct(act, t) {
     return;
   }
   if (act === 'wnext') {
-    if (r.cur && r.cur.finished && !r.cur.phase && gapCount(r.items[r.i].sentence)) {
+    if (r.cur && r.cur.finished && !r.cur.phase && r.items[r.i].words.length) {
       r.cur.phase = 'read';
       drawRead();
       return;
@@ -5091,6 +5119,13 @@ const convoKana = () => {
   }
 };
 
+/** Wrap the kanji being learned in markers: applyReadings leaves it alone and the list highlights it. */
+function markTargets(text, kanji) {
+  const mark = (s) => '\uE100' + s + '\uE101';
+  if (/[{\uFF5B]/.test(text)) return text.replace(/[{\uFF5B]([^}\uFF5D]*)[}\uFF5D]/g, (m, inner) => mark(inner));
+  return kanji.length ? text.replace(new RegExp(kanji.join('|'), 'g'), (m) => mark(m)) : text;
+}
+
 function makeConvo(c, mode, kana) {
   const lines = parseScript(c.script),
     gaps = [];
@@ -5100,11 +5135,11 @@ function makeConvo(c, mode, kana) {
       x.t === 'gap'
         ? (gaps.push({ answer: kana ? kanaOnly(x.v) : x.v, val: '', chip: null, res: null }),
           { t: 'gap', i: gaps.length - 1 })
-        : { t: 'text', v: applyReadings(x.v, kana) }
+        : { t: 'text', v: applyReadings(c.targets ? markTargets(x.v, c.targets) : x.v, kana) }
     ),
   }));
   const bank = shuffle(gaps.map((g, i) => ({ id: i, label: bankLabel(g.answer), used: false })));
-  return { id: c.id, c, L, gaps, bank, mode, kana: !!kana, checked: false, score: 0, xp: 0 };
+  return { id: c.id, c, L, gaps, bank, mode, kana: !!kana, list: !!c.targets, checked: false, score: 0, xp: 0 };
 }
 /** Load a conversation and start practising it. */
 async function convoView(id) {
@@ -5133,7 +5168,7 @@ function drawConvo() {
       ><button class="${v.kana ? 'on' : ''}" data-act="ckana" data-v="1">Kana only</button>
     </div>
   </div>
-  ${v.kana ? '<p class="sub" style="margin:0 0 4px">Kana only: words with a reading in (brackets) are shown in kana, and answers are written in kana.</p>' : ''}`;
+  ${v.kana ? `<p class="sub" style="margin:0 0 4px">${v.list ? 'Kana only: the other kanji in each word are shown as kana. The kanji you are learning stays.' : 'Kana only: words with a reading in (brackets) are shown in kana, and answers are written in kana.'}</p>` : ''}`;
   const gapHtml = (i) => {
     const g = v.gaps[i],
       w = gapWidth(bankLabel(g.answer)),
@@ -5144,7 +5179,7 @@ function drawConvo() {
           class="gap ${cls}"
           data-g="${i}"
           value="${esc(g.val)}"
-          style="width:${w}ch"
+          ${v.list ? 'placeholder="Reading"' : `style="width:${w}ch"`}
           ${v.checked ? 'readonly' : ''}
           autocomplete="off"
           autocapitalize="off"
@@ -5157,14 +5192,18 @@ function drawConvo() {
         class="gap ${cls} ${g.chip === null ? '' : 'filled'}"
         data-act="cslot"
         data-g="${i}"
-        style="min-width:${w}ch"
+        ${v.list ? '' : `style="min-width:${w}ch"`}
         ${v.checked ? 'disabled' : ''}
         aria-label="Gap ${i + 1}"
       >
         ${label || '&nbsp;'}</button
       >${fix}`;
   };
-  const chat = v.L.length
+  const textHtml = (t) => esc(t).replace(/\uE100/g, '<span class="tk">').replace(/\uE101/g, '</span>');
+  const list = `<div class="wlist">${v.L.map((l) => `<div class="wrow">${l.segs.map((x) => (x.t === 'text' ? `<span class="wtext">${textHtml(x.v)}</span>` : x.t === 'gap' ? gapHtml(x.i) : '')).join('')}</div>`).join('')}</div>`;
+  const chat = v.L.length && v.list
+    ? list
+    : v.L.length
     ? /* HTML */ `<div class="chat">
         ${v.L.map(
           (l) =>
@@ -5207,7 +5246,7 @@ function drawConvo() {
     foot = /* HTML */ `<div class="panel" style="text-align:center">
       <div class="score">${v.score}/${n}</div>
       <p class="sub">
-        ${v.score === n ? 'Perfect. ' : ''}gaps correct${v.xp ? `, +${XpSystem.format(v.xp)} XP` : ''}
+        ${v.score === n ? 'Perfect. ' : ''}${v.list ? 'readings' : 'gaps'} correct${v.xp ? `, +${XpSystem.format(v.xp)} XP` : ''}
       </p>
       <div class="row" style="justify-content:center">
         <button class="pri" data-act="cagain">Try again</button
