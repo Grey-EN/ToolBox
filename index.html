@@ -1840,6 +1840,14 @@ button.gap {
 .pickfld .picks {
   margin-top: 8px;
 }
+.sortbar {
+  margin-top: 12px;
+  gap: 10px;
+}
+.circle[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--acc-t);
+}
 </style>
 </head>
 <body>
@@ -2417,6 +2425,67 @@ function paintBell() {
       : '<div class="empty" style="padding:22px 14px">No notifications</div>');
 }
 
+// ---------- sorting ----------
+const SORTS = { date: 'Date', az: 'A-Z' };
+// Stages and habits have always listed oldest first, so that stays their starting order.
+const DEFAULT_SORT = { stages: { by: 'date', rev: true }, habits: { by: 'date', rev: true } };
+let sortPrefs = {};
+try {
+  sortPrefs = JSON.parse(localStorage.getItem('sortPrefs') || '{}');
+} catch (e) {}
+/** The saved sort for one list: { by: 'date' | 'az' | 'size', rev: true when flipped }. */
+const getSort = (key) => sortPrefs[key] || DEFAULT_SORT[key] || { by: 'date', rev: false };
+/** When an item was made. Older items have no `created`, but their id starts with the time they were made. */
+const madeAt = (x) => {
+  if (x.created) return x.created;
+  const fromId = parseInt(String(x.id).slice(0, 8), 36);
+  return fromId > 1.5e12 && fromId < 4e12 ? fromId : x.updated || 0;
+};
+/**
+ * Sort a list the way the user chose for it.
+ * Date: newest first. A-Z: alphabetical. Size: biggest first. The reverse button flips any of them.
+ * @param key     which list (its choice is remembered separately)
+ * @param sizeOf  how big an item is (cards, lines, steps...)
+ * @param nameOf  the text to sort alphabetically
+ */
+function sortList(key, list, sizeOf, nameOf) {
+  const { by, rev } = getSort(key);
+  const dir = rev ? -1 : 1;
+  const name = (x) => String(nameOf(x) || '');
+  return list.slice().sort((a, b) => {
+    if (by === 'az') return dir * name(a).localeCompare(name(b), undefined, { sensitivity: 'base', numeric: true });
+    if (by === 'size') return dir * (sizeOf(b) - sizeOf(a)) || madeAt(b) - madeAt(a);
+    return dir * (madeAt(b) - madeAt(a));
+  });
+}
+/** The sort buttons shown above a list (nothing if there are fewer than two items). */
+function sortBar(key, count, sizeLabel = 'Size') {
+  if (count < 2) return '';
+  const s = getSort(key);
+  const opts = { ...SORTS, size: sizeLabel };
+  return /* HTML */ `<div class="row sortbar">
+    <span class="sub" style="margin:0">Sort</span>
+    <div class="seg">
+      ${Object.entries(opts)
+        .map(
+          ([v, l]) =>
+            /* HTML */ `<button class="${s.by === v ? 'on' : ''}" data-act="sortby" data-list="${key}" data-v="${v}">${l}</button>`
+        )
+        .join('')}
+    </div>
+    <button
+      class="circle sm ghost"
+      data-act="sortrev"
+      data-list="${key}"
+      aria-pressed="${!!s.rev}"
+      title="Reverse order"
+      aria-label="Reverse order"
+    >
+      ${SVG('M7 4v16m0 0l-3-3m3 3l3-3M17 20V4m0 0l-3 3m3-3l3 3')}
+    </button>
+  </div>`;
+}
+
 // ---------- router ----------
 async function route() {
   await saver.flush();
@@ -2822,8 +2891,8 @@ function folderTile(f, decks) {
 /** The Flashcards page: folders, then the decks that are not in a folder. */
 async function decksView() {
   const [decks0, folders0] = await Promise.all([all('decks'), all('folders')]);
-  const decks = decks0.sort((a, b) => b.updated - a.updated),
-    folders = folders0.sort((a, b) => (b.updated || 0) - (a.updated || 0));
+  const decks = sortList('cards', decks0, (d) => d.cards.length, (d) => d.name),
+    folders = sortList('cards', folders0, (f) => decks0.filter((d) => d.folder === f.id).length, (f) => f.name);
   const loose = decks.filter((d) => !d.folder || !folders.some((f) => f.id === d.folder));
   app.innerHTML = /* HTML */ `<h1>Flashcards</h1>
     <p class="sub">Make decks, paste in lists, and study.</p>
@@ -2833,6 +2902,7 @@ async function decksView() {
         ><button data-act="newfolder">+ New folder</button></span
       ><span class="row">${backupBtns('decks')}</span>
     </div>
+    ${sortBar('cards', decks.length + folders.length)}
     ${
       folders.length
         ? /* HTML */ `<h2 class="h2">Folders</h2>
@@ -2848,7 +2918,7 @@ async function folderView(id) {
     location.hash = '#/cards';
     return;
   }
-  const ds = decks.filter((d) => d.folder === id).sort((a, b) => b.updated - a.updated);
+  const ds = sortList('cards', decks.filter((d) => d.folder === id), (d) => d.cards.length, (d) => d.name);
   app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK('#/cards')}</div>
     <input class="title" id="ftitle" placeholder="Folder name" value="${esc(f.name)}" />
     <div class="row between">
@@ -2858,6 +2928,7 @@ async function folderView(id) {
         ><button class="del" data-act="delfolder" data-id="${id}">Delete folder</button>
       </div>
     </div>
+    ${sortBar('cards', ds.length)}
     ${ds.length ? /* HTML */ `<div class="grid">${ds.map(deckTile).join('')}</div>` : '<div class="empty">This folder is empty. Make a deck here, or move decks in from a deck\'s menu.</div>'}`;
   const ti = document.getElementById('ftitle');
   if (!f.name) ti.focus();
@@ -3180,13 +3251,14 @@ const habitCard = (h) => {
 };
 /** The Habits page. */
 async function habitsView() {
-  const hs = (await all('habits')).sort((a, b) => (a.created || 0) - (b.created || 0));
+  const hs = sortList('habits', await all('habits'), (h) => hstats(h).cur, (h) => h.name);
   app.innerHTML = /* HTML */ `<h1>Habits</h1>
     <p class="sub">Check off what you do each day and build streaks.</p>
     <div class="row between">
       <button class="pri" data-act="newhabit">+ New habit</button
       ><span class="row">${backupBtns('habits')}</span>
     </div>
+    ${sortBar('habits', hs.length, 'Streak')}
     ${hs.length ? hs.map(habitCard).join('') : '<div class="empty">No habits yet. Add one to get started.</div>'}`;
 }
 let hOff = 0,
@@ -4269,7 +4341,7 @@ function wItems(d) {
 }
 /** Load the kanji decks, then show the Kanji page. */
 async function writeView() {
-  wDecks = (await all('kdecks')).sort((a, b) => (b.updated || 0) - (a.updated || 0));
+  wDecks = sortList('kanji', await all('kdecks'), (d) => d.cards.length, (d) => d.name);
   if (W) drawWrite();
   else drawWSetup();
 }
@@ -4281,6 +4353,7 @@ function drawWSetup() {
     <div class="row between">
       <button class="pri" data-act="newkdeck">+ New deck</button><span class="row">${backupBtns('kdecks')}</span>
     </div>
+    ${sortBar('kanji', wDecks.length)}
     ${
       wDecks.length
         ? /* HTML */ `<div class="grid">
@@ -4860,13 +4933,14 @@ function convoTile(c) {
 }
 /** The Conversations page. */
 async function convosView() {
-  const cs = (await all('convos')).sort((a, b) => (b.updated || 0) - (a.updated || 0));
+  const cs = sortList('convos', await all('convos'), (c) => parseScript(c.script).length, (c) => c.name);
   app.innerHTML = /* HTML */ `<h1>Conversations</h1>
     <p class="sub">Practise A/B scripts by filling in the missing words.</p>
     <div class="row between">
       <button class="pri" data-act="newconvo">+ New conversation</button
       ><span class="row">${backupBtns('convos')}</span>
     </div>
+    ${sortBar('convos', cs.length)}
     ${cs.length ? /* HTML */ `<div class="grid">${cs.map(convoTile).join('')}</div>` : '<div class="empty">No conversations yet. Create one and paste in a script.</div>'}`;
 }
 /** Chat bubbles for a list of lines; gapHtml draws each gap. */
@@ -5827,7 +5901,7 @@ function stageTile(stage, state) {
 /** The Stages page: every lesson, in the order they were made. */
 async function stagesView() {
   const [stages, states] = await Promise.all([all('stages'), all('stagestate')]);
-  stages.sort((a, b) => (a.created || 0) - (b.created || 0));
+  const list = sortList('stages', stages, (s) => (s.comps || []).length, (s) => s.name);
   const stateOf = (id) => states.find((s) => s.id === id);
   app.innerHTML = /* HTML */ `<h1>Stages</h1>
     <p class="sub">Lessons made of steps: text, flashcards, conversations and questions.</p>
@@ -5835,9 +5909,10 @@ async function stagesView() {
       <button class="pri" data-act="newstage">+ New stage</button>
       <span class="row">${backupBtns('stages')}</span>
     </div>
+    ${sortBar('stages', list.length)}
     ${
       stages.length
-        ? /* HTML */ `<div class="grid">${stages.map((s) => stageTile(s, stateOf(s.id))).join('')}</div>`
+        ? /* HTML */ `<div class="grid">${list.map((s) => stageTile(s, stateOf(s.id))).join('')}</div>`
         : '<div class="empty">No stages yet. Make one, then add steps from your textbook.</div>'
     }`;
 }
@@ -6355,13 +6430,14 @@ document.addEventListener('keydown', (e) => {
 
 // ---------- notes ----------
 async function notesView() {
-  const notes = (await all('notes')).sort((a, b) => b.updated - a.updated);
+  const notes = sortList('notes', await all('notes'), (n) => (n.html || '').replace(/<[^>]*>/g, '').length, (n) => n.title);
   app.innerHTML = /* HTML */ `<h1>Notes</h1>
     <p class="sub">Tap a note to open it.</p>
     <div class="row between">
       <button class="pri" data-act="newnote">+ New note</button
       ><span class="row">${backupBtns('notes')}</span>
     </div>
+    ${sortBar('notes', notes.length)}
     ${
       notes.length
         ? /* HTML */ `<div class="grid">
@@ -6507,6 +6583,18 @@ document.addEventListener('click', async (e) => {
     const d = { id: uid(), name: '', cards: [], folder: t.dataset.folder || null, updated: Date.now() };
     await put('decks', d);
     location.hash = '#/cards/' + d.id;
+  } else if (act === 'sortby' || act === 'sortrev') {
+    const list = t.dataset.list,
+      s = { ...getSort(list) };
+    if (act === 'sortby') {
+      s.by = t.dataset.v;
+      s.rev = false;
+    } else s.rev = !s.rev;
+    sortPrefs[list] = s;
+    try {
+      localStorage.setItem('sortPrefs', JSON.stringify(sortPrefs));
+    } catch (e) {}
+    render();
   } else if (act === 'menu') {
     const w = t.closest('.menuwrap'),
       was = w.classList.contains('open');
