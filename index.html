@@ -3481,10 +3481,6 @@ const fold = (s) =>
   nrm(s)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
-const fold = (s) =>
-  nrm(s)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
 // Accepted answers for one side of a card: the whole text, each variant split by / ; |, each variant without its (bracketed note),
 // and any Japanese reading in brackets, e.g. "階 (かい)" accepts 階 and かい, and "floor (counter)" accepts floor
 const BR = /[\uFF08(]([^\uFF09)]*)[\uFF09)]/g;
