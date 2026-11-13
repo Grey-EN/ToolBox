@@ -3473,7 +3473,7 @@ const nrm = (s) =>
     .replace(/[\u201C\u201D]/g, '"')
     .replace(/\s+/g, ' ')
     .trim()
-    .replace(/^[\s"'.,;:!?\u00A1\u00BF]+|[\s"'.,;:!?\u00A1\u00BF]+$/g, '')
+    .replace(/^[\s"'.,;:!?\u00A1\u00BF]+|[\s"'.,;:!?\u00A1\u00BF\u3002\u3001\uFF01\uFF1F]+$/g, '')
     .trim()
     .toLowerCase();
 /** Like nrm() but also ignores accents (é counts as e). */
