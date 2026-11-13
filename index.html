@@ -3480,8 +3480,7 @@ const nrm = (s) =>
 const fold = (s) =>
   nrm(s)
     .normalize('NFD')
-    .replace
-/** Like nrm() but also ignores accents (é counts as e). */
+    .replace(/[\u0300-\u036f]/g, '');
 const fold = (s) =>
   nrm(s)
     .normalize('NFD')
