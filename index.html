@@ -1078,116 +1078,6 @@ nav .menu {
   color: var(--ink);
   border: 1px solid var(--line);
 }
-.badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 99px;
-  background: var(--accent);
-  color: var(--accent-ink);
-  font-size: 0.64rem;
-  font-weight: 700;
-  display: grid;
-  place-items: center;
-  outline: 2px solid var(--bg);
-}
-.notifwrap {
-  position: static;
-}
-.menu.notifs {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 12px;
-  left: auto;
-  width: min(380px, calc(100vw - 24px));
-  max-height: 70vh;
-  overflow-y: auto;
-  padding: 0;
-  gap: 0;
-}
-.notifs .nhead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--line);
-  font-weight: 700;
-}
-.notifs .nhead .row {
-  flex-wrap: nowrap;
-  gap: 6px;
-}
-.notifs .nhead button {
-  width: auto;
-  padding: 5px 9px;
-  font-size: 0.76rem;
-  border: 1px solid var(--line);
-  background: var(--panel2);
-}
-.notifs .nhead button:disabled {
-  opacity: 0.4;
-}
-.notifs .nitem {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 8px 12px 14px;
-  border-bottom: 1px solid var(--line);
-}
-.notifs .nitem:last-child {
-  border-bottom: 0;
-}
-.notifs .nitem.unread {
-  background: color-mix(in srgb, var(--accent) 9%, transparent);
-}
-.notifs .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  margin-top: 7px;
-  flex: none;
-}
-.notifs .nitem.read .dot {
-  background: transparent;
-}
-.notifs a.txt {
-  display: block;
-  flex: 1;
-  min-width: 0;
-  width: auto;
-  padding: 0;
-  background: transparent;
-  border-radius: 0;
-}
-.notifs a.txt:hover {
-  background: transparent;
-}
-.notifs .txt b {
-  display: block;
-}
-.notifs .txt span {
-  display: block;
-  color: var(--soft);
-  font-weight: 500;
-}
-.notifs .txt small {
-  color: var(--soft);
-  font-weight: 500;
-  font-size: 0.78rem;
-}
-.notifs .nx {
-  width: auto;
-  padding: 0 8px;
-  font-size: 1.3rem;
-  line-height: 1;
-  color: var(--soft);
-  background: transparent;
-}
 /* Setup pickers for Test and Write. */
 .pick {
   display: flex;
@@ -1860,8 +1750,7 @@ button.gap {
 <body>
 <header><div class="bar"><a class="brand" href="#/home" aria-label="Toolbox home"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></i><b>Toolbox</b></a>
 <nav><a href="#/home" id="n-home">Home</a><div class="menuwrap"><button class="navbtn" id="n-tools" data-act="menu">Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="menu"><span class="grp">Study</span><a href="#/stages">Stages</a><a href="#/cards">Flashcards</a><a href="#/test">Test</a><a href="#/kanji">Kanji</a><a href="#/convos">Conversations</a><span class="grp">General</span><a href="#/habits">Habits</a><a href="#/notes">Notes</a><a href="#/dictionary">Dictionary</a></div></div></nav>
-<div class="acts"><div class="menuwrap notifwrap" id="notifwrap" hidden><button class="circle ghost" id="bell" data-act="menu" title="Notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button><div class="menu notifs" id="notifs"></div></div>
-<div class="menuwrap" id="usermenu"><button class="circle ghost" id="burger" data-act="menu" title="Menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="menu"><a href="#/profile" id="mProfile" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profile</a><button id="theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Switch theme</button><button id="out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></div></div></div></div>
+<div class="acts"><div class="menuwrap" id="usermenu"><button class="circle ghost" id="burger" data-act="menu" title="Menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="menu"><a href="#/profile" id="mProfile" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profile</a><button id="theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Switch theme</button><button id="out" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></div></div></div></div>
 <div class="xpbar" id="xpbar" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" hidden><i id="xpfill"></i></div></header>
 <main id="app"></main>
 <script type="module">
@@ -1872,11 +1761,11 @@ button.gap {
  * How this file is laid out:
  *   1. Firebase setup and the three classes: Store (database), Autosaver (saving as you type)
  *      and XpSystem (levels, XP and the streak multiplier).
- *   2. Router, shared helpers (confirm dialog, escaping) and "cards due" notifications.
+ *   2. Router and shared helpers (confirm dialog, escaping).
  *   3. One section per tool: home, flashcards, habits, test, write, conversations, notes.
  *   4. One click handler that connects every data-act="..." button to the function that handles it.
  *
- * Data, all under users/{uid}/ : decks, folders, notes, habits, convos, notifications and profile/main.
+ * Data, all under users/{uid}/ : decks, folders, notes, habits, convos and profile/main.
  */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import {
@@ -2063,9 +1952,8 @@ onAuthStateChanged(auth, (u) => {
   store.uid = u ? u.uid : null;
   ME_EMAIL = u ? u.email || '' : '';
   document.querySelector('nav').style.display = u ? '' : 'none';
-  ['out', 'mProfile', 'notifwrap', 'xpbar'].forEach((i) => (document.getElementById(i).hidden = !u));
+  ['out', 'mProfile', 'xpbar'].forEach((i) => (document.getElementById(i).hidden = !u));
   if (!u) {
-    NOTIFS = [];
     xpSystem.reset();
     signedOut();
     return;
@@ -2073,20 +1961,17 @@ onAuthStateChanged(auth, (u) => {
   (async () => {
     await Promise.all([xpSystem.load(), xpSystem.refreshMult()]);
     route();
-    syncNotifs();
   })();
 });
 document.getElementById('out').onclick = () => signOut(auth);
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
-    syncNotifs();
     xpSystem.load();
     xpSystem.refreshMult();
   }
 });
 setInterval(() => {
   if (!document.hidden) {
-    syncNotifs();
     xpSystem.load();
     xpSystem.refreshMult();
   }
@@ -2344,94 +2229,6 @@ function testMult(r) {
   );
 }
 
-// ---------- notifications (in-site only) ----------
-let NOTIFS = [],
-  syncing = false;
-/** Create or clear the "cards due" notification for each deck, then repaint the bell. */
-async function syncNotifs() {
-  if (!store.uid || syncing) return;
-  syncing = true;
-  try {
-    const [decks, ns] = await Promise.all([all('decks'), all('notifications')]);
-    const today = ymd(new Date()),
-      now = Date.now(),
-      ids = new Set(decks.map((d) => d.id)),
-      jobs = [];
-    let list = ns.filter((n) => {
-      if (!ids.has(n.deckId) || now - n.created > 30 * DAY) {
-        jobs.push(del('notifications', n.id));
-        return false;
-      }
-      return true;
-    });
-    for (const d of decks) {
-      const due = d.cards.filter((c) => (c.due || 0) <= now).length,
-        name = d.name || 'Untitled deck';
-      const mine = list.filter((n) => n.deckId === d.id),
-        unread = mine.find((n) => !n.read);
-      const text = due + ' card' + (due == 1 ? '' : 's') + ' due';
-      if (due > 0) {
-        if (unread) {
-          if (unread.text !== text || unread.name !== name) {
-            unread.text = text;
-            unread.name = name;
-            jobs.push(put('notifications', unread));
-          }
-        } else if (!mine.some((n) => n.day === today)) {
-          const n = {
-            id: 'n-' + d.id + '-' + today,
-            type: 'due',
-            deckId: d.id,
-            name,
-            day: today,
-            text,
-            created: now,
-            read: false,
-          };
-          list.push(n);
-          jobs.push(put('notifications', n));
-        }
-      } else if (unread) {
-        jobs.push(del('notifications', unread.id));
-        list = list.filter((n) => n !== unread);
-      }
-    }
-    await Promise.all(jobs);
-    NOTIFS = list.sort((a, b) => b.created - a.created);
-  } catch (e) {}
-  syncing = false;
-  paintBell();
-}
-/** Update the bell badge and the notification list. */
-function paintBell() {
-  const list = NOTIFS.filter((n) => !n.dismissed),
-    un = list.filter((n) => !n.read).length,
-    b = document.getElementById('badge'),
-    today = ymd(new Date());
-  b.hidden = !un;
-  b.textContent = un > 9 ? '9+' : un;
-  document.getElementById('notifs').innerHTML =
-    /* HTML */ `<div class="nhead"><span>Notifications</span><span class="row"><button data-act="nreadall" ${un ? '' : 'disabled'}>Mark all read</button><button data-act="nclear" ${list.length ? '' : 'disabled'}>Clear all</button></span></div>` +
-    (list.length
-      ? list
-          .map(
-            (n) =>
-              /* HTML */ `<div class="nitem ${n.read ? 'read' : 'unread'}">
-                <i class="dot"></i
-                ><a class="txt" href="#/study/${n.deckId}" data-act="nread" data-id="${n.id}"
-                  ><b>${esc(n.name)}</b><span>${esc(n.text)}</span
-                  ><small
-                    >${n.day === today ? 'Today' : new Date(n.created).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</small
-                  ></a
-                ><button class="nx" data-act="ndismiss" data-id="${n.id}" aria-label="Dismiss">
-                  &times;
-                </button>
-              </div>`
-          )
-          .join('')
-      : '<div class="empty" style="padding:22px 14px">No notifications</div>');
-}
-
 // ---------- sorting ----------
 const SORTS = { date: 'Date', az: 'A-Z' };
 // Stages and habits have always listed oldest first, so that stays their starting order.
@@ -2528,8 +2325,6 @@ async function render() {
       'stages',
       'stage',
       'stageedit',
-      'stagefolder',
-      'convofolder',
     ].includes(page)
       ? ' on'
       : '');
@@ -2546,8 +2341,6 @@ async function render() {
   if (page === 'convo') return convoView(id);
   if (page === 'convoedit') return convoEdit(id);
   if (page === 'dictionary') return dictionaryView();
-  if (page === 'stagefolder') return kfolderView('stages', id);
-  if (page === 'convofolder') return kfolderView('convos', id);
   if (page === 'stages') return stagesView();
   if (page === 'stage') return stageView(id);
   if (page === 'stageedit') return stageEdit(id);
@@ -2804,10 +2597,8 @@ async function homeView() {
 }
 
 // ---------- flashcards ----------
-const DAY = 864e5,
-  STEPS = [0, 1, 3, 7, 14, 30].map((x) => x * DAY);
 /** A new flashcard, marked as never studied. */
-const newCard = (f, b) => ({ k: uid(), f, b, box: 0, due: 0, seen: 0, right: 0 });
+const newCard = (f, b) => ({ k: uid(), f, b, box: 0, seen: 0, right: 0 });
 /** Give older cards that have no id one. Returns true if anything changed. */
 const ensureKeys = (d) => {
   let ch = false;
@@ -2819,38 +2610,25 @@ const ensureKeys = (d) => {
   });
   return ch;
 };
-/** Counts for a deck: cards due, learning, mastered, and accuracy. */
+/** Counts for a deck: learning, mastered, and accuracy. */
 function deckStats(d) {
-  const now = Date.now();
-  let due = 0,
-    mastered = 0,
+  let mastered = 0,
     learning = 0,
     seen = 0,
     right = 0;
   d.cards.forEach((c) => {
-    if ((c.due || 0) <= now) due++;
     if ((c.box || 0) >= 4) mastered++;
     else if (c.seen) learning++;
     seen += c.seen || 0;
     right += c.right || 0;
   });
   return {
-    due,
     mastered,
     learning,
     total: d.cards.length,
     acc: seen ? Math.round((right / seen) * 100) : null,
   };
 }
-/** Duration as text, e.g. "3 days". */
-const inText = (ms) => {
-  const m = Math.round(ms / 6e4);
-  if (m < 60) return Math.max(m, 1) + ' min';
-  const h = Math.round(m / 60);
-  if (h < 24) return h + ' hr';
-  const dd = Math.round(h / 24);
-  return dd + ' day' + (dd == 1 ? '' : 's');
-};
 const FOLDER =
   'M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z';
 /** The three-dot menu button. */
@@ -2860,13 +2638,11 @@ const dotsBtn = (t) =>
   </button>`;
 /** A deck card (with its menu) for the Flashcards and folder pages. */
 function deckTile(d) {
-  const st = deckStats(d);
   return /* HTML */ `<div class="deckwrap">
     <a class="tile" href="#/study/${d.id}"
       ><b>${esc(d.name || 'Untitled deck')}</b>${d.desc ? /* HTML */ `<p>${esc(d.desc)}</p>` : ''}
       <div class="pills">
-        <span class="pill">${d.cards.length} card${d.cards.length == 1 ? '' : 's'}</span
-        >${st.due ? /* HTML */ `<span class="pill due">${st.due} due</span>` : ''}
+        <span class="pill">${d.cards.length} card${d.cards.length == 1 ? '' : 's'}</span>
       </div></a
     >
     <div class="menuwrap">
@@ -2880,14 +2656,12 @@ function deckTile(d) {
 }
 /** A folder card (with its menu) for the Flashcards page. */
 function folderTile(f, decks) {
-  const ds = decks.filter((d) => d.folder === f.id),
-    due = ds.reduce((a, d) => a + deckStats(d).due, 0);
+  const ds = decks.filter((d) => d.folder === f.id);
   return /* HTML */ `<div class="deckwrap">
     <a class="tile" href="#/folder/${f.id}"
       ><b>${SVG(FOLDER)}${esc(f.name || 'Untitled folder')}</b>
       <div class="pills">
-        <span class="pill">${ds.length} deck${ds.length == 1 ? '' : 's'}</span
-        >${due ? /* HTML */ `<span class="pill due">${due} due</span>` : ''}
+        <span class="pill">${ds.length} deck${ds.length == 1 ? '' : 's'}</span>
       </div></a
     >
     <div class="menuwrap">
@@ -2972,112 +2746,6 @@ async function moveDeck(id) {
     }
   };
   document.body.appendChild(o);
-}
-/**
- * Folders for Stages and Conversations. Same idea as the deck folders above, but each tool keeps its own
- * folders (stagefolders / convofolders), and each stage or conversation points at one with its `folder` field.
- */
-const KFOLDERS = {
-  stages: { coll: 'stagefolders', page: 'stagefolder', home: '#/stages', noun: 'stage', Noun: 'Stage' },
-  convos: { coll: 'convofolders', page: 'convofolder', home: '#/convos', noun: 'conversation', Noun: 'Conversation' },
-};
-/** Where Back goes for a stage or conversation: its folder if it has one, otherwise the tool's main page. */
-const kBack = (kind, item) => (item && item.folder ? `#/${KFOLDERS[kind].page}/${item.folder}` : KFOLDERS[kind].home);
-/** A folder card (with its menu) for the Stages and Conversations pages. */
-function kfolderTile(kind, f, items) {
-  const K = KFOLDERS[kind],
-    n = items.filter((x) => x.folder === f.id).length;
-  return /* HTML */ `<div class="deckwrap">
-    <a class="tile" href="#/${K.page}/${f.id}"
-      ><b>${SVG(FOLDER)}${esc(f.name || 'Untitled folder')}</b>
-      <div class="pills"><span class="pill">${n} ${K.noun}${n == 1 ? '' : 's'}</span></div></a
-    >
-    <div class="menuwrap">
-      ${dotsBtn('Folder options')}
-      <div class="menu">
-        <a href="#/${K.page}/${f.id}">Open</a
-        ><button class="del" data-act="kdelf" data-k="${kind}" data-id="${f.id}" data-list="1">Delete</button>
-      </div>
-    </div>
-  </div>`;
-}
-/** One Stages or Conversations folder: rename it, add to it, or delete it. */
-async function kfolderView(kind, id) {
-  const K = KFOLDERS[kind];
-  const [f, items0, states] = await Promise.all([
-    get(K.coll, id),
-    all(kind),
-    kind === 'stages' ? all('stagestate') : Promise.resolve([]),
-  ]);
-  if (!f) {
-    location.hash = K.home;
-    return;
-  }
-  const sizeOf = kind === 'stages' ? (s) => (s.comps || []).length : (c) => parseScript(c.script).length;
-  const items = sortList(kind, items0.filter((x) => x.folder === id), sizeOf, (x) => x.name);
-  const tile = kind === 'stages' ? (s) => stageTile(s, states.find((x) => x.id === s.id)) : convoTile;
-  app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK(K.home)}</div>
-    <input class="title" id="ftitle" placeholder="Folder name" value="${esc(f.name)}" />
-    <div class="row between">
-      <p class="sub" style="margin:0">${items.length} ${K.noun}${items.length == 1 ? '' : 's'}</p>
-      <div class="row">
-        <button class="pri" data-act="${kind === 'stages' ? 'newstage' : 'newconvo'}" data-folder="${id}">+ New ${K.noun}</button
-        ><button class="del" data-act="kdelf" data-k="${kind}" data-id="${id}">Delete folder</button>
-      </div>
-    </div>
-    ${sortBar(kind, items.length)}
-    ${items.length ? /* HTML */ `<div class="grid">${items.map(tile).join('')}</div>` : `<div class="empty">This folder is empty. Make a ${K.noun} here, or move one in from its menu.</div>`}`;
-  const ti = document.getElementById('ftitle');
-  if (!f.name) ti.focus();
-  saver.bind(K.coll, id, { name: ti });
-}
-/** Dialog for moving a stage or conversation into a folder (or out of one). */
-async function moveItem(kind, id) {
-  const K = KFOLDERS[kind];
-  const [it, folders] = await Promise.all([get(kind, id), all(K.coll)]);
-  if (!it) return;
-  const o = document.createElement('div');
-  o.className = 'modal';
-  o.innerHTML = /* HTML */ `<div class="dialog" role="dialog" aria-modal="true">
-    <p>Move "${esc(it.name || 'Untitled ' + K.noun)}" to</p>
-    <div class="opts">
-      ${[{ id: '', name: 'No folder' }, ...folders].map((f) => /* HTML */ `<button class="opt ${(it.folder || '') === f.id ? 'right' : ''}" data-f="${f.id}">${esc(f.name || 'Untitled folder')}</button>`).join('')}
-    </div>
-    <div class="row" style="justify-content:flex-end;margin-top:14px">
-      <button data-f="__cancel">Cancel</button>
-    </div>
-  </div>`;
-  o.onclick = async (e) => {
-    const b = e.target.closest('button');
-    if (!b && e.target !== o) return;
-    o.remove();
-    if (b && b.dataset.f !== '__cancel') {
-      it.folder = b.dataset.f || null;
-      it.updated = Date.now();
-      await put(kind, it);
-      render();
-    }
-  };
-  document.body.appendChild(o);
-}
-/** The "Folder" drop-down on a stage or conversation editor. */
-const kfolderSelect = (kind, item, folders, selId) => /* HTML */ `<div class="row" style="margin:0 0 14px;flex-wrap:nowrap">
-  <span class="sub" style="margin:0">Folder</span
-  ><select id="${selId}">
-    <option value="">No folder</option>
-    ${folders.map((f) => /* HTML */ `<option value="${f.id}" ${item.folder === f.id ? 'selected' : ''}>${esc(f.name || 'Untitled folder')}</option>`).join('')}
-  </select>
-</div>`;
-/** Save a folder choice made in a stage or conversation editor, then redraw it. */
-function kfolderBind(kind, id, selId, redraw) {
-  document.getElementById(selId).addEventListener('change', async (e) => {
-    await saver.flush();
-    const x = await get(kind, id);
-    x.folder = e.target.value || null;
-    x.updated = Date.now();
-    await put(kind, x);
-    redraw(id);
-  });
 }
 /** Edit one deck: name, description, folder, cards and bulk import. */
 async function deckView(id) {
@@ -3169,17 +2837,12 @@ const stylePref = () => {
 const canChoice = (d) => new Set(d.cards.map((c) => c.b)).size >= 3;
 /** Find a card of the current study session by its id. */
 const cardOf = (k) => study.deck.cards.find((c) => c.k === k);
-/** Build a study session from a deck: due cards (or all cards), shuffled. */
-function startStudy(d, mode) {
-  const now = Date.now();
-  const q = d.cards
-    .filter((c) => mode === 'all' || (c.due || 0) <= now)
-    .map((c) => c.k)
-    .sort(() => Math.random() - 0.5);
+/** Build a study session from a deck: all its cards, shuffled. */
+function startStudy(d) {
+  const q = d.cards.map((c) => c.k).sort(() => Math.random() - 0.5);
   return {
     id: d.id,
     deck: d,
-    mode,
     style: stylePref(),
     q,
     total: q.length,
@@ -3198,32 +2861,23 @@ function makeOpts(d, c) {
     .slice(0, 3);
   return [{ t: c.b, ok: true }, ...others.map((t) => ({ t, ok: false }))].sort(() => Math.random() - 0.5);
 }
-/** Record an answer: spaced-repetition box and due date, XP, and a notification refresh. */
+/** Record an answer: the card's box and counts, and XP. */
 function grade(c, ok) {
   c.seen = (c.seen || 0) + 1;
   if (ok) {
     c.right = (c.right || 0) + 1;
     c.box = Math.min(5, (c.box || 0) + 1);
   } else c.box = 0;
-  c.due = STEPS[c.box]
-    ? (() => {
-        const d = new Date(Date.now() + STEPS[c.box]);
-        d.setHours(0, 0, 0, 0);
-        return d.getTime();
-      })()
-    : Date.now();
   put('decks', study.deck).catch(() => {});
   const s = study,
     g = xpSystem.award(
       'flash',
       (ok ? 1 : 0.25) *
         (s.style === 'choice' && canChoice(s.deck) ? 1.5 : 1) *
-        (s.mode === 'all' ? 1.1 : 1) *
         XpSystem.countBonus(s.total),
       { flashCards: 1, flashCorrect: ok ? 1 : 0 }
     );
   s.xp = (s.xp || 0) + g;
-  setTimeout(syncNotifs, 1500);
 }
 /** Load a deck and start studying it. */
 async function studyView(id) {
@@ -3242,7 +2896,7 @@ async function studyView(id) {
     return;
   }
   if (ensureKeys(d)) put('decks', d).catch(() => {});
-  if (!study || study.id !== id) study = startStudy(d, 'due');
+  if (!study || study.id !== id) study = startStudy(d);
   drawStudy();
 }
 /** Heading of the study pages (name, description, back button). */
@@ -3261,27 +2915,17 @@ function drawStudy() {
     st = deckStats(d),
     edit = /* HTML */ `<a class="btn" href="#/cards/${d.id}" style="text-decoration:none">Edit deck</a>`;
   const stats = /* HTML */ `<div class="stats c">
-    <div><b>${st.due}</b><span>due</span></div>
     <div><b>${st.learning}</b><span>learning</span></div>
     <div><b>${st.mastered}</b><span>mastered</span></div>
     ${st.acc !== null ? /* HTML */ `<div><b>${st.acc}%</b><span>accuracy</span></div>` : ''}
   </div>`;
   const ctl =
-    /* HTML */ `<div class="ctl"><div class="seg"><button class="${s.mode === 'due' ? 'on' : ''}" data-act="smode" data-v="due">Due (${st.due})</button><button class="${s.mode === 'all' ? 'on' : ''}" data-act="smode" data-v="all">All (${st.total})</button></div><div class="seg"><button class="${s.style === 'flip' ? 'on' : ''}" data-act="sstyle" data-v="flip">Flip</button><button class="${s.style === 'choice' ? 'on' : ''}" data-act="sstyle" data-v="choice">Multiple choice</button></div></div>` +
+    /* HTML */ `<div class="ctl"><div class="seg"><button class="${s.style === 'flip' ? 'on' : ''}" data-act="sstyle" data-v="flip">Flip</button><button class="${s.style === 'choice' ? 'on' : ''}" data-act="sstyle" data-v="choice">Multiple choice</button></div></div>` +
     (s.style === 'choice' && !canChoice(d)
       ? '<p class="sub" style="text-align:center;margin:6px 0 0">Multiple choice needs at least 3 different answers, so flip cards are used for now.</p>'
       : '');
   let body;
-  if (!s.total) {
-    const next = d.cards.reduce((m, c) => Math.min(m, c.due || 0), Infinity);
-    body = /* HTML */ `<div class="empty">
-        You are all caught
-        up.${next > Date.now() && isFinite(next) ? ` The next card is due in ${inText(next - Date.now())}.` : ''}
-      </div>
-      <div class="row" style="justify-content:center">
-        <button class="pri" data-act="smode" data-v="all">Study all cards</button>${edit}
-      </div>`;
-  } else if (!s.q.length) {
+  if (!s.q.length) {
     body = /* HTML */ `<div class="empty">
         Session complete. ${s.right}
         correct${s.wrong ? `, ${s.wrong} to retry` : ''}.${s.xp ? ` You earned ${XpSystem.format(s.xp)} XP.` : ''}
@@ -3473,7 +3117,7 @@ const nrm = (s) =>
     .replace(/[\u201C\u201D]/g, '"')
     .replace(/\s+/g, ' ')
     .trim()
-    .replace(/^[\s"'.,;:!?\u00A1\u00BF]+|[\s"'.,;:!?\u00A1\u00BF\u3002\u3001\uFF01\uFF1F]+$/g, '')
+    .replace(/^[\s"'.,;:!?\u00A1\u00BF]+|[\s"'.,;:!?\u00A1\u00BF]+$/g, '')
     .trim()
     .toLowerCase();
 /** Like nrm() but also ignores accents (é counts as e). */
@@ -5064,7 +4708,6 @@ function convoTile(c) {
       ${dotsBtn('Conversation options')}
       <div class="menu">
         <a href="#/convoedit/${c.id}">Edit</a
-        ><button data-act="kmove" data-k="convos" data-id="${c.id}">Move to folder</button
         ><button class="del" data-act="askdelc" data-id="${c.id}">Delete</button>
       </div>
     </div>
@@ -5072,27 +4715,15 @@ function convoTile(c) {
 }
 /** The Conversations page. */
 async function convosView() {
-  const [cs0, fo0] = await Promise.all([all('convos'), all('convofolders')]);
-  const sizeOf = (c) => parseScript(c.script).length,
-    cs = sortList('convos', cs0, sizeOf, (c) => c.name),
-    folders = sortList('convos', fo0, (f) => cs0.filter((c) => c.folder === f.id).length, (f) => f.name),
-    loose = cs.filter((c) => !c.folder || !folders.some((f) => f.id === c.folder));
+  const cs = sortList('convos', await all('convos'), (c) => parseScript(c.script).length, (c) => c.name);
   app.innerHTML = /* HTML */ `<h1>Conversations</h1>
     <p class="sub">Practise A/B scripts by filling in the missing words.</p>
     <div class="row between">
-      <span class="row"
-        ><button class="pri" data-act="newconvo">+ New conversation</button
-        ><button data-act="knewfolder" data-k="convos">+ New folder</button></span
+      <button class="pri" data-act="newconvo">+ New conversation</button
       ><span class="row">${backupBtns('convos')}</span>
     </div>
-    ${sortBar('convos', cs.length + folders.length)}
-    ${
-      folders.length
-        ? /* HTML */ `<h2 class="h2">Folders</h2>
-            <div class="grid">${folders.map((f) => kfolderTile('convos', f, cs0)).join('')}</div>`
-        : ''
-    }
-    ${loose.length ? `${folders.length ? '<h2 class="h2">Conversations</h2>' : ''}<div class="grid">${loose.map(convoTile).join('')}</div>` : folders.length ? '' : '<div class="empty">No conversations yet. Create one and paste in a script.</div>'}`;
+    ${sortBar('convos', cs.length)}
+    ${cs.length ? /* HTML */ `<div class="grid">${cs.map(convoTile).join('')}</div>` : '<div class="empty">No conversations yet. Create one and paste in a script.</div>'}`;
 }
 /** Chat bubbles for a list of lines; gapHtml draws each gap. */
 const bubbles = (lines, gapHtml) =>
@@ -5111,15 +4742,14 @@ const bubbles = (lines, gapHtml) =>
     .join('');
 /** Edit one conversation: name, description and the script, with a live preview. */
 async function convoEdit(id) {
-  const [c, cfolders] = await Promise.all([get('convos', id), all('convofolders')]);
+  const c = await get('convos', id);
   if (!c) {
     location.hash = '#/convos';
     return;
   }
-  app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK(kBack('convos', c))}</div>
+  app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK('#/convos')}</div>
     <input class="title" id="ctitle" placeholder="Conversation name" value="${esc(c.name)}" />
     <textarea class="desc" id="cdesc" rows="1" placeholder="Add a description">${esc(c.desc || '')}</textarea>
-    ${kfolderSelect('convos', c, cfolders, 'cfolder')}
     <div class="row between">
       <p class="sub" id="csum" style="margin:0"></p>
       <div class="row">
@@ -5152,7 +4782,6 @@ ${esc(c.script || '')}</textarea>
     sc = document.getElementById('cscript');
   if (!c.name) ti.focus();
   grow(de);
-  kfolderBind('convos', id, 'cfolder', convoEdit);
   const refresh = () => {
     const ls = parseScript(sc.value),
       g = gapCount(sc.value);
@@ -5387,7 +5016,7 @@ function drawConvo() {
           <h1>${esc(c.name || 'Untitled conversation')}</h1>
           ${c.desc ? /* HTML */ `<p class="sub pre" style="margin:0">${esc(c.desc)}</p>` : ''}
         </div>
-        ${BACK(kBack('convos', c))}
+        ${BACK('#/convos')}
       </div>`;
   const host = v.embed ? document.getElementById('convohost') : app;
   host.innerHTML = `${head}${n ? seg : ''}${chat}${foot}`;
@@ -6056,7 +5685,6 @@ function stageTile(stage, state) {
       ${dotsBtn('Stage options')}
       <div class="menu">
         <a href="#/stageedit/${stage.id}">Edit</a>
-        <button data-act="kmove" data-k="stages" data-id="${stage.id}">Move to folder</button>
         <button class="del" data-act="askdels" data-id="${stage.id}">Delete</button>
       </div>
     </div>
@@ -6065,33 +5693,20 @@ function stageTile(stage, state) {
 
 /** The Stages page: every lesson, in the order they were made. */
 async function stagesView() {
-  const [stages, states, fo0] = await Promise.all([all('stages'), all('stagestate'), all('stagefolders')]);
-  const list = sortList('stages', stages, (s) => (s.comps || []).length, (s) => s.name),
-    folders = sortList('stages', fo0, (f) => stages.filter((s) => s.folder === f.id).length, (f) => f.name),
-    loose = list.filter((s) => !s.folder || !folders.some((f) => f.id === s.folder));
+  const [stages, states] = await Promise.all([all('stages'), all('stagestate')]);
+  const list = sortList('stages', stages, (s) => (s.comps || []).length, (s) => s.name);
   const stateOf = (id) => states.find((s) => s.id === id);
   app.innerHTML = /* HTML */ `<h1>Stages</h1>
     <p class="sub">Lessons made of steps: text, flashcards, conversations and questions.</p>
     <div class="row between">
-      <span class="row"
-        ><button class="pri" data-act="newstage">+ New stage</button
-        ><button data-act="knewfolder" data-k="stages">+ New folder</button></span
-      >
+      <button class="pri" data-act="newstage">+ New stage</button>
       <span class="row">${backupBtns('stages')}</span>
     </div>
-    ${sortBar('stages', list.length + folders.length)}
+    ${sortBar('stages', list.length)}
     ${
-      folders.length
-        ? /* HTML */ `<h2 class="h2">Folders</h2>
-            <div class="grid">${folders.map((f) => kfolderTile('stages', f, stages)).join('')}</div>`
-        : ''
-    }
-    ${
-      loose.length
-        ? /* HTML */ `${folders.length ? '<h2 class="h2">Stages</h2>' : ''}<div class="grid">${loose.map((s) => stageTile(s, stateOf(s.id))).join('')}</div>`
-        : folders.length
-          ? ''
-          : '<div class="empty">No stages yet. Make one, then add steps from your textbook.</div>'
+      stages.length
+        ? /* HTML */ `<div class="grid">${list.map((s) => stageTile(s, stateOf(s.id))).join('')}</div>`
+        : '<div class="empty">No stages yet. Make one, then add steps from your textbook.</div>'
     }`;
 }
 
@@ -6246,7 +5861,7 @@ function saveStage() {
 
 /** The stage editor: name, description and the list of steps. */
 async function stageEdit(id) {
-  const [stage, lib, sfolders] = await Promise.all([get('stages', id), loadStageLib(), all('stagefolders')]);
+  const [stage, lib] = await Promise.all([get('stages', id), loadStageLib()]);
   if (!stage) {
     location.hash = '#/stages';
     return;
@@ -6254,11 +5869,10 @@ async function stageEdit(id) {
   stage.comps = stage.comps || [];
   const keepOpen = STG && STG.stage.id === id ? STG.open : new Set();
   STG = { stage, open: keepOpen, lib };
-  app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK(kBack('stages', stage))}</div>
+  app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK('#/stages')}</div>
     <input class="title" id="stitle" placeholder="Stage name" value="${esc(stage.name)}" />
     <textarea class="desc" id="sdesc" rows="1" placeholder="Add a description">
 ${esc(stage.desc || '')}</textarea>
-    ${kfolderSelect('stages', stage, sfolders, 'sfolder')}
     <div class="row between">
       <p class="sub" id="ssum" style="margin:0"></p>
       <div class="row">
@@ -6299,7 +5913,6 @@ ${esc(stage.desc || '')}</textarea>
   if (!stage.name) STG.title.focus();
   grow(STG.desc);
   paintComps();
-  kfolderBind('stages', id, 'sfolder', stageEdit);
   STG.title.addEventListener('input', saveStage);
   STG.desc.addEventListener('input', () => {
     grow(STG.desc);
@@ -6478,7 +6091,7 @@ function drawStage() {
   if (!stage.comps.length) {
     app.innerHTML = /* HTML */ `<div class="row between" style="align-items:flex-start">
         <h1>${esc(stage.name || 'Untitled stage')}</h1>
-        ${BACK(kBack('stages', stage))}
+        ${BACK('#/stages')}
       </div>
       <div class="empty">This stage has no steps yet.</div>
       <div class="row" style="justify-content:center">
@@ -6495,7 +6108,7 @@ function drawStage() {
         <h1>${esc(stage.name || 'Untitled stage')}</h1>
         <p class="sub" style="margin:0">Step ${run.i + 1} of ${count}, ${type.label}</p>
       </div>
-      ${BACK(kBack('stages', stage))}
+      ${BACK('#/stages')}
     </div>
     <div class="bar2" style="margin:14px 0"><i style="width:${Math.round((run.i / count) * 100)}%"></i></div>
     <div class="panel step" id="stepbody">${type.play(run, c)}</div>
@@ -6524,7 +6137,7 @@ function drawStageDone() {
   }
   app.innerHTML = /* HTML */ `<div class="row between" style="align-items:flex-start">
       <h1>${esc(stage.name || 'Untitled stage')}</h1>
-      ${BACK(kBack('stages', stage))}
+      ${BACK('#/stages')}
     </div>
     <div class="panel" style="text-align:center">
       <div class="score">${asked ? `${right}/${asked}` : 'Done'}</div>
@@ -6533,7 +6146,7 @@ function drawStageDone() {
       </p>
       <div class="row" style="justify-content:center">
         <button class="pri" data-act="srestart" data-id="${stage.id}">Do it again</button>
-        <a class="btn" href="${kBack('stages', stage)}" style="text-decoration:none">All stages</a>
+        <a class="btn" href="#/stages" style="text-decoration:none">All stages</a>
         <a class="btn" href="#/stageedit/${stage.id}" style="text-decoration:none">Edit</a>
       </div>
     </div>`;
@@ -6747,7 +6360,7 @@ document.addEventListener('mousedown', (e) => {
 });
 /** One click handler for the whole page: buttons carry data-act="..." and are routed here. */
 document.addEventListener('click', async (e) => {
-  if (!e.target.closest('[data-act="menu"],.notifs')) closeMenus();
+  if (!e.target.closest('[data-act="menu"]')) closeMenus();
   const cm = e.target.closest('[data-cmd]');
   if (cm) {
     document.getElementById('ed').focus();
@@ -6871,13 +6484,9 @@ document.addEventListener('click', async (e) => {
   } else if (act === 'study') {
     location.hash = '#/study/' + id;
   } else if (act === 'restart') {
-    const m = study ? study.mode : 'due',
-      d = await get('decks', id);
+    const d = await get('decks', id);
     ensureKeys(d);
-    study = startStudy(d, m);
-    drawStudy();
-  } else if (act === 'smode') {
-    study = startStudy(study.deck, t.dataset.v);
+    study = startStudy(d);
     drawStudy();
   } else if (act === 'sstyle') {
     study.style = t.dataset.v;
@@ -6929,45 +6538,12 @@ document.addEventListener('click', async (e) => {
       const d = await get('decks', id);
       d.cards.forEach((c) => {
         c.box = 0;
-        c.due = 0;
         c.seen = 0;
         c.right = 0;
       });
       await put('decks', d);
       deckView(id);
     }
-  } else if (act === 'nread') {
-    const n = NOTIFS.find((x) => x.id === id);
-    if (n && !n.read) {
-      n.read = true;
-      put('notifications', n);
-      paintBell();
-    }
-  } else if (act === 'ndismiss') {
-    const n = NOTIFS.find((x) => x.id === id);
-    if (n) {
-      n.read = true;
-      n.dismissed = true;
-      await put('notifications', n);
-      paintBell();
-    }
-  } else if (act === 'nreadall') {
-    await Promise.all(
-      NOTIFS.filter((n) => !n.read).map((n) => {
-        n.read = true;
-        return put('notifications', n);
-      })
-    );
-    paintBell();
-  } else if (act === 'nclear') {
-    await Promise.all(
-      NOTIFS.filter((n) => !n.dismissed).map((n) => {
-        n.read = true;
-        n.dismissed = true;
-        return put('notifications', n);
-      })
-    );
-    paintBell();
   } else if (act === 'newfolder') {
     const f = { id: uid(), name: '', created: Date.now(), updated: Date.now() };
     await put('folders', f);
@@ -6985,26 +6561,6 @@ document.addEventListener('click', async (e) => {
       if (act === 'delfolder') location.hash = '#/cards';
       else decksView();
     }
-  } else if (act === 'knewfolder') {
-    const K = KFOLDERS[t.dataset.k],
-      f = { id: uid(), name: '', created: Date.now(), updated: Date.now() };
-    await put(K.coll, f);
-    location.hash = `#/${K.page}/${f.id}`;
-  } else if (act === 'kmove') {
-    await moveItem(t.dataset.k, id);
-  } else if (act === 'kdelf') {
-    const kind = t.dataset.k,
-      K = KFOLDERS[kind];
-    if (await confirmBox(`Delete this folder? The ${K.noun}s inside are kept and move out of the folder.`)) {
-      saver.cancel();
-      for (const x of (await all(kind)).filter((x) => x.folder === id)) {
-        x.folder = null;
-        await put(kind, x);
-      }
-      await del(K.coll, id);
-      if (t.dataset.list) render();
-      else location.hash = K.home;
-    }
   } else if (KACT.includes(act)) {
     await kanjiDeckAct(act, t);
   } else if (SACT.includes(act)) {
@@ -7012,7 +6568,7 @@ document.addEventListener('click', async (e) => {
   } else if (STAGE_EDIT_ACTS.includes(act)) {
     await stageEditAct(act, t);
   } else if (act === 'newstage') {
-    const stage = { id: uid(), name: '', desc: '', comps: [], folder: t.dataset.folder || null, created: Date.now(), updated: Date.now() };
+    const stage = { id: uid(), name: '', desc: '', comps: [], created: Date.now(), updated: Date.now() };
     await put('stages', stage);
     location.hash = '#/stageedit/' + stage.id;
   } else if (act === 'delstage' || act === 'askdels') {
@@ -7027,7 +6583,7 @@ document.addEventListener('click', async (e) => {
   } else if (CACT.includes(act)) {
     convoAct(act, t);
   } else if (act === 'newconvo') {
-    const c = { id: uid(), name: '', desc: '', script: '', folder: t.dataset.folder || null, created: Date.now(), updated: Date.now() };
+    const c = { id: uid(), name: '', desc: '', script: '', created: Date.now(), updated: Date.now() };
     await put('convos', c);
     location.hash = '#/convoedit/' + c.id;
   } else if (act === 'cstudy') {
@@ -7106,8 +6662,6 @@ document.addEventListener('click', async (e) => {
       data = JSON.stringify({
         [k]: await all(k),
         ...(k === 'decks' ? { folders: await all('folders') } : {}),
-        ...(k === 'stages' ? { stagefolders: await all('stagefolders') } : {}),
-        ...(k === 'convos' ? { convofolders: await all('convofolders') } : {}),
       });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
@@ -7126,8 +6680,6 @@ document.addEventListener('click', async (e) => {
       try {
         const j = JSON.parse(await inp.files[0].text());
         for (const f of j.folders || []) await put('folders', f);
-        for (const f of j.stagefolders || []) await put('stagefolders', f);
-        for (const f of j.convofolders || []) await put('convofolders', f);
         for (const d of j.decks || []) await put('decks', d);
         for (const d of j.kdecks || []) await put('kdecks', d);
         for (const n of j.notes || []) await put('notes', n);
