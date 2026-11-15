@@ -5460,6 +5460,7 @@ class DictionaryIndex {
       deckId: deck.id,
       deckName: deck.name || 'Untitled deck',
       folder: deck.folder || null,
+      t: typeLabel(card.t) ? card.t : '',
       ja,
       en,
       text: normSearch(card.f + ' ' + card.b),
@@ -5475,12 +5476,13 @@ class DictionaryIndex {
   }
 
   /** Entries that match the text and the deck/folder filter ('' = everything, 'f:id' = a folder, 'd:id' = a deck). */
-  search(rawQuery, filter, sort) {
+  search(rawQuery, filter, sort, type = '') {
     const query = normSearch(rawQuery);
     const romajiQuery = query.replace(/[^a-z]/g, '');
     const inScope = (e) =>
       !filter || (filter.startsWith('d:') ? e.deckId === filter.slice(2) : e.folder === filter.slice(2));
-    const found = this.entries.filter((e) => inScope(e) && DictionaryIndex.matches(e, query, romajiQuery));
+    const inType = (e) => !type || (type === '_' ? !e.t : e.t === type);
+    const found = this.entries.filter((e) => inScope(e) && inType(e) && DictionaryIndex.matches(e, query, romajiQuery));
     if (sort === 'az') found.sort((a, b) => a.en.localeCompare(b.en, undefined, { sensitivity: 'base' }));
     return found;
   }
@@ -5499,6 +5501,7 @@ async function dictionaryView() {
     query: prev ? prev.query : '',
     filter: prev ? prev.filter : '',
     sort: prev ? prev.sort : 'deck',
+    type: prev ? prev.type : '',
     limit: DICT_PAGE,
   };
   const loose = decks.filter((d) => !d.folder || !folders.some((f) => f.id === d.folder));
@@ -5523,6 +5526,19 @@ async function dictionaryView() {
         <button class="${DICT.sort === 'az' ? 'on' : ''}" data-act="dsort" data-v="az">English A-Z</button>
       </div>
     </div>
+    <div class="row" style="margin-top:10px">
+    <select id="dtype" aria-label="Show only one word type">${(() => {
+      const n = {};
+      DICT.index.entries.forEach((e) => (n[e.t || '_'] = (n[e.t || '_'] || 0) + 1));
+      return [
+        ['', 'All types', DICT.index.entries.length],
+        ...WORD_TYPES.filter(([k]) => n[k]).map(([k, l]) => [k, l, n[k]]),
+        ...(n._ ? [['_', 'No type', n._]] : []),
+      ]
+        .map(([k, l, c]) => `<option value="${k}" ${DICT.type === k ? 'selected' : ''}>${l} (${c})</option>`)
+        .join('');
+    })()}</select>
+    </div>
     <p class="sub" id="dcount" style="margin:14px 0 0"></p>
     <div id="dres"></div>`;
   let timer = null;
@@ -5533,6 +5549,11 @@ async function dictionaryView() {
       DICT.limit = DICT_PAGE;
       paintDictionary();
     }, 120);
+  });
+  document.getElementById('dtype').addEventListener('change', (e) => {
+    DICT.type = e.target.value;
+    DICT.limit = DICT_PAGE;
+    paintDictionary();
   });
   document.getElementById('dfilter').addEventListener('change', (e) => {
     DICT.filter = e.target.value;
@@ -5545,12 +5566,12 @@ async function dictionaryView() {
 /** Fill in the results list for the current search. */
 function paintDictionary() {
   const d = DICT;
-  const found = d.index.search(d.query, d.filter, d.sort);
+  const found = d.index.search(d.query, d.filter, d.sort, d.type);
   const shown = found.slice(0, d.limit);
   const total = d.index.entries.length;
   document.getElementById('dcount').textContent = !total
     ? ''
-    : d.query || d.filter
+    : d.query || d.filter || d.type
       ? `${found.length} of ${total} card${total == 1 ? '' : 's'}`
       : `${total} card${total == 1 ? '' : 's'}`;
   const row = (e) =>
