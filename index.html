@@ -1758,6 +1758,45 @@ button.gap {
   letter-spacing: 0.08em;
   margin: 14px 0 2px;
 }
+.pfolders {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.pfold .fbody {
+  margin: 6px 0 4px 14px;
+  padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+.pfold .fbody .picks {
+  margin-top: 6px;
+}
+.pfold .fall {
+  display: flex;
+  justify-content: flex-end;
+}
+.pfold .fall button {
+  font-size: 0.78rem;
+  padding: 6px 10px;
+}
+.pick.fold .chev {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--soft);
+  transition: transform 0.15s;
+}
+.pfold.open > .pick.fold {
+  border-color: var(--accent);
+}
+.pfold.open > .pick.fold .chev {
+  transform: rotate(90deg);
+}
 .pickfld .picks {
   margin-top: 8px;
 }
@@ -5968,9 +6007,15 @@ async function stagesView() {
 // ----- stage editor -----
 /** The decks, folders and conversations a stage can pull from. */
 async function loadStageLib() {
-  const [decks, folders, convos] = await Promise.all([all('decks'), all('folders'), all('convos')]);
+  const [decks, folders, convos, cfolders] = await Promise.all([all('decks'), all('folders'), all('convos'), all('convofolders')]);
   const recent = (a, b) => (b.updated || 0) - (a.updated || 0);
-  return { decks: decks.sort(recent), folders: folders.sort(recent), convos: convos.sort(recent) };
+  const byName = (a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true });
+  return {
+  decks: decks.sort(recent),
+  folders: folders.sort(byName),
+  convos: convos.sort(recent),
+  cfolders: cfolders.sort(byName),
+  };
 }
 
 /** Every card a flashcards step uses: the picked decks, plus any old typed cards. */
@@ -5992,62 +6037,81 @@ function stageScript(lib, c) {
 function pickerHtml(f, c, i) {
   const lib = STG.lib;
   const plural = (n, word) => `${n} ${word}${n == 1 ? '' : 's'}`;
+  const openId = (STG.openF || (STG.openF = {}))[c.id] || '';
+  const CHEV = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  /** A folder row that opens or closes; its contents appear straight underneath. */
+  const folderRow = (fo, count, noun, picked, body) => {
+  const isOpen = openId === fo.id;
+  return /* HTML */ `<div class="pfold ${isOpen ? 'open' : ''}">
+  <button class="pick fold ${picked ? 'part' : ''}" data-act="stfold" data-i="${i}" data-id="${fo.id}" aria-expanded="${isOpen}">
+  ${CHEV}<span class="nm">${SVG(FOLDER)}${esc(fo.name || 'Untitled folder')}</span
+  ><small>${picked ? picked + ' picked · ' : ''}${plural(count, noun)}</small>
+  </button>
+  ${isOpen ? `<div class="fbody">${body}</div>` : ''}
+  </div>`;
+  };
   if (f.picker === 'convo') {
-    if (!lib.convos.length)
-      return '<div class="empty" style="padding:12px 0">No conversations yet. <a href="#/convos">Make one in Conversations</a>.</div>';
-    return /* HTML */ `<div class="picks">
-      ${lib.convos
-        .map((cv) => {
-          const on = c.convoId === cv.id;
-          const g = gapCount(cv.script);
-          return /* HTML */ `<button
-            class="pick radio ${on ? 'on' : ''}"
-            data-act="stpick"
-            data-k="convo"
-            data-i="${i}"
-            data-id="${cv.id}"
-            ${g || on ? '' : 'disabled'}
-          >
-            <span class="chk">${on ? SVG(CHECK) : ''}</span
-            ><span class="nm">${esc(cv.name || 'Untitled conversation')}</span
-            ><small>${plural(g, 'gap')}</small>
-          </button>`;
-        })
-        .join('')}
-    </div>`;
+  if (!lib.convos.length)
+  return '<div class="empty" style="padding:12px 0">No conversations yet. <a href="#/convos">Make one in Conversations</a>.</div>';
+  const convoBtn = (cv) => {
+  const on = c.convoId === cv.id;
+  const g = gapCount(cv.script);
+  return /* HTML */ `<button
+  class="pick radio ${on ? 'on' : ''}"
+  data-act="stpick"
+  data-k="convo"
+  data-i="${i}"
+  data-id="${cv.id}"
+  ${g || on ? '' : 'disabled'}
+  >
+  <span class="chk">${on ? SVG(CHECK) : ''}</span
+  ><span class="nm">${esc(cv.name || 'Untitled conversation')}</span
+  ><small>${plural(g, 'gap')}</small>
+  </button>`;
+  };
+  const ids = new Set(lib.cfolders.map((x) => x.id));
+  const rows = lib.cfolders
+  .map((fo) => {
+  const cs = lib.convos.filter((cv) => cv.folder === fo.id);
+  if (!cs.length) return '';
+  const picked = cs.filter((cv) => cv.id === c.convoId).length;
+  return folderRow(fo, cs.length, 'conversation', picked, `<div class="picks">${cs.map(convoBtn).join('')}</div>`);
+  })
+  .join('');
+  const loose = lib.convos.filter((cv) => !cv.folder || !ids.has(cv.folder));
+  return (
+  (rows ? `<div class="pfolders">${rows}</div>` : '') +
+  (loose.length ? `${rows ? '<div class="sub-h">Not in a folder</div>' : ''}<div class="picks">${loose.map(convoBtn).join('')}</div>` : '')
+  );
   }
   const chosen = new Set(c.decks || []);
   const decks = lib.decks.filter((d) => d.cards.length);
   if (!decks.length)
-    return '<div class="empty" style="padding:12px 0">No decks yet. <a href="#/cards">Make one in Flashcards</a>.</div>';
-  const folderBtns = lib.folders
-    .map((fo) => {
-      const ds = decks.filter((d) => d.folder === fo.id);
-      if (!ds.length) return '';
-      const k = ds.filter((d) => chosen.has(d.id)).length;
-      const st = k && k === ds.length ? 'on' : k ? 'part' : '';
-      return /* HTML */ `<button class="pick ${st}" data-act="stpick" data-k="folder" data-i="${i}" data-id="${fo.id}">
-        <span class="chk">${st === 'on' ? SVG(CHECK) : st === 'part' ? '<i class="dash"></i>' : ''}</span
-        ><span class="nm">${SVG(FOLDER)}${esc(fo.name || 'Untitled folder')}</span
-        ><small>${plural(ds.length, 'deck')}</small>
-      </button>`;
-    })
-    .join('');
-  const deckBtns = decks
-    .map((d) => {
-      const on = chosen.has(d.id);
-      return /* HTML */ `<button class="pick ${on ? 'on' : ''}" data-act="stpick" data-k="deck" data-i="${i}" data-id="${d.id}">
-        <span class="chk">${on ? SVG(CHECK) : ''}</span><span class="nm">${esc(d.name || 'Untitled deck')}</span
-        ><small>${plural(d.cards.length, 'card')}</small>
-      </button>`;
-    })
-    .join('');
+  return '<div class="empty" style="padding:12px 0">No decks yet. <a href="#/cards">Make one in Flashcards</a>.</div>';
+  const deckBtn = (d) => {
+  const on = chosen.has(d.id);
+  return /* HTML */ `<button class="pick ${on ? 'on' : ''}" data-act="stpick" data-k="deck" data-i="${i}" data-id="${d.id}">
+  <span class="chk">${on ? SVG(CHECK) : ''}</span><span class="nm">${esc(d.name || 'Untitled deck')}</span
+  ><small>${plural(d.cards.length, 'card')}</small>
+  </button>`;
+  };
+  const fids = new Set(lib.folders.map((x) => x.id));
+  const rows = lib.folders
+  .map((fo) => {
+  const ds = decks.filter((d) => d.folder === fo.id);
+  if (!ds.length) return '';
+  const picked = ds.filter((d) => chosen.has(d.id)).length;
+  const all = picked === ds.length;
+  const body = /* HTML */ `<div class="fall"><button data-act="stpick" data-k="folder" data-i="${i}" data-id="${fo.id}">${all ? 'Clear folder' : 'Select whole folder'}</button></div>
+  <div class="picks">${ds.map(deckBtn).join('')}</div>`;
+  return folderRow(fo, ds.length, 'deck', picked, body);
+  })
+  .join('');
+  const loose = decks.filter((d) => !d.folder || !fids.has(d.folder));
   return (
-    (folderBtns
-      ? `<div class="sub-h">Folders</div><div class="picks">${folderBtns}</div><div class="sub-h">Decks</div>`
-      : '') +
-    `<div class="picks">${deckBtns}</div>` +
-    `<p class="sub" style="margin:10px 0 0">${plural(stageCards(lib, c).length, 'card')} selected</p>`
+  (rows ? `<div class="pfolders">${rows}</div>` : '') +
+  (loose.length ? `${rows ? '<div class="sub-h">Not in a folder</div>' : ''}<div class="picks">${loose.map(deckBtn).join('')}</div>` : '') +
+  `<p class="sub" style="margin:10px 0 0">${plural(stageCards(lib, c).length, 'card')} selected</p>`
   );
 }
 
@@ -6123,7 +6187,7 @@ async function stageEdit(id) {
   }
   stage.comps = stage.comps || [];
   const keepOpen = STG && STG.stage.id === id ? STG.open : new Set();
-  STG = { stage, open: keepOpen, lib };
+  STG = { stage, open: keepOpen, lib, openF: STG && STG.stage.id === id ? STG.openF : {} };
   app.innerHTML = /* HTML */ `<div class="row" style="justify-content:flex-end">${BACK(kBack('stages', stage))}</div>
     <input class="title" id="stitle" placeholder="Stage name" value="${esc(stage.name)}" />
     <textarea class="desc" id="sdesc" rows="1" placeholder="Add a description">
@@ -6279,6 +6343,14 @@ async function stageEditAct(act, t) {
     return alert(
       `Added ${items.length} step${items.length == 1 ? '' : 's'}.` + (notes.length ? '\n\n' + notes.join('\n') : '')
     );
+  } else if (act === 'stfold') {
+    // open this folder (closing any other one in the same step); click it again to close it
+    const c = stage.comps[i];
+    const openF = STG.openF || (STG.openF = {});
+    if (openF[c.id] === t.dataset.id) delete openF[c.id];
+    else openF[c.id] = t.dataset.id;
+    paintComps();
+    return; // only changes what is shown, so nothing to save
   } else if (act === 'stpick') {
     const c = stage.comps[i];
     const kind = t.dataset.k;
@@ -6423,7 +6495,7 @@ function startStepConvo(run, c) {
 }
 
 const SACT = ['sstart', 'sprev', 'snext', 'srestart', 'smc', 'swcheck', 'sfflip', 'sfgot', 'sfagain'];
-const STAGE_EDIT_ACTS = ['addcomp', 'compup', 'compdown', 'compdel', 'compdeck', 'stpick', 'simport'];
+const STAGE_EDIT_ACTS = ['addcomp', 'compup', 'compdown', 'compdel', 'compdeck', 'stpick', 'stfold', 'simport'];
 
 /** Buttons while running a stage. */
 function stageRunAct(act, t) {
